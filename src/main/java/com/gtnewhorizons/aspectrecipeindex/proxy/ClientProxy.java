@@ -1,6 +1,10 @@
 package com.gtnewhorizons.aspectrecipeindex.proxy;
 
+import net.minecraftforge.client.MinecraftForgeClient;
+
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.client.render.ItemAspectRenderer;
 import com.gtnewhorizons.aspectrecipeindex.nei.IMCForNEI;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 
@@ -24,6 +28,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         IMCForNEI.IMCSender();
+        MinecraftForgeClient.registerItemRenderer(ModItems.itemAspect, new ItemAspectRenderer());
     }
 
     @Override
