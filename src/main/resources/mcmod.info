@@ -3,13 +3,14 @@
 	"modList": [{
 		"modid": "${modId}",
 		"name": "${modName}",
-		"description": "Improvements and fixes for Thaumcraft 4 NEI Plugin.",
+		"description": "New and improved compatibility for Thaumcraft in NEI.",
 		"version": "${modVersion}",
 		"mcversion": "${minecraftVersion}",
-		"url": "https://github.com/TimeConqueror/TCNEIAdditions",
+		"url": "https://github.com/TimeConqueror/aspectrecipeindex",
 		"updateUrl": "",
 		"authorList": [
-			"Time_Conqueror"
+			"Time_Conqueror",
+            "koolkrafter5"
 		],
 		"credits": "",
 		"logoFile": "",

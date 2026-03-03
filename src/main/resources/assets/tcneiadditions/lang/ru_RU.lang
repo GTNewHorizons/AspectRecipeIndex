@@ -1,3 +1,3 @@
-tcneiadditions.aspect_from_itemstack.title=Аспект из предметов
-tcneiadditions.aspect_from_itemstack.still_load=Ещё загружаем... (%s/%s)
-tcneiadditions.aspect_combination.title=Комбинация аспектов
+aspectrecipeindex.aspect_from_itemstack.title=Аспект из предметов
+aspectrecipeindex.aspect_from_itemstack.still_load=Ещё загружаем... (%s/%s)
+aspectrecipeindex.aspect_combination.title=Комбинация аспектов

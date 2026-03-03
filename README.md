@@ -1,5 +1,5 @@
-# TCNEIAdditions
-Mod that improves and fixes Thaumcraft NEI Plugin.
+# Aspect Recipe Index
+FOSS Replacement for Thaumcraft NEI Plugin, based on aspectrecipeindex by TimeConqueror.
 
 🚨 **Requires [SpongeMixins](https://github.com/GTNewHorizons/SpongeMixins) as a dependency** 🚨
 
