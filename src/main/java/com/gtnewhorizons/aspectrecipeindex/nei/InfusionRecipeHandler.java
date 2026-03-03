@@ -21,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
@@ -155,7 +155,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             }
         }
 
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             GuiDraw.drawString(
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
@@ -198,7 +198,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         InfusionCachedRecipe recipe = (InfusionCachedRecipe) this.arecipes.get(recipeIndex);
         if (!recipe.shouldShowRecipe) return;
 
-        if (TCNAConfig.showInstabilityNumber) {
+        if (ARIConfig.showInstabilityNumber) {
             int colorIndex = Math.min(5, recipe.getInstability() / 2);
             String text = StatCollector.translateToLocal("tc.inst") + recipe.getInstability();
             GuiDraw.drawString(
@@ -221,7 +221,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             if (GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
                 CachedRecipe cRecipe = arecipes.get(recipeIndex);
                 Point mousePos = GuiDraw.getMousePosition();

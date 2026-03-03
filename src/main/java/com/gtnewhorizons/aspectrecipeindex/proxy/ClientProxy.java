@@ -2,7 +2,7 @@ package com.gtnewhorizons.aspectrecipeindex.proxy;
 
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.nei.IMCForNEI;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -14,7 +14,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        TCNAConfig.init(event.getSuggestedConfigurationFile());
+        ARIConfig.init(event.getSuggestedConfigurationFile());
         FMLCommonHandler.instance().bus().register(ARIClient.getInstance());
         ARIClient.getInstance().registerResourceReloadListener();
         super.preInit(event);

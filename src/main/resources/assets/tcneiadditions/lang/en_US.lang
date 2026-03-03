@@ -34,3 +34,6 @@ aspectrecipeindex.config.general.showLockedRecipes.tooltip=Show recipes even if 
 aspectrecipeindex.config.general.showInstabilityNumber=Show number of instability
 aspectrecipeindex.config.general.showInstabilityNumber.tooltip=Show the number of instability of infusion
 aspectrecipeindex.config.general.showResearchKey=Show research key
+aspectrecipeindex.config.general.showUndiscoveredAspects=Show undiscovered aspects in NEI
+
+aspectrecipeindex.aspect.undiscovered=%s (Undiscovered)

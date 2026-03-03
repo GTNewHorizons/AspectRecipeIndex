@@ -6,7 +6,7 @@ import net.minecraftforge.common.config.Configuration;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
 
-public class TCNAConfig {
+public class ARIConfig {
 
     public static Configuration config;
 
@@ -19,6 +19,7 @@ public class TCNAConfig {
     public static boolean showLockedRecipes;
     public static boolean showInstabilityNumber;
     public static boolean showResearchKey;
+    public static boolean showUndiscoveredAspects;
 
     public static void init(File file) {
         config = new Configuration(file);
@@ -39,6 +40,10 @@ public class TCNAConfig {
 
         showResearchKey = config.get(GENERAL, "showResearchKey", true, "Show research key")
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showResearchKey").getBoolean();
+
+        showUndiscoveredAspects = config
+                .get(GENERAL, "showResearchKey", false, "Show icons of unlearned aspects in NEI")
+                .setLanguageKey(LANG_PREFIX + GENERAL + ".showUndiscoveredAspects").getBoolean();
 
         if (config.hasChanged()) {
             config.save();

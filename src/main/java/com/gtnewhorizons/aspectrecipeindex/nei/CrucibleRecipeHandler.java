@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
@@ -47,8 +47,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof CrucibleRecipe) {
-                    CrucibleRecipe tcRecipe = (CrucibleRecipe) o;
+                if (o instanceof CrucibleRecipe tcRecipe) {
                     boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.key);
                     CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, shouldShowRecipe);
                     if (recipe.isValid()) {
@@ -160,7 +159,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
             }
         }
 
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             GuiDraw.drawString(
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
@@ -181,7 +180,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             if (GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
                 CachedRecipe cRecipe = arecipes.get(recipeIndex);
                 Point mousePos = GuiDraw.getMousePosition();
@@ -260,7 +259,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
         @Override
         public List<PositionedStack> getIngredients() {
             if (!this.shouldShowRecipe) return Collections.emptyList();
-            return getCycledIngredients(cycleticks / 20, this.ingredients);
+            return this.ingredients;
         }
 
         public void computeVisuals() {

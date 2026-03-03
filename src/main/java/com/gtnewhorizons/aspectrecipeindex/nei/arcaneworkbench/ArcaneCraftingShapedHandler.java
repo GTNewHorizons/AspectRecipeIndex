@@ -18,8 +18,8 @@ import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.NEIHelper;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
@@ -319,7 +319,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
             }
         }
 
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             GuiDraw.drawString(
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
@@ -429,7 +429,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
         @Override
         public boolean contains(Collection<PositionedStack> ingredients, ItemStack ingredient) {
             if (ingredient.getItem() instanceof ItemAspect) {
-                Aspect aspect = ItemAspect.getAspects(ingredient).getAspects()[0];
+                Aspect aspect = ItemAspect.getAspect(ingredient);
                 return this.aspects.aspects.containsKey(aspect);
             }
             return super.contains(ingredients, ingredient);
@@ -475,7 +475,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
     @Override
     public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
-        if (TCNAConfig.showResearchKey) {
+        if (ARIConfig.showResearchKey) {
             if (GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
                 CachedRecipe cRecipe = arecipes.get(recipeIndex);
                 Point mousePos = GuiDraw.getMousePosition();
@@ -583,7 +583,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
         @Override
         public boolean contains(Collection<PositionedStack> ingredients, ItemStack ingredient) {
             if (ingredient.getItem() instanceof ItemAspect) {
-                Aspect aspect = ItemAspect.getAspects(ingredient).getAspects()[0];
+                Aspect aspect = ItemAspect.getAspect(ingredient);
                 return this.aspects.aspects.containsKey(aspect);
             }
             return super.contains(ingredients, ingredient);

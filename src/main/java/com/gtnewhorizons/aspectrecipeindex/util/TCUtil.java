@@ -25,7 +25,6 @@ import cpw.mods.fml.common.Loader;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
@@ -68,19 +67,18 @@ public class TCUtil {
 
         // if input is an Aspect item, pre-read its aspect safely
         Aspect inputAspect = null;
-        boolean inputIsAspectItem = input != null && input.getItem() instanceof ItemAspect;
+        boolean inputIsAspectItem = input.getItem() instanceof ItemAspect;
         if (inputIsAspectItem) {
-            AspectList alt = ItemAspect.getAspects(input);
-            if (alt != null && alt.getAspects() != null && alt.getAspects().length > 0) {
-                inputAspect = alt.getAspects()[0];
+            Aspect aspect = ItemAspect.getAspect(input);
+            if (aspect != null) {
+                inputAspect = aspect;
             } else {
                 return list;
             }
         }
 
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(r instanceof InfusionRecipe)) continue;
-            InfusionRecipe raw = (InfusionRecipe) r;
+            if (!(r instanceof InfusionRecipe raw)) continue;
 
             if (raw.getRecipeOutput() == null) continue;
             Object[] comps = raw.getComponents();
@@ -100,9 +98,7 @@ public class TCUtil {
             }
 
             boolean aspectsContain = false;
-            if (inputIsAspectItem && inputAspect != null
-                    && tcRecipe.getAspects() != null
-                    && tcRecipe.getAspects().aspects != null) {
+            if (inputIsAspectItem && tcRecipe.getAspects() != null && tcRecipe.getAspects().aspects != null) {
                 aspectsContain = tcRecipe.getAspects().aspects.containsKey(inputAspect);
             }
 
@@ -133,11 +129,10 @@ public class TCUtil {
         ArrayList<CrucibleRecipe> list = new ArrayList<>();
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
             if (r == null) continue;
-            if (!(r instanceof CrucibleRecipe)) continue;
-            CrucibleRecipe tcRecipe = (CrucibleRecipe) r;
+            if (!(r instanceof CrucibleRecipe tcRecipe)) continue;
 
             if (input.getItem() instanceof ItemAspect) {
-                Aspect aspect = ItemAspect.getAspects(input).getAspects()[0];
+                Aspect aspect = ItemAspect.getAspect(input);
                 if (tcRecipe.aspects.aspects.containsKey(aspect)) {
                     list.add(tcRecipe);
                 }
@@ -151,7 +146,7 @@ public class TCUtil {
     }
 
     public static boolean shouldShowRecipe(String username, String researchKey) {
-        return ThaumcraftApiHelper.isResearchComplete(username, researchKey) || TCNAConfig.showLockedRecipes;
+        return ThaumcraftApiHelper.isResearchComplete(username, researchKey) || ARIConfig.showLockedRecipes;
     }
 
     // Fix crash with broken item

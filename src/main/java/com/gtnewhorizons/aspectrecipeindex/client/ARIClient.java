@@ -20,7 +20,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 
 import codechicken.nei.recipe.HandlerInfo;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
@@ -93,7 +93,7 @@ public class ARIClient implements IResourceManagerReloadListener {
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.modID.equals(AspectRecipeIndex.MODID)) {
-            TCNAConfig.syncConfig();
+            ARIConfig.syncConfig();
         }
     }
 

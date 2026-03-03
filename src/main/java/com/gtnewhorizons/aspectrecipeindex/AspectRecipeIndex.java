@@ -49,6 +49,7 @@ public class AspectRecipeIndex {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
+        ModItems.init();
     }
 
     @Mod.EventHandler

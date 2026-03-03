@@ -108,7 +108,7 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
     @Override
     public void loadCraftingRecipes(ItemStack ingredient) {
         if (ingredient.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspects(ingredient).getAspects()[0];
+            Aspect aspect = ItemAspect.getAspect(ingredient);
 
             if (Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(playerName, aspect)) {
                 final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);

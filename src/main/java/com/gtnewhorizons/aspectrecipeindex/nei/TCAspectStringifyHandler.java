@@ -9,7 +9,6 @@ import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import codechicken.nei.api.IStackStringifyHandler;
 import thaumcraft.api.aspects.Aspect;
-import thaumcraft.api.aspects.AspectList;
 
 public class TCAspectStringifyHandler implements IStackStringifyHandler {
 
@@ -19,11 +18,10 @@ public class TCAspectStringifyHandler implements IStackStringifyHandler {
             return null;
         }
 
-        AspectList aspectList = ItemAspect.getAspects(stack);
-        if (aspectList == null) {
+        Aspect aspect = ItemAspect.getAspect(stack);
+        if (aspect == null) {
             return null;
         }
-        Aspect aspect = aspectList.getAspects()[0];
         NBTTagCompound nbtTag = new NBTTagCompound();
         nbtTag.setString("TCAspect", aspect.getTag());
         nbtTag.setInteger("Count", Math.max(saveStackSize ? stack.stackSize : 1, 1));

@@ -10,6 +10,7 @@ import net.minecraft.util.StatCollector;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.client.DrawUtils;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
@@ -35,7 +36,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         if (result.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspects(result).getAspects()[0];
+            Aspect aspect = ItemAspect.getAspect(result);
             if (Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(userName, aspect)) {
                 new AspectCombinationRecipe(result);
             }
@@ -44,8 +45,8 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (ingredient.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspects(ingredient).getAspects()[0];
+        if (ingredient.getItem() instanceof ItemAspect item) {
+            Aspect aspect = ItemAspect.getAspect(ingredient);
 
             if (Thaumcraft.proxy.playerKnowledge
                     .hasDiscoveredAspect(Minecraft.getMinecraft().getSession().getUsername(), aspect)) {
@@ -69,13 +70,13 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
             int startY = 25;
             GuiDraw.drawStringC(
                     StatCollector.translateToLocal("tc.aspect.primal"),
-                    ariClient.NEI_GUI_WIDTH / 2,
+                    ARIClient.NEI_GUI_WIDTH / 2,
                     startY,
                     ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
         } else {
             int spaceX = 16;
-            int startX = ariClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
+            int startX = ARIClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
             int startY = 6;
             DrawUtils.drawXYCenteredString(
                     "=",
@@ -105,15 +106,15 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
             int startY = 0;
 
-            Aspect aspect = ItemAspect.getAspects(aspectStack).getAspects()[0];
+            Aspect aspect = ItemAspect.getAspect(aspectStack);
             aspectStack = new ItemStack(ModItems.itemAspect);
             ItemAspect.setAspect(aspectStack, aspect);
 
             if (aspect.isPrimal()) {
-                this.result = new PositionedStack(aspectStack, ariClient.NEI_GUI_WIDTH / 2 - 16 / 2, startY + 6);
+                this.result = new PositionedStack(aspectStack, ARIClient.NEI_GUI_WIDTH / 2 - 16 / 2, startY + 6);
             } else {
                 int spaceX = 16;
-                int startX = ariClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
+                int startX = ARIClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
 
                 this.result = new PositionedStack(aspectStack, startX, startY + 6);
 
