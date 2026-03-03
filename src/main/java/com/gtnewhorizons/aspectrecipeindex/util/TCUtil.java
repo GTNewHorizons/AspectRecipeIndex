@@ -15,14 +15,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
-import com.djgiannuzz.thaumcraftneiplugin.nei.NEIHelper;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.common.Loader;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -36,7 +35,7 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
-    private static TCNAClient tcnaClient = TCNAClient.getInstance();
+    private static ARIClient ariClient = ARIClient.getInstance();
 
     public static List<InfusionRecipe> getInfusionRecipes(ItemStack result) {
         List<InfusionRecipe> list = new ArrayList<>();
@@ -259,7 +258,7 @@ public class TCUtil {
                 EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"),
                 162,
                 y,
-                tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                ariClient.getColor("aspectrecipeindex.gui.textColor"),
                 false);
     }
 }

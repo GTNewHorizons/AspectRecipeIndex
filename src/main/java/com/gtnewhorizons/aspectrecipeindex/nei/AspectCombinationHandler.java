@@ -9,21 +9,18 @@ import net.minecraft.util.StatCollector;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.client.DrawUtils;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
-import codechicken.nei.recipe.TemplateRecipeHandler;
-import com.gtnewhorizons.aspectrecipeindex.client.DrawUtils;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.common.Thaumcraft;
 
-public class AspectCombinationHandler extends TemplateRecipeHandler {
+public class AspectCombinationHandler extends TemplateThaumHandler {
 
     private final String userName = Minecraft.getMinecraft().getSession().getUsername();
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
 
     @Override
     public String getGuiTexture() {
@@ -72,25 +69,25 @@ public class AspectCombinationHandler extends TemplateRecipeHandler {
             int startY = 25;
             GuiDraw.drawStringC(
                     StatCollector.translateToLocal("tc.aspect.primal"),
-                    TCNAClient.NEI_GUI_WIDTH / 2,
+                    ariClient.NEI_GUI_WIDTH / 2,
                     startY,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
         } else {
             int spaceX = 16;
-            int startX = TCNAClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
+            int startX = ariClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
             int startY = 6;
             DrawUtils.drawXYCenteredString(
                     "=",
                     startX + 24,
                     startY + 8,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             DrawUtils.drawXYCenteredString(
                     "+",
                     startX + 56,
                     startY + 8,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
         }
     }
@@ -113,10 +110,10 @@ public class AspectCombinationHandler extends TemplateRecipeHandler {
             ItemAspect.setAspect(aspectStack, aspect);
 
             if (aspect.isPrimal()) {
-                this.result = new PositionedStack(aspectStack, TCNAClient.NEI_GUI_WIDTH / 2 - 16 / 2, startY + 6);
+                this.result = new PositionedStack(aspectStack, ariClient.NEI_GUI_WIDTH / 2 - 16 / 2, startY + 6);
             } else {
                 int spaceX = 16;
-                int startX = TCNAClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
+                int startX = ariClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
 
                 this.result = new PositionedStack(aspectStack, startX, startY + 6);
 

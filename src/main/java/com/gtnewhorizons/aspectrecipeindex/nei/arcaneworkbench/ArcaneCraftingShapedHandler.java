@@ -1,7 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
-import static com.djgiannuzz.thaumcraftneiplugin.nei.NEIHelper.getPrimalAspectListFromAmounts;
-
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -16,10 +14,13 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
-import com.djgiannuzz.thaumcraftneiplugin.nei.NEIHelper;
-import com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler.ArcaneShapedRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
+import com.gtnewhorizons.aspectrecipeindex.util.NEIHelper;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
@@ -27,10 +28,6 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.ShapedRecipeHandler;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -43,11 +40,12 @@ import thaumcraft.api.wands.WandRod;
 import thaumcraft.client.lib.UtilsFX;
 import thaumcraft.common.items.wands.ItemWandCasting;
 
-public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
+public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
     private final String userName = Minecraft.getMinecraft().getSession().getUsername();
     private int ySizeNormal, ySizeRod, ySizeCap;
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
+    private ARIClient ariClient = ARIClient.getInstance();
+    protected ArrayList<AspectList> aspectsAmount;
 
     @Override
     public void loadTransferRects() {
@@ -97,6 +95,11 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
         }
     }
 
+    // TODO
+    private AspectList getAmounts(ShapedArcaneRecipe tcRecipe) {
+        return new AspectList();
+    }
+
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         if (result.getItem() instanceof ItemWandCasting) {
@@ -111,7 +114,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
                 }
             }
 
-            if (!TCNAClient.getInstance().areWandRecipesDeleted()) {
+            if (!ariClient.getInstance().areWandRecipesDeleted()) {
                 ArcaneWandCachedRecipe recipe = new ArcaneWandCachedRecipe(
                         rod,
                         cap,
@@ -162,6 +165,11 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
         }
     }
 
+    @Override
+    public String getGuiTexture() {
+        return "";
+    }
+
     @SuppressWarnings("unchecked")
     public void loadShapedRecipesForWands(ItemStack wandStack, boolean shouldShowRecipe) {
         if (!(wandStack.getItem() instanceof ItemWandCasting)) {
@@ -202,6 +210,11 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
                     this.arecipes.add(recipe);
                     this.aspectsAmount.add(getAmounts(arcaneRecipe));
                 });
+    }
+
+    @Override
+    public String getRecipeName() {
+        return "";
     }
 
     @Override
@@ -246,8 +259,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
     }
 
     public void drawAspects(int recipe) {
-        int[] amounts = this.aspectsAmount.get(recipe);
-        AspectList aspects = getPrimalAspectListFromAmounts(amounts);
+        AspectList aspects = this.aspectsAmount.get(recipe);
 
         int baseX = 36;
         int baseY = 115;
@@ -262,7 +274,11 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
         }
     }
 
-    @Override
+    // TODO
+    private AspectList getPrimalAspectListFromAmounts(int[] amounts) {
+        return new AspectList();
+    }
+
     public List<PositionedStack> getIngredientStacksForOverlay(int recipeIndex) {
         CachedRecipe recipe = arecipes.get(recipeIndex);
         return recipe instanceof IArcaneOverlayProvider
@@ -282,7 +298,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
                             (String) text,
                             82,
                             y,
-                            tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
                             false);
                     y += 11;
                 }
@@ -296,7 +312,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
                             (String) text,
                             82,
                             y,
-                            tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
                             false);
                     y += 11;
                 }
@@ -308,7 +324,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     7,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof ArcaneShapedCachedRecipe cachedRecipe) {
                 int recipeY = 17;
@@ -338,6 +354,7 @@ public class ArcaneCraftingShapedHandler extends ArcaneShapedRecipeHandler {
         protected int height;
         private final boolean shouldShowRecipe;
         private final ResearchItem researchItem;
+        private int[][][] positions;
 
         public ArcaneShapedCachedRecipe(ShapedArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(recipe.width, recipe.height, recipe.getInput(), recipe.getRecipeOutput());

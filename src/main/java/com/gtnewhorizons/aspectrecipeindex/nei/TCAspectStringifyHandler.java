@@ -4,8 +4,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import codechicken.nei.api.IStackStringifyHandler;
 import thaumcraft.api.aspects.Aspect;

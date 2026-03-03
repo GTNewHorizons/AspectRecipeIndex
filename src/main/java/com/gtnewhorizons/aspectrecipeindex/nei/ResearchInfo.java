@@ -9,9 +9,10 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.recipe.GuiRecipe;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchCategoryList;
 import thaumcraft.api.research.ResearchItem;

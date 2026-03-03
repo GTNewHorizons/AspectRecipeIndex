@@ -8,23 +8,10 @@ import com.gtnewhorizon.gtnhmixins.builders.MixinBuilder;
 public enum Mixins implements IMixins {
 
     // spotless:off
-    FIX_RECIPEHANDLER_NPES(new MixinBuilder()
-        .addClientMixins(
-            "thaumcraftneiplugin.ArcaneShapedRecipeHandlerMixin",
-            "thaumcraftneiplugin.ArcaneShapelessRecipeHandlerMixin",
-            "thaumcraftneiplugin.AspectRecipeHandlerMixin",
-            "thaumcraftneiplugin.CrucibleRecipeHandlerMixin",
-            "thaumcraftneiplugin.InfusionRecipeHandlerMixin")
-        .addRequiredMod(TargetedMod.THAUMCRAFTNEIPLUGIN)
-        .setPhase(Phase.LATE)),
     MAPPING_THREAD_HOOK(new MixinBuilder()
         .addClientMixins("thaumcraft.MappingThreadMixin")
         .addClientMixins("thaumcraft.ClientTickEventsFMLMixin")
         .addRequiredMod(TargetedMod.THAUMCRAFT)
-        .setPhase(Phase.LATE)),
-    FIX_NEICONFIG_VERSION(new MixinBuilder()
-        .addClientMixins("thaumcraftneiplugin.NEIConfigMixin")
-        .addRequiredMod(TargetedMod.THAUMCRAFTNEIPLUGIN)
         .setPhase(Phase.LATE));
     // spotless:on
 

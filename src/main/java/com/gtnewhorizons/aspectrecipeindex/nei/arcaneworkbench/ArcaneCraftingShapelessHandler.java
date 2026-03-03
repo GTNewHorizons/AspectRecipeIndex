@@ -1,7 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
-import static com.djgiannuzz.thaumcraftneiplugin.nei.NEIHelper.getPrimalAspectListFromAmounts;
-
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -16,19 +14,19 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
-import com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler.ArcaneShapelessRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import codechicken.nei.recipe.ShapelessRecipeHandler;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -38,11 +36,11 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.client.lib.UtilsFX;
 
-public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler {
+public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
-    private final String userName = Minecraft.getMinecraft().getSession().getUsername();
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
-    private int ySize;
+    protected final String userName = Minecraft.getMinecraft().getSession().getUsername();
+    protected ARIClient ariClient = ARIClient.getInstance();
+    protected ArrayList<AspectList> aspectsAmount;
 
     @Override
     public void loadTransferRects() {
@@ -66,6 +64,11 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
         } else if (outputId.equals("item")) {
             super.loadCraftingRecipes(outputId, results);
         }
+    }
+
+    // TODO
+    private AspectList getAmounts(ShapelessArcaneRecipe tcRecipe) {
+        return new AspectList();
     }
 
     @Override
@@ -131,8 +134,7 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
     }
 
     public void drawAspects(int recipe) {
-        int[] amounts = this.aspectsAmount.get(recipe);
-        AspectList aspects = getPrimalAspectListFromAmounts(amounts);
+        AspectList aspects = this.aspectsAmount.get(recipe);
 
         int baseX = 36;
         int baseY = 115;
@@ -147,7 +149,6 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
         }
     }
 
-    @Override
     public List<PositionedStack> getIngredientStacksForOverlay(int recipeIndex) {
         CachedRecipe recipe = arecipes.get(recipeIndex);
         return recipe instanceof IArcaneOverlayProvider
@@ -167,7 +168,7 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
                             (String) text,
                             82,
                             y,
-                            tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
                             false);
                     y += 11;
                 }
@@ -179,7 +180,7 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     7,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
                 int recipeY = 17;
@@ -217,7 +218,8 @@ public class ArcaneCraftingShapelessHandler extends ArcaneShapelessRecipeHandler
         return super.handleTooltip(gui, list, recipeIndex);
     }
 
-    private class ArcaneShapelessCachedRecipe extends CachedShapelessRecipe implements IArcaneOverlayProvider {
+    private class ArcaneShapelessCachedRecipe extends ShapelessRecipeHandler.CachedShapelessRecipe
+            implements IArcaneOverlayProvider {
 
         private final AspectList aspects;
         protected Object[] overlay;

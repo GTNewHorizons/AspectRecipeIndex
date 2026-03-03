@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
+
 import thaumcraft.client.gui.MappingThread;
 
 @Mixin(value = MappingThread.class)

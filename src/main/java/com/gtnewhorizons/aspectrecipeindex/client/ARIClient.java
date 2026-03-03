@@ -19,19 +19,19 @@ import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
+import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
 
 import codechicken.nei.recipe.HandlerInfo;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
-import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.common.lib.crafting.ArcaneSceptreRecipe;
 import thaumcraft.common.lib.crafting.ArcaneWandRecipe;
 
-public class TCNAClient implements IResourceManagerReloadListener {
+public class ARIClient implements IResourceManagerReloadListener {
 
     private final String[] UNLOCALIZED_COLORS = { "aspectrecipeindex.gui.textColor",
             "aspectrecipeindex.gui.instabilityColor0", "aspectrecipeindex.gui.instabilityColor1",
@@ -43,7 +43,7 @@ public class TCNAClient implements IResourceManagerReloadListener {
     public static final int NEI_GUI_WIDTH = HandlerInfo.DEFAULT_WIDTH;
     public static final int NEI_GUI_HEIGHT = 116;
 
-    private static final TCNAClient instance = new TCNAClient();
+    private static final ARIClient instance = new ARIClient();
     private final Queue<FutureTask<?>> tasks = Queues.newArrayDeque();
     /**
      * Detects if any mod turned off ArcaneWandRecipes by deleting them.
@@ -52,7 +52,7 @@ public class TCNAClient implements IResourceManagerReloadListener {
 
     private HashMap<String, Integer> colors;
 
-    public static TCNAClient getInstance() {
+    public static ARIClient getInstance() {
         return instance;
     }
 

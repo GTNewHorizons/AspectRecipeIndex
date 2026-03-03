@@ -12,18 +12,17 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import codechicken.nei.ItemsTooltipLineHandler;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.GuiRecipe;
-import codechicken.nei.recipe.TemplateRecipeHandler;
-import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.client.gui.GuiResearchRecipe;
@@ -31,7 +30,7 @@ import thaumcraft.common.Thaumcraft;
 import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumcraft.common.lib.research.ScanManager;
 
-public class AspectFromItemStackHandler extends TemplateRecipeHandler {
+public class AspectFromItemStackHandler extends TemplateThaumHandler {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(
             AspectRecipeIndex.MODID,
@@ -41,11 +40,10 @@ public class AspectFromItemStackHandler extends TemplateRecipeHandler {
             "textures/gui/gui_researchbook_overlay.png");
     private static final int STACKS_OVERLAY_WIDTH = 163;
     private static final int STACKS_OVERLAY_HEIGHT = 74;
-    private static final int STACKS_OVERLAY_START_X = TCNAClient.NEI_GUI_WIDTH / 2 - STACKS_OVERLAY_WIDTH / 2;
-    private static final int STACKS_OVERLAY_START_Y = TCNAClient.NEI_GUI_HEIGHT - STACKS_OVERLAY_HEIGHT;
+    private static final int STACKS_OVERLAY_START_X = ARIClient.NEI_GUI_WIDTH / 2 - STACKS_OVERLAY_WIDTH / 2;
+    private static final int STACKS_OVERLAY_START_Y = ARIClient.NEI_GUI_HEIGHT - STACKS_OVERLAY_HEIGHT;
     private String playerName;
     private int ticks;
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
 
     private ITooltipLineHandler aspectsTooltipLineHandler = null;
     private ItemStack aspectsTooltipStack = null;
@@ -132,7 +130,7 @@ public class AspectFromItemStackHandler extends TemplateRecipeHandler {
             {
                 int textureSize = 16;
                 float scaleFactor = 1.75F;
-                int x = TCNAClient.NEI_GUI_WIDTH / 2;
+                int x = ariClient.NEI_GUI_WIDTH / 2;
                 int y = 13;
                 GL11.glTranslatef(x, y, 0);
                 GL11.glScalef(scaleFactor, scaleFactor, 1.0F);
@@ -155,7 +153,7 @@ public class AspectFromItemStackHandler extends TemplateRecipeHandler {
                             ThaumcraftHooks.getTotalToLoad()),
                     2,
                     32,
-                    tcnaClient.getColor("aspectrecipeindex.gui.loadingTextColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.loadingTextColor"),
                     true);
         }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -248,7 +246,7 @@ public class AspectFromItemStackHandler extends TemplateRecipeHandler {
 
             final ItemStack aspectStack = new ItemStack(ModItems.itemAspect);
             ItemAspect.setAspect(aspectStack, aspect);
-            this.result = new PositionedStack(aspectStack, TCNAClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
+            this.result = new PositionedStack(aspectStack, ariClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
 
             arecipes.add(this);
             initStackList(fullItemStackList);

@@ -19,17 +19,15 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
-import com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler.InfusionRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -39,16 +37,20 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.client.lib.UtilsFX;
 
-public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
+public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     private final String userName = Minecraft.getMinecraft().getSession().getUsername();
     private int ySize;
     private final int aspectsPerRow = 7;
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
 
     @Override
     public void loadTransferRects() {
         TCUtil.loadTransferRects(this, 5);
+    }
+
+    @Override
+    public String getRecipeName() {
+        return "";
     }
 
     @Override
@@ -110,6 +112,11 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
     }
 
     @Override
+    public String getGuiTexture() {
+        return "";
+    }
+
+    @Override
     public void drawBackground(int recipeIndex) {
         InfusionCachedRecipe recipe = (InfusionCachedRecipe) arecipes.get(recipeIndex);
         if (recipe.shouldShowRecipe) {
@@ -141,7 +148,7 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
                             (String) text,
                             82,
                             y,
-                            tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
                             false);
                     y += 11;
                 }
@@ -153,7 +160,7 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     5,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof InfusionCachedRecipe cachedRecipe) {
                 int recipeY = 15;
@@ -167,7 +174,6 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
         TCUtil.drawSeeAllRecipesLabel(5);
     }
 
-    @Override
     public void drawAspects(int recipe, int x, int y) {
         AspectList aspects = this.aspectsAmount.get(recipe);
         int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
@@ -188,7 +194,6 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
         }
     }
 
-    @Override
     public void drawInstability(int recipeIndex, int x, int y) {
         InfusionCachedRecipe recipe = (InfusionCachedRecipe) this.arecipes.get(recipeIndex);
         if (!recipe.shouldShowRecipe) return;
@@ -200,7 +205,7 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
                     text,
                     x + 56 - GuiDraw.fontRenderer.getStringWidth(text) / 2,
                     y + 263,
-                    tcnaClient.getColor("aspectrecipeindex.gui.instabilityColor" + colorIndex),
+                    ariClient.getColor("aspectrecipeindex.gui.instabilityColor" + colorIndex),
                     false);
         } else {
             int inst = Math.min(5, recipe.getInstability() / 2);
@@ -209,7 +214,7 @@ public class TCNAInfusionRecipeHandler extends InfusionRecipeHandler {
                     text,
                     x + 56 - GuiDraw.fontRenderer.getStringWidth(text) / 2,
                     y + 263,
-                    tcnaClient.getColor("aspectrecipeindex.gui.instabilityColorOff"),
+                    ariClient.getColor("aspectrecipeindex.gui.instabilityColorOff"),
                     false);
         }
     }

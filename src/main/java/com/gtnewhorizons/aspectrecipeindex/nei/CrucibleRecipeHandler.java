@@ -14,18 +14,16 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.djgiannuzz.thaumcraftneiplugin.ModItems;
-import com.djgiannuzz.thaumcraftneiplugin.items.ItemAspect;
-import com.djgiannuzz.thaumcraftneiplugin.nei.recipehandler.CrucibleRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -35,12 +33,10 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.client.lib.UtilsFX;
 
-public class TCNACrucibleRecipeHandler extends CrucibleRecipeHandler {
+public class CrucibleRecipeHandler extends TemplateThaumHandler {
 
-    private final String userName = Minecraft.getMinecraft().getSession().getUsername();
     private int ySize;
     private final int aspectsPerRow = 3;
-    private TCNAClient tcnaClient = TCNAClient.getInstance();
 
     @Override
     public void loadTransferRects() {
@@ -95,6 +91,16 @@ public class TCNACrucibleRecipeHandler extends CrucibleRecipeHandler {
     }
 
     @Override
+    public String getGuiTexture() {
+        return "";
+    }
+
+    @Override
+    public String getRecipeName() {
+        return "";
+    }
+
+    @Override
     public void drawBackground(int recipeIndex) {
         CrucibleCachedRecipe recipe = (CrucibleCachedRecipe) arecipes.get(recipeIndex);
         if (recipe.shouldShowRecipe) {
@@ -115,7 +121,6 @@ public class TCNACrucibleRecipeHandler extends CrucibleRecipeHandler {
     }
 
     // Math in these looks a little weird to show similarity to other method above.
-    @Override
     public void drawAspects(int recipe, int x, int y) {
         AspectList aspects = this.aspectsAmount.get(recipe);
         int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
@@ -148,7 +153,7 @@ public class TCNACrucibleRecipeHandler extends CrucibleRecipeHandler {
                             (String) text,
                             82,
                             y,
-                            tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
                             false);
                     y += 11;
                 }
@@ -160,7 +165,7 @@ public class TCNACrucibleRecipeHandler extends CrucibleRecipeHandler {
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     13,
-                    tcnaClient.getColor("aspectrecipeindex.gui.textColor"),
+                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof CrucibleCachedRecipe cachedRecipe) {
                 int recipeY = 23;

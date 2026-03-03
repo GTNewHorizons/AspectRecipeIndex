@@ -7,8 +7,7 @@ import com.gtnewhorizon.gtnhmixins.builders.TargetModBuilder;
 
 public enum TargetedMod implements ITargetMod {
 
-    THAUMCRAFT("Thaumcraft"),
-    THAUMCRAFTNEIPLUGIN("thaumcraftneiplugin");
+    THAUMCRAFT("Thaumcraft");
 
     private final TargetModBuilder builder;
 

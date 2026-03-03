@@ -8,7 +8,7 @@ import com.gtnewhorizon.gtnhmixins.LateMixin;
 import com.gtnewhorizon.gtnhmixins.builders.IMixins;
 
 @LateMixin
-public class aspectrecipeindexLateMixins implements ILateMixinLoader {
+public class AspectRecipeIndexLateMixins implements ILateMixinLoader {
 
     @Override
     public String getMixinConfig() {

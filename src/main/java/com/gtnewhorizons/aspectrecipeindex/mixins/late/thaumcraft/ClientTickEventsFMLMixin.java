@@ -13,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.gtnewhorizons.aspectrecipeindex.nei.AspectFromItemStackHandler;
+
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
-import com.gtnewhorizons.aspectrecipeindex.nei.AspectFromItemStackHandler;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.client.lib.ClientTickEventsFML;

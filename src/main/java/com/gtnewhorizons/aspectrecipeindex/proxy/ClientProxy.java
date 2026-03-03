@@ -1,15 +1,13 @@
 package com.gtnewhorizons.aspectrecipeindex.proxy;
 
-import net.minecraftforge.common.MinecraftForge;
+import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
+import com.gtnewhorizons.aspectrecipeindex.nei.IMCForNEI;
+import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import com.gtnewhorizons.aspectrecipeindex.HandlerRemover;
-import com.gtnewhorizons.aspectrecipeindex.client.TCNAClient;
-import com.gtnewhorizons.aspectrecipeindex.nei.IMCForNEI;
-import com.gtnewhorizons.aspectrecipeindex.util.TCNAConfig;
 
 @SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
@@ -17,9 +15,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         TCNAConfig.init(event.getSuggestedConfigurationFile());
-        FMLCommonHandler.instance().bus().register(TCNAClient.getInstance());
-        TCNAClient.getInstance().registerResourceReloadListener();
-        MinecraftForge.EVENT_BUS.register(new HandlerRemover());
+        FMLCommonHandler.instance().bus().register(ARIClient.getInstance());
+        ARIClient.getInstance().registerResourceReloadListener();
         super.preInit(event);
     }
 
