@@ -18,12 +18,12 @@ public class IMCForNEI {
                 4,
                 138);
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.TCNACrucibleRecipeHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.CrucibleRecipeHandler",
                 "Thaumcraft:blockMetalDevice",
                 -2,
                 136);
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.TCNAInfusionRecipeHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.InfusionRecipeHandler",
                 "Thaumcraft:blockStoneDevice:2",
                 6,
                 152);
