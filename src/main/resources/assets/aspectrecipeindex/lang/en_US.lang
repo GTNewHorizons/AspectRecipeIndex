@@ -1,6 +1,6 @@
-aspectrecipeindex.aspect_from_itemstack.title=Aspect from ItemStack
-aspectrecipeindex.aspect_from_itemstack.still_load=Still loading... (%s/%s)
-aspectrecipeindex.aspect_from_itemstack.aspect_list=Aspects
+aspectrecipeindex.items_containing_aspect.title=Items Containing Aspect
+aspectrecipeindex.items_containing_aspect.still_load=Still loading... (%s/%s)
+aspectrecipeindex.items_containing_aspect.aspect_list=Aspects
 aspectrecipeindex.aspect_combination.title=Aspect Combination
 aspectrecipeindex.alchemy.title=Alchemy
 aspectrecipeindex.infusion.title=Arcane Infusion

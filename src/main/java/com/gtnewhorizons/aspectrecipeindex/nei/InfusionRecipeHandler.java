@@ -13,6 +13,8 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 
+import org.lwjgl.opengl.GL11;
+
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
@@ -106,7 +108,9 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     protected void drawIngredientBackground() {
-        GuiDraw.drawTexturedModalRect(26, 19, 207, 78, 42, 42); // Runic matrix drawing
+        GL11.glTranslatef(-0.5F, -0.4F, 0);
+        GuiDraw.drawTexturedModalRect(27, 20, 207, 78, 42, 42); // Runic matrix drawing
+        GL11.glTranslatef(0.5F, 0.4F, 0);
     }
 
     @Override
@@ -129,7 +133,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             text = StatCollector.translateToLocal("tc.inst." + Math.min(5, recipe.getInstability() / 2));
             color = ariClient.getColor("aspectrecipeindex.gui.instabilityColorOff");
         }
-        GuiDraw.drawString(text, 82 - GuiDraw.fontRenderer.getStringWidth(text) / 2, 119, color, false);
+        GuiDraw.drawString(text, 83 - GuiDraw.fontRenderer.getStringWidth(text) / 2, 120, color, false);
     }
 
     private class InfusionCachedRecipe extends CachedThaumRecipe {
@@ -159,9 +163,9 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected void setIngredients(InfusionRecipe recipeLegacy) {
             EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipeLegacy);
             this.ingredients = new ArrayList<>();
-            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), 74, 61));
-            int x = 26;
-            int y = -32;
+            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), 75, 62));
+            int x = 27;
+            int y = -31;
             int le = r.getComponentsExt().size();
             ArrayList<Point> coords = new ArrayList<>();
             float pieSlice = 360f / le;
@@ -194,7 +198,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             if (recipe.getRecipeOutput() instanceof ItemStack stack) {
                 res = stack;
             } else {
-                // Used for adding faceplates to thaumium fortress helms
+                // Used for adding faceplates to thaumium fortress helms and maybe other things I don't know
                 res = recipe.getRecipeInput().copy();
                 Object[] obj = (Object[]) recipe.getRecipeOutput();
                 NBTBase tag = (NBTBase) obj[1];
@@ -220,8 +224,8 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
         protected void addAspectsToIngredients(AspectList aspects) {
             int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
-            final int baseX = 34;
-            final int baseY = 129;
+            final int baseX = 35;
+            final int baseY = 130;
             int count = 0;
             for (int row = 0; row < rows; row++) {
                 int reversedRow = -row + rows - 1;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +16,7 @@ import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
@@ -25,41 +25,39 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.GuiRecipe;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.client.gui.GuiResearchRecipe;
 import thaumcraft.common.Thaumcraft;
 import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumcraft.common.lib.research.ScanManager;
 
-public class AspectFromItemStackHandler extends TemplateThaumHandler {
+public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     private static final ResourceLocation BACKGROUND = new ResourceLocation(
             AspectRecipeIndex.MODID,
             "textures/gui/itemstack_background.png");
-    private static final ResourceLocation THAUM_OVERLAYS = new ResourceLocation(
-            Thaumcraft.MODID.toLowerCase(),
-            "textures/gui/gui_researchbook_overlay.png");
     private static final int STACKS_OVERLAY_WIDTH = 163;
     private static final int STACKS_OVERLAY_HEIGHT = 74;
     private static final int STACKS_OVERLAY_START_X = ARIClient.NEI_GUI_WIDTH / 2 - STACKS_OVERLAY_WIDTH / 2;
     private static final int STACKS_OVERLAY_START_Y = ARIClient.NEI_GUI_HEIGHT - STACKS_OVERLAY_HEIGHT;
-    private String playerName;
     private int ticks;
 
     private ITooltipLineHandler aspectsTooltipLineHandler = null;
     private ItemStack aspectsTooltipStack = null;
 
-    public AspectFromItemStackHandler() {
-        playerName = Minecraft.getMinecraft().getSession().getUsername();
+    @Override
+    public String getRecipeName() {
+        return StatCollector.translateToLocal("aspectrecipeindex.items_containing_aspect.title");
     }
 
     @Override
-    public String getRecipeName() {
-        return StatCollector.translateToLocal("aspectrecipeindex.aspect_from_itemstack.title");
+    public String getOverlayIdentifier() {
+        return "thaumcraft.items_containing_aspect";
     }
 
     protected AspectList getAspectsForItemStack(ItemStack stack) {
         final int hash = ScanManager.generateItemHash(stack.getItem(), stack.getItemDamage());
-        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(playerName);
+        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.username);
 
         if (list != null && (list.contains("@" + hash) || list.contains("#" + hash))) {
             final AspectList tags = ThaumcraftCraftingManager.getObjectTags(stack);
@@ -71,9 +69,8 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
 
     @Override
     public List<String> handleItemTooltip(GuiRecipe<?> gui, ItemStack stack, List<String> currenttip, int recipe) {
-
         if (stack == null) {
-            this.aspectsTooltipStack = stack;
+            this.aspectsTooltipStack = null;
             this.aspectsTooltipLineHandler = null;
         } else if (aspectsTooltipStack == null || !ItemStack.areItemStacksEqual(aspectsTooltipStack, stack)) {
             final AspectList tags = getAspectsForItemStack(stack);
@@ -91,7 +88,7 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
                 }
 
                 this.aspectsTooltipLineHandler = new ItemsTooltipLineHandler(
-                        StatCollector.translateToLocal("aspectrecipeindex.aspect_from_itemstack.aspect_list"),
+                        StatCollector.translateToLocal("aspectrecipeindex.items_containing_aspect.aspect_list"),
                         inputs,
                         true,
                         Integer.MAX_VALUE);
@@ -110,7 +107,7 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
         if (ingredient.getItem() instanceof ItemAspect) {
             Aspect aspect = ItemAspect.getAspect(ingredient);
 
-            if (Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(playerName, aspect)) {
+            if (TCUtil.shouldShowAspect(aspect)) {
                 final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);
                 if (!containingItemStacks.isEmpty()) {
                     new AspectCachedRecipe(aspect, containingItemStacks);
@@ -120,35 +117,28 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
     }
 
     @Override
-    public void drawBackground(int recipe) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        GuiDraw.changeTexture(THAUM_OVERLAYS);
-        {
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            {
-                int textureSize = 16;
-                float scaleFactor = 1.75F;
-                int x = ariClient.NEI_GUI_WIDTH / 2;
-                int y = 13;
-                GL11.glTranslatef(x, y, 0);
-                GL11.glScalef(scaleFactor, scaleFactor, 1.0F);
-
-                GL11.glTranslatef(-0.07F, 0.1F, 0);
-                GuiDraw.drawTexturedModalRect(-textureSize / 2, -textureSize / 2, 20, 3, 16, 16);
-                GL11.glTranslatef(0.07F, -0.1F, 0);
-
-                GL11.glScalef(1 / scaleFactor, 1 / scaleFactor, 1.0F);
-                GL11.glTranslatef(-x, -y, 0);
+    public void loadCraftingRecipes(String outputId, Object... results) {
+        if (outputId.equals(this.getOverlayIdentifier())) {
+            for (Aspect aspect : Aspect.aspects.values()) {
+                if (TCUtil.shouldShowAspect(aspect)) {
+                    continue;
+                }
+                final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);
+                new AspectCachedRecipe(aspect, containingItemStacks);
             }
-            GL11.glDisable(GL11.GL_BLEND);
+        } else if (outputId.equals("item")) {
+            this.loadCraftingRecipes((ItemStack) results[0]);
         }
+    }
+
+    @Override
+    public void drawBackground(int recipe) {
+        super.drawBackground(recipe);
 
         if (!ThaumcraftHooks.isDataLoaded()) {
             GuiDraw.drawString(
                     I18n.format(
-                            "aspectrecipeindex.aspect_from_itemstack.still_load",
+                            "aspectrecipeindex.items_containing_aspect.still_load",
                             ThaumcraftHooks.getItemsLoaded(),
                             ThaumcraftHooks.getTotalToLoad()),
                     2,
@@ -169,30 +159,30 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
     }
 
     @Override
-    public void drawForeground(int recipe) {}
+    public void drawForeground(int recipe) {
+        drawExtras(recipe);
+    }
 
     @Override
     public void onUpdate() {
-        if (!ThaumcraftHooks.isDataLoaded()) {
-            if (ticks < -1) {
-                ticks = -1;
-            }
-
-            if (ticks % 200 == 0) {
-                if (!arecipes.isEmpty() && arecipes.get(0) instanceof AspectCachedRecipe) {
-                    final AspectCachedRecipe first = ((AspectCachedRecipe) arecipes.get(0));
-                    final List<ItemStack> fullList = findContainingItemStacks(first.aspect);
-                    first.initStackList(fullList);
-                }
-            }
-
-            ticks++;
+        if (ThaumcraftHooks.isDataLoaded()) {
+            return;
         }
+        if (ticks < -1) {
+            ticks = -1;
+        }
+
+        if (ticks % 200 == 0 && !arecipes.isEmpty() && arecipes.get(0) instanceof AspectCachedRecipe first) {
+            final List<ItemStack> fullList = findContainingItemStacks(first.aspect);
+            first.initStackList(fullList);
+        }
+
+        ticks++;
     }
 
     private List<ItemStack> findContainingItemStacks(Aspect aspect) {
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        List<String> list = Thaumcraft.proxy.getScannedObjects().get(playerName);
+        List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.username);
 
         if (list != null) {
             for (String itemStackCache : list) { // every string represents cache of itemstack, like @12921929129
@@ -221,14 +211,14 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
         return stacks;
     }
 
-    private class AspectCachedRecipe extends CachedRecipe {
+    private class AspectCachedRecipe extends CachedThaumRecipe {
 
         private static final int STACKS_COUNT = 36;
-        private Aspect aspect;
-        private int start;
+        private final Aspect aspect;
+        private final int start;
         private ItemStack[] localPageStacks;
         private List<PositionedStack> ingredients = null;
-        private PositionedStack result;
+        private final PositionedStack result;
         private AspectCachedRecipe next = null;
 
         public AspectCachedRecipe(Aspect aspect, List<ItemStack> fullItemStackList) {
@@ -236,12 +226,14 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
         }
 
         private AspectCachedRecipe(Aspect aspect, List<ItemStack> fullItemStackList, int start) {
+            super(true);
             this.start = start;
             this.aspect = aspect;
 
             final ItemStack aspectStack = new ItemStack(ModItems.itemAspect);
             ItemAspect.setAspect(aspectStack, aspect);
-            this.result = new PositionedStack(aspectStack, ariClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
+            this.result = new PositionedStack(aspectStack, ARIClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
+            prereqs.add(new ResearchInfo(ResearchCategories.getResearch("ASPECTS"), true));
 
             arecipes.add(this);
             initStackList(fullItemStackList);
@@ -251,8 +243,9 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
             this.localPageStacks = getItemsInInterval(fullItemStackList);
             this.ingredients = null;
 
-            if (next != null) next.initStackList(fullItemStackList);
-            else if (start + STACKS_COUNT < fullItemStackList.size()) {
+            if (next != null) {
+                next.initStackList(fullItemStackList);
+            } else if (start + STACKS_COUNT < fullItemStackList.size()) {
                 next = new AspectCachedRecipe(aspect, fullItemStackList, start + STACKS_COUNT);
             }
         }

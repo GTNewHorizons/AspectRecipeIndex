@@ -24,7 +24,7 @@ public class IMCForNEI {
                 "Thaumcraft:blockStoneDevice:2",
                 152);
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.AspectFromItemStackHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.ItemsContainingAspectHandler",
                 "Thaumcraft:ItemResearchNotes",
                 147);
         setNBTAndSend(

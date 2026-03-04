@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.gtnewhorizons.aspectrecipeindex.nei.AspectFromItemStackHandler;
+import com.gtnewhorizons.aspectrecipeindex.nei.ItemsContainingAspectHandler;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.guihook.GuiContainerManager;
@@ -41,7 +41,7 @@ public class ClientTickEventsFMLMixin {
             return;
         }
 
-        if (gui instanceof GuiRecipe<?>guiRecipe && guiRecipe.getHandler() instanceof AspectFromItemStackHandler) {
+        if (gui instanceof GuiRecipe<?>guiRecipe && guiRecipe.getHandler() instanceof ItemsContainingAspectHandler) {
             final Point mouse = GuiDraw.getMousePosition();
             if (mouse.x >= guiRecipe.guiLeft && mouse.x <= guiRecipe.guiLeft + gui.xSize
                     && mouse.y >= guiRecipe.guiTop

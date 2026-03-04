@@ -10,6 +10,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
@@ -25,9 +26,13 @@ import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import thaumcraft.api.aspects.AspectList;
-import thaumcraft.client.lib.UtilsFX;
+import thaumcraft.common.Thaumcraft;
 
 public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
+
+    private static final ResourceLocation THAUM_OVERLAYS = new ResourceLocation(
+            Thaumcraft.MODID.toLowerCase(),
+            "textures/gui/gui_researchbook_overlay.png");
 
     protected ARIClient ariClient = ARIClient.getInstance();
     protected ArrayList<AspectList> aspects = new ArrayList<>();
@@ -37,10 +42,12 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         CachedThaumRecipe recipe = (CachedThaumRecipe) arecipes.get(recipeIndex);
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        UtilsFX.bindTexture("textures/gui/gui_researchbook_overlay.png");
+        GuiDraw.changeTexture(THAUM_OVERLAYS);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glScalef(1.75F, 1.75F, 1.0F);
+        GL11.glTranslatef(0.3F, 0.4F, 0);
         GuiDraw.drawTexturedModalRect(39, 0, 20, 4, 16, 16); // Result item icon
+        GL11.glTranslatef(-0.3F, -0.4F, 0);
         if (recipe.shouldShowRecipe) drawIngredientBackground();
         GL11.glPopAttrib();
         GL11.glPopMatrix();
@@ -131,7 +138,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
         protected void setResult(ItemStack out) {
             if (out != null) {
-                this.result = new PositionedStack(out, 74, 4, false);
+                this.result = new PositionedStack(out, 75, 5, false);
             }
         }
 

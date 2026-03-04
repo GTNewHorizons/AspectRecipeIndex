@@ -12,7 +12,7 @@ public class NEIConfig implements IConfigureNEI {
     @Override
     public void loadConfig() {
 
-        API.registerRecipeHandler(new AspectFromItemStackHandler());
+        API.registerRecipeHandler(new ItemsContainingAspectHandler());
         API.registerRecipeHandler(new AspectCombinationHandler());
         API.registerRecipeHandler(new ArcaneCraftingShapedHandler());
         API.registerRecipeHandler(new ArcaneCraftingShapelessHandler());

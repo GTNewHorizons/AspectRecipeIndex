@@ -49,7 +49,7 @@ public class ResearchInfo {
     public void onHover(List<String> list) {
         list.add(
                 String.format(
-                        "%s%s%s : %s",
+                        "%s%s%s: %s",
                         EnumChatFormatting.UNDERLINE,
                         isResearched ? EnumChatFormatting.GREEN : EnumChatFormatting.RED,
                         category != null ? category : "N/A",

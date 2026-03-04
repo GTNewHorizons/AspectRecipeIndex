@@ -75,7 +75,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
     @Override
     protected void drawIngredientBackground() {
         GuiDraw.drawTexturedModalRect(21, 26, 2, 20, 52, 47); // Crucible outline
-        GuiDraw.drawTexturedModalRect(40, 19, 100, 85, 10, 12); // Input item arrow
+        GuiDraw.drawTexturedModalRect(40, 18, 100, 84, 10, 13); // Input item arrow
     }
 
     @Override
@@ -102,7 +102,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
         protected void setIngredient(Object in) {
             if (in != null && NEIServerUtils.extractRecipeItems(in).length > 0) {
-                PositionedStack stack = new PositionedStack(in, 55, 27, false);
+                PositionedStack stack = new PositionedStack(in, 54, 27, false);
                 stack.setMaxSize(1);
                 this.ingredients = new ArrayList<>(Collections.singletonList(stack));
             }
@@ -113,7 +113,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             final int aspectsPerRow = 3;
             int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
 
-            final int xBase = 31;
+            final int xBase = 34;
             final int yBase = 86 - (10 * rows);
             int count = 0;
 
