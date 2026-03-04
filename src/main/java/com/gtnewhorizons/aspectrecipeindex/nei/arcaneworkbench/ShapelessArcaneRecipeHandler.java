@@ -18,6 +18,7 @@ import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
+import com.gtnewhorizons.aspectrecipeindex.nei.TemplateThaumHandler;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
@@ -36,7 +37,7 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.client.lib.UtilsFX;
 
-public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
+public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
 
     protected ARIClient ariClient = ARIClient.getInstance();
     protected ArrayList<AspectList> aspectsAmount = new ArrayList<>();
@@ -48,25 +49,39 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
-        if (outputId.equals(this.getOverlayIdentifier())) {
-            for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapelessArcaneRecipe tcRecipe) {
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
-                    ArcaneShapelessCachedRecipe recipe = new ArcaneShapelessCachedRecipe(tcRecipe, shouldShowRecipe);
-                    if (recipe.isValid()) {
-                        this.arecipes.add(recipe);
-                        this.aspectsAmount.add(getAmounts(tcRecipe));
-                    }
-                }
+        if (outputId.equals("item")) {
+            this.loadCraftingRecipes((ItemStack) results[0]);
+            return;
+        }
+        if (!outputId.equals(this.getOverlayIdentifier())) {
+            return;
+        }
+        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
+            if (!(o instanceof ShapelessArcaneRecipe tcRecipe)) {
+                continue;
             }
-        } else if (outputId.equals("item")) {
-            super.loadCraftingRecipes(outputId, results);
+            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
+            ArcaneShapelessCachedRecipe recipe = new ArcaneShapelessCachedRecipe(tcRecipe, shouldShowRecipe);
+            if (recipe.isValid()) {
+                this.arecipes.add(recipe);
+                this.aspectsAmount.add(tcRecipe.aspects);
+            }
         }
     }
 
-    // TODO
-    private AspectList getAmounts(ShapelessArcaneRecipe tcRecipe) {
-        return new AspectList();
+    @Override
+    public String getGuiTexture() {
+        return "nei:textures/gui/recipebg.png";
+    }
+
+    @Override
+    public String getOverlayIdentifier() {
+        return "thaumcraft.arcane.shapeless";
+    }
+
+    @Override
+    public String getRecipeName() {
+        return StatCollector.translateToLocal("aspectrecipeindex.shapeless_arcane_crafting.title");
     }
 
     @Override
@@ -78,7 +93,7 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
                 if (recipe.isValid()
                         && NEIServerUtils.areStacksSameTypeCraftingWithNBT(tcRecipe.getRecipeOutput(), result)) {
                     this.arecipes.add(recipe);
-                    this.aspectsAmount.add(getAmounts(tcRecipe));
+                    this.aspectsAmount.add(tcRecipe.aspects);
                 }
             }
         }
@@ -93,7 +108,7 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
                         && TCUtil.shouldShowRecipe(tcRecipe.getResearch())) {
                     recipe.setIngredientPermutation(recipe.ingredients, ingredient);
                     this.arecipes.add(recipe);
-                    this.aspectsAmount.add(getAmounts(tcRecipe));
+                    this.aspectsAmount.add(tcRecipe.aspects);
                 }
             }
         }
@@ -101,32 +116,28 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
     @Override
     public void drawBackground(int recipeIndex) {
-        ArcaneShapelessCachedRecipe recipe = (ArcaneShapelessCachedRecipe) arecipes.get(recipeIndex);
-        int x = 34;
-        int y = -15;
-        UtilsFX.bindTexture("textures/gui/gui_researchbook_overlay.png");
+        boolean shouldShowRecipe = ((ArcaneShapelessCachedRecipe) arecipes.get(recipeIndex)).shouldShowRecipe;
         GL11.glPushMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(3042);
-        GL11.glTranslatef((float) x, (float) y, 0.0F);
-        GL11.glScalef(1.7F, 1.7F, 1.0F);
-        GuiDraw.drawTexturedModalRect(20, 7, 20, 3, 16, 16);
-        if (recipe.shouldShowRecipe) {
-            GuiDraw.drawTexturedModalRect(2, 23, 112, 15, 52, 52);
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        GuiDraw.changeTexture(TemplateThaumHandler.THAUM_OVERLAYS);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glScalef(1.75F, 1.75F, 1.0F);
+        GL11.glTranslatef(0.3F, 0.4F, 0);
+        GuiDraw.drawTexturedModalRect(39, 0, 20, 4, 16, 16); // Result item icon
+        GL11.glTranslatef(-0.3F, -0.4F, 0);
+        if (shouldShowRecipe) {
+            GuiDraw.drawTexturedModalRect(20, 13, 112, 15, 52, 52);
         }
         GL11.glPopMatrix();
-
-        if (recipe.shouldShowRecipe) {
+        if (shouldShowRecipe) {
             GL11.glPushMatrix();
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.4F);
-            GL11.glEnable(3042);
-            GL11.glTranslatef((float) x - 30, (float) (y + 126), 0.0F);
+            GL11.glTranslatef(4F, 111F, 0.0F);
             GL11.glScalef(2.0F, 2.0F, 1.0F);
             GuiDraw.drawTexturedModalRect(0, 0, 68, 76, 12, 12);
             GL11.glPopMatrix();
-
-            this.drawAspects(recipeIndex);
         }
+        GL11.glPopAttrib();
     }
 
     public void drawAspects(int recipe) {
@@ -145,19 +156,17 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
         }
     }
 
-    public List<PositionedStack> getIngredientStacksForOverlay(int recipeIndex) {
-        CachedRecipe recipe = arecipes.get(recipeIndex);
-        return recipe instanceof IArcaneOverlayProvider
-                ? ((IArcaneOverlayProvider) recipe).getPositionedStacksForOverlay()
-                : null;
-    }
-
+    /**
+     * Changes made here must also be made in ShapedArcaneRecipeHandler and TemplateThaumHandler!
+     *
+     * @param recipeIndex The recipeIndex being drawn
+     */
     @Override
     public void drawExtras(int recipeIndex) {
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
         if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe && !cachedRecipe.shouldShowRecipe) {
             String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
-            int y = 30;
+            int y = 38;
             for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
                 GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
                 y += 11;
@@ -168,11 +177,11 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
             GuiDraw.drawString(
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
-                    7,
+                    2,
                     ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
-                int recipeY = 17;
+                int recipeY = 12;
                 for (ResearchInfo r : cachedRecipe.prereqs) {
                     r.onDraw(0, recipeY);
                     recipeY += 13;
@@ -180,7 +189,7 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
             }
         }
 
-        TCUtil.drawSeeAllRecipesLabel(7);
+        TCUtil.drawSeeAllRecipesLabel(2);
     }
 
     private boolean isValidInput(Object input) {
@@ -205,8 +214,7 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
         return super.handleTooltip(gui, list, recipeIndex);
     }
 
-    private class ArcaneShapelessCachedRecipe extends ShapelessRecipeHandler.CachedShapelessRecipe
-            implements IArcaneOverlayProvider {
+    private class ArcaneShapelessCachedRecipe extends CachedShapelessRecipe {
 
         private final AspectList aspects;
         protected Object[] overlay;
@@ -215,7 +223,10 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
         public ArcaneShapelessCachedRecipe(ShapelessArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(recipe.getInput(), recipe.getRecipeOutput());
-            this.result = new PositionedStack(recipe.getRecipeOutput(), 74, 2);
+            this.result = new PositionedStack(
+                    recipe.getRecipeOutput(),
+                    TemplateThaumHandler.OUTPUT_X,
+                    TemplateThaumHandler.OUTPUT_Y);
             this.overlay = recipe.getInput().toArray();
             this.aspects = recipe.getAspects();
             this.shouldShowRecipe = shouldShowRecipe;
@@ -230,51 +241,27 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
             this.addAspectsToIngredients(aspects);
         }
 
-        public AspectList getAspectList() {
-            return this.aspects;
-        }
-
         public boolean isValid() {
             return !this.ingredients.isEmpty() && this.result != null;
         }
 
         @Override
         public void setIngredients(List<?> items) {
-            if (!items.isEmpty()) {
-                int[][] positions = new int[][] { { 48, 32 }, { 75, 33 }, { 103, 33 }, { 49, 60 }, { 76, 60 },
-                        { 103, 60 }, { 49, 87 }, { 76, 87 }, { 103, 87 } };
-                int shiftX = 0;
-                int shiftY = 0;
-
-                for (int x = 0; x < items.size(); ++x) {
-                    if (items.get(x) != null && isValidInput(items.get(x))) {
-                        PositionedStack stack = new PositionedStack(
-                                items.get(x),
-                                positions[x][0] + shiftX,
-                                positions[x][1] + shiftY,
-                                items.get(x) instanceof ItemStack);
-                        stack.setMaxSize(1);
-                        this.ingredients.add(stack);
-                    }
-                }
+            if (items == null || items.isEmpty()) {
+                return;
             }
-        }
-
-        @Override
-        public ArrayList<PositionedStack> getPositionedStacksForOverlay() {
-            ArrayList<PositionedStack> stacks = new ArrayList<>();
-            if (this.overlay != null && this.overlay.length > 0) {
-                for (int x = 0; x < this.overlay.length; ++x) {
-                    Object object = overlay[x];
-                    if ((object instanceof ItemStack || object instanceof ItemStack[]
-                            || object instanceof String
-                            || (object instanceof List && !((List<?>) object).isEmpty()))) {
-                        stacks.add(new PositionedStack(object, 40 + x % 3 * 24, 40 + x / 3 * 24));
-                    }
+            for (int x = 0; x < items.size(); ++x) {
+                if (items.get(x) == null || !isValidInput(items.get(x))) {
+                    continue;
                 }
+                PositionedStack stack = new PositionedStack(
+                        items.get(x),
+                        ShapedArcaneRecipeHandler.XPOS[x % 3],
+                        ShapedArcaneRecipeHandler.YPOS[x / 3],
+                        items.get(x) instanceof ItemStack);
+                stack.setMaxSize(1);
+                this.ingredients.add(stack);
             }
-
-            return stacks;
         }
 
         @Override
@@ -299,19 +286,22 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
         }
 
         protected void addAspectsToIngredients(AspectList aspects) {
+            final int baseY = 115;
+            final int spacing = 19;
 
-            int baseX = 36;
-            int baseY = 115;
-            int count = 0;
-            int columns = aspects.size();
-            int xOffset = (100 - columns * 20) / 2;
+            Aspect[] sorted = aspects.getAspectsSortedAmount();
+            int columns = sorted.length;
 
-            for (int column = 0; column < columns; column++) {
-                Aspect aspect = aspects.getAspectsSortedAmount()[count++];
-                int posX = baseX + column * 18 + xOffset;
+            int startX = 35 + (100 - columns * spacing) / 2;
+
+            for (int i = 0; i < columns; i++) {
+                Aspect aspect = sorted[i];
+                int posX = startX + i * spacing;
+
                 ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
+
                 ItemAspect.setAspect(stack, aspect);
-                this.ingredients.add(new PositionedStack(stack, posX, baseY, false));
+                ingredients.add(new PositionedStack(stack, posX, baseY, false));
             }
         }
     }

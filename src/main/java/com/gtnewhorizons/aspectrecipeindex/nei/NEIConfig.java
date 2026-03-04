@@ -1,8 +1,8 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
-import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneCraftingShapedHandler;
-import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneCraftingShapelessHandler;
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapedArcaneRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapelessArcaneRecipeHandler;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
@@ -14,14 +14,14 @@ public class NEIConfig implements IConfigureNEI {
 
         API.registerRecipeHandler(new ItemsContainingAspectHandler());
         API.registerRecipeHandler(new AspectCombinationHandler());
-        API.registerRecipeHandler(new ArcaneCraftingShapedHandler());
-        API.registerRecipeHandler(new ArcaneCraftingShapelessHandler());
+        API.registerRecipeHandler(new ShapedArcaneRecipeHandler());
+        API.registerRecipeHandler(new ShapelessArcaneRecipeHandler());
         API.registerRecipeHandler(new AlchemyRecipeHandler());
         API.registerRecipeHandler(new InfusionRecipeHandler());
 
         API.registerUsageHandler(new AspectCombinationHandler());
-        API.registerUsageHandler(new ArcaneCraftingShapedHandler());
-        API.registerUsageHandler(new ArcaneCraftingShapelessHandler());
+        API.registerUsageHandler(new ShapedArcaneRecipeHandler());
+        API.registerUsageHandler(new ShapelessArcaneRecipeHandler());
         API.registerUsageHandler(new AlchemyRecipeHandler());
         API.registerUsageHandler(new InfusionRecipeHandler());
 

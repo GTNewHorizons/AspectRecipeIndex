@@ -29,6 +29,7 @@ import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
+import thaumcraft.common.items.wands.ItemWandCasting;
 import thaumcraft.common.lib.research.ResearchManager;
 import tuhljin.automagy.config.ModResearchItems;
 
@@ -152,6 +153,14 @@ public class TCUtil {
 
     public static boolean shouldShowAspect(Aspect aspect) {
         return ARIConfig.showUndiscoveredAspects || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
+    }
+
+    public static boolean shouldShowWandRecipe(ItemStack item) {
+        if (item == null || !(item.getItem() instanceof ItemWandCasting wand)) return false;
+        return ARIConfig.showLockedRecipes || (ThaumcraftApiHelper
+                .isResearchComplete(TCUtil.username, wand.getRod(item).getResearch())
+                && ThaumcraftApiHelper.isResearchComplete(TCUtil.username, wand.getCap(item).getResearch())
+                && (ThaumcraftApiHelper.isResearchComplete(TCUtil.username, "SCEPTRE") || !wand.isSceptre(item)));
     }
 
     // Fix crash with broken item

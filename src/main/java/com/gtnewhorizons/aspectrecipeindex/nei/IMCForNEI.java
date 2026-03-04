@@ -8,11 +8,11 @@ public class IMCForNEI {
 
     public static void IMCSender() {
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneCraftingShapedHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapedArcaneRecipeHandler",
                 "Thaumcraft:blockTable:15",
                 138);
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneCraftingShapelessHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapelessArcaneRecipeHandler",
                 "Thaumcraft:blockTable:15",
                 138);
         setNBTAndSend(

@@ -2,7 +2,6 @@ package com.gtnewhorizons.aspectrecipeindex.common.items;
 
 import java.util.List;
 
-import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import cpw.mods.fml.relauncher.Side;
@@ -69,8 +69,10 @@ public class ItemAspect extends Item {
         }
         if (TCUtil.shouldShowAspect(aspect)) {
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (ARIConfig.showUndiscoveredAspects && player != null && !ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
-                return StatCollector.translateToLocalFormatted("aspectrecipeindex.aspect.undiscovered", aspect.getName());
+            if (ARIConfig.showUndiscoveredAspects && player != null
+                    && !ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
+                return StatCollector
+                        .translateToLocalFormatted("aspectrecipeindex.aspect.undiscovered", aspect.getName());
             }
             return aspect.getName();
         }

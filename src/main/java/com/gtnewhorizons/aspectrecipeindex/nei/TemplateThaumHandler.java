@@ -30,9 +30,11 @@ import thaumcraft.common.Thaumcraft;
 
 public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
-    private static final ResourceLocation THAUM_OVERLAYS = new ResourceLocation(
+    public static final ResourceLocation THAUM_OVERLAYS = new ResourceLocation(
             Thaumcraft.MODID.toLowerCase(),
             "textures/gui/gui_researchbook_overlay.png");
+    public static final int OUTPUT_X = 75;
+    public static final int OUTPUT_Y = 5;
 
     protected ARIClient ariClient = ARIClient.getInstance();
     protected ArrayList<AspectList> aspects = new ArrayList<>();
@@ -58,6 +60,11 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
      */
     protected void drawIngredientBackground() {}
 
+    /**
+     * Changes made here must also be made in ShapedArcaneRecipeHandler and ShapelessArcaneRecipeHandler!
+     *
+     * @param recipeIndex The recipeIndex being drawn
+     */
     @Override
     public void drawExtras(int recipeIndex) {
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
@@ -138,7 +145,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
         protected void setResult(ItemStack out) {
             if (out != null) {
-                this.result = new PositionedStack(out, 75, 5, false);
+                this.result = new PositionedStack(out, OUTPUT_X, OUTPUT_Y, false);
             }
         }
 
