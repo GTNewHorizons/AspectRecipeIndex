@@ -18,7 +18,7 @@ public class IMCForNEI {
                 4,
                 138);
         setNBTAndSend(
-                "com.gtnewhorizons.aspectrecipeindex.nei.CrucibleRecipeHandler",
+                "com.gtnewhorizons.aspectrecipeindex.nei.AlchemyRecipeHandler",
                 "Thaumcraft:blockMetalDevice",
                 -2,
                 136);

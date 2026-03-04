@@ -55,7 +55,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public int getRecipeHeight(int recipe) {
-        final AspectList aspects = this.aspectsAmount.get(recipe);
+        final AspectList aspects = this.aspects.get(recipe);
         final int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
         return 152 + (rows - 1) * 20;
     }
@@ -75,7 +75,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                     if (recipe.isValid()) {
                         recipe.computeVisuals();
                         this.arecipes.add(recipe);
-                        this.aspectsAmount.add(recipe.aspects);
+                        this.aspects.add(recipe.aspects);
                     }
                 }
             }
@@ -91,7 +91,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
             recipe.computeVisuals();
             this.arecipes.add(recipe);
-            this.aspectsAmount.add(recipe.aspects);
+            this.aspects.add(recipe.aspects);
         }
     }
 
@@ -106,14 +106,14 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 recipe.computeVisuals();
                 recipe.setIngredientPermutation(recipe.ingredients, ingredient);
                 this.arecipes.add(recipe);
-                this.aspectsAmount.add(recipe.aspects);
+                this.aspects.add(recipe.aspects);
             }
         }
     }
 
     @Override
     public String getGuiTexture() {
-        return "nei:textures/gui/recipebg.png";
+        return super.getGuiTexture();
     }
 
     @Override
@@ -143,13 +143,8 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             if (!cachedRecipe.shouldShowRecipe) {
                 String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
                 int y = 28;
-                for (Object text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                    GuiDraw.drawStringC(
-                            (String) text,
-                            82,
-                            y,
-                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                            false);
+                for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
+                    GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
                     y += 11;
                 }
             }
@@ -175,7 +170,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     }
 
     public void drawAspects(int recipe, int x, int y) {
-        AspectList aspects = this.aspectsAmount.get(recipe);
+        AspectList aspects = this.aspects.get(recipe);
         int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
         int baseX = x + 8;
         int baseY = y + 173;

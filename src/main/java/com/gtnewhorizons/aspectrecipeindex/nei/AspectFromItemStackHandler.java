@@ -172,11 +172,6 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
     public void drawForeground(int recipe) {}
 
     @Override
-    public String getGuiTexture() {
-        return "nei:textures/gui/recipebg.png";
-    }
-
-    @Override
     public void onUpdate() {
         if (!ThaumcraftHooks.isDataLoaded()) {
             if (ticks < -1) {

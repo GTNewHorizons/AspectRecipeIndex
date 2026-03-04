@@ -16,13 +16,13 @@ public class NEIConfig implements IConfigureNEI {
         API.registerRecipeHandler(new AspectCombinationHandler());
         API.registerRecipeHandler(new ArcaneCraftingShapedHandler());
         API.registerRecipeHandler(new ArcaneCraftingShapelessHandler());
-        API.registerRecipeHandler(new CrucibleRecipeHandler());
+        API.registerRecipeHandler(new AlchemyRecipeHandler());
         API.registerRecipeHandler(new InfusionRecipeHandler());
 
         API.registerUsageHandler(new AspectCombinationHandler());
         API.registerUsageHandler(new ArcaneCraftingShapedHandler());
         API.registerUsageHandler(new ArcaneCraftingShapelessHandler());
-        API.registerUsageHandler(new CrucibleRecipeHandler());
+        API.registerUsageHandler(new AlchemyRecipeHandler());
         API.registerUsageHandler(new InfusionRecipeHandler());
 
         try {

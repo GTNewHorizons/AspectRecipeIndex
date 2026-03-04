@@ -22,11 +22,6 @@ import thaumcraft.common.Thaumcraft;
 public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
-    public String getGuiTexture() {
-        return "nei:textures/gui/recipebg.png";
-    }
-
-    @Override
     public String getRecipeName() {
         return StatCollector.translateToLocal("aspectrecipeindex.aspect_combination.title");
     }
