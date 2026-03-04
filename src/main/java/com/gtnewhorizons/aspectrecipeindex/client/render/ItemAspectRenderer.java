@@ -42,7 +42,7 @@ public class ItemAspectRenderer implements IItemRenderer {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
         if (aspect != null && player != null) {
-            if (TCUtil.shouldShowAspect(player.getCommandSenderName(), aspect)) {
+            if (TCUtil.shouldShowAspect(aspect)) {
                 UtilsFX.drawTag(0, 0, aspect, 0.0F, 0, 0.0F);
                 GL11.glPopMatrix();
                 return;

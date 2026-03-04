@@ -47,7 +47,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
                 if (o instanceof CrucibleRecipe tcRecipe) {
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.key);
+                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.key);
                     CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, shouldShowRecipe);
                     if (recipe.isValid()) {
                         recipe.computeVisuals();
@@ -64,7 +64,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         for (CrucibleRecipe tcRecipe : TCUtil.getCrucibleRecipes(result)) {
-            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.key);
+            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.key);
             CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, shouldShowRecipe);
             recipe.computeVisuals();
             this.arecipes.add(recipe);
@@ -77,7 +77,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
         List<CrucibleRecipe> tcRecipeList = TCUtil.getCrucibleRecipesByInput(ingredient);
 
         for (CrucibleRecipe tcRecipe : tcRecipeList) {
-            if (tcRecipe == null || !TCUtil.shouldShowRecipe(this.userName, tcRecipe.key)) {
+            if (tcRecipe == null || !TCUtil.shouldShowRecipe(tcRecipe.key)) {
                 continue; // recipe input is invisible unless complete research
             }
             CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, true);
@@ -211,7 +211,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(userName, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
             }
             this.addAspectsToIngredients(aspects);
         }

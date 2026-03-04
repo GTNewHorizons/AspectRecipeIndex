@@ -42,10 +42,8 @@ import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
-    private final String userName = Minecraft.getMinecraft().getSession().getUsername();
-    private int ySizeNormal, ySizeRod, ySizeCap;
-    private ARIClient ariClient = ARIClient.getInstance();
-    protected ArrayList<AspectList> aspectsAmount;
+    private final ARIClient ariClient = ARIClient.getInstance();
+    protected ArrayList<AspectList> aspectsAmount = new ArrayList<>();
 
     @Override
     public void loadTransferRects() {
@@ -62,10 +60,9 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
                         WandRod rod = wand.getRod(tcRecipe.getRecipeOutput());
                         WandCap cap = wand.getCap(tcRecipe.getRecipeOutput());
                         boolean shouldShowRecipe = false;
-                        if (!wand.isSceptre(tcRecipe.getRecipeOutput())
-                                || TCUtil.shouldShowRecipe(userName, "SCEPTRE")) {
-                            if (TCUtil.shouldShowRecipe(userName, cap.getResearch())
-                                    && TCUtil.shouldShowRecipe(userName, rod.getResearch())) {
+                        if (!wand.isSceptre(tcRecipe.getRecipeOutput()) || TCUtil.shouldShowRecipe("SCEPTRE")) {
+                            if (TCUtil.shouldShowRecipe(cap.getResearch())
+                                    && TCUtil.shouldShowRecipe(rod.getResearch())) {
                                 shouldShowRecipe = true;
                             }
                         }
@@ -78,7 +75,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
                                     shouldShowRecipe);
                         }
                     }
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch());
+                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
                     ArcaneShapedCachedRecipe recipe = new ArcaneShapedCachedRecipe(tcRecipe, shouldShowRecipe);
                     if (wandRec != null) {
                         recipe.prereqs.addAll(wandRec.prereqs);
@@ -102,19 +99,17 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result.getItem() instanceof ItemWandCasting) {
-            ItemWandCasting wand = (ItemWandCasting) result.getItem();
+        if (result.getItem() instanceof ItemWandCasting wand) {
             WandRod rod = wand.getRod(result);
             WandCap cap = wand.getCap(result);
             boolean shouldShowRecipe = false;
-            if (!wand.isSceptre(result) || TCUtil.shouldShowRecipe(userName, "SCEPTRE")) {
-                if (TCUtil.shouldShowRecipe(userName, cap.getResearch())
-                        && TCUtil.shouldShowRecipe(userName, rod.getResearch())) {
+            if (!wand.isSceptre(result) || TCUtil.shouldShowRecipe("SCEPTRE")) {
+                if (TCUtil.shouldShowRecipe(cap.getResearch()) && TCUtil.shouldShowRecipe(rod.getResearch())) {
                     shouldShowRecipe = true;
                 }
             }
 
-            if (!ariClient.getInstance().areWandRecipesDeleted()) {
+            if (!ARIClient.getInstance().areWandRecipesDeleted()) {
                 ArcaneWandCachedRecipe recipe = new ArcaneWandCachedRecipe(
                         rod,
                         cap,
@@ -129,9 +124,8 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
             loadShapedRecipesForWands(result, shouldShowRecipe);
         } else {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapedArcaneRecipe) {
-                    ShapedArcaneRecipe shapedArcaneRecipe = (ShapedArcaneRecipe) o;
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(userName, shapedArcaneRecipe.getResearch());
+                if (o instanceof ShapedArcaneRecipe shapedArcaneRecipe) {
+                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(shapedArcaneRecipe.getResearch());
 
                     ArcaneShapedCachedRecipe recipe = new ArcaneShapedCachedRecipe(
                             shapedArcaneRecipe,
@@ -151,11 +145,10 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (o instanceof ShapedArcaneRecipe) {
-                ShapedArcaneRecipe tcRecipe = (ShapedArcaneRecipe) o;
+            if (o instanceof ShapedArcaneRecipe tcRecipe) {
                 ArcaneShapedCachedRecipe recipe = new ArcaneShapedCachedRecipe(tcRecipe, true);
                 if (recipe.isValid() && recipe.containsWithNBT(recipe.ingredients, ingredient)
-                        && TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch())) {
+                        && TCUtil.shouldShowRecipe(tcRecipe.getResearch())) {
                     recipe.computeVisuals();
                     recipe.setIngredientPermutation(recipe.ingredients, ingredient);
                     this.arecipes.add(recipe);
@@ -172,11 +165,10 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
     @SuppressWarnings("unchecked")
     public void loadShapedRecipesForWands(ItemStack wandStack, boolean shouldShowRecipe) {
-        if (!(wandStack.getItem() instanceof ItemWandCasting)) {
+        if (!(wandStack.getItem() instanceof ItemWandCasting wand)) {
             throw new RuntimeException("This method works only for Thaumcraft Wands! Provided: " + wandStack);
         }
 
-        ItemWandCasting wand = ((ItemWandCasting) wandStack.getItem());
         WandRod rod = wand.getRod(wandStack);
         WandCap cap = wand.getCap(wandStack);
         boolean isSceptre = wand.isSceptre(wandStack);
@@ -221,11 +213,9 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
     public void drawBackground(int recipeIndex) {
         boolean shouldShowRecipe;
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
-        if (cRecipe instanceof ArcaneShapedCachedRecipe) {
-            ArcaneShapedCachedRecipe recipe = (ArcaneShapedCachedRecipe) cRecipe;
+        if (cRecipe instanceof ArcaneShapedCachedRecipe recipe) {
             shouldShowRecipe = recipe.shouldShowRecipe;
-        } else if (cRecipe instanceof ArcaneWandCachedRecipe) {
-            ArcaneWandCachedRecipe recipe = (ArcaneWandCachedRecipe) cRecipe;
+        } else if (cRecipe instanceof ArcaneWandCachedRecipe recipe) {
             shouldShowRecipe = recipe.shouldShowRecipe;
         } else {
             throw new RuntimeException("Incompatible recipe type found: " + cRecipe.getClass());
@@ -293,13 +283,8 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
             if (!cachedRecipe.shouldShowRecipe) {
                 String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
                 int y = 30;
-                for (Object text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                    GuiDraw.drawStringC(
-                            (String) text,
-                            82,
-                            y,
-                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                            false);
+                for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
+                    GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
                     y += 11;
                 }
             }
@@ -307,13 +292,8 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
             if (!cachedRecipe.shouldShowRecipe) {
                 String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
                 int y = 30;
-                for (Object text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                    GuiDraw.drawStringC(
-                            (String) text,
-                            82,
-                            y,
-                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                            false);
+                for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
+                    GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
                     y += 11;
                 }
             }
@@ -353,8 +333,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
         protected int width;
         protected int height;
         private final boolean shouldShowRecipe;
-        private final ResearchItem researchItem;
-        private int[][][] positions;
+        private final int[][][] positions = new int[][][] {};
 
         public ArcaneShapedCachedRecipe(ShapedArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(recipe.width, recipe.height, recipe.getInput(), recipe.getRecipeOutput());
@@ -364,13 +343,13 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
             this.width = recipe.width;
             this.height = recipe.height;
             this.shouldShowRecipe = shouldShowRecipe;
-            this.researchItem = ResearchCategories.getResearch(recipe.getResearch());
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
             this.prereqs = new ArrayList<>();
             if (researchItem != null && researchItem.key != null) {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(userName, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
             }
             this.addAspectsToIngredients(aspects);
         }
@@ -520,19 +499,19 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch("SCEPTRE"),
-                                ThaumcraftApiHelper.isResearchComplete(userName, "SCEPTRE")));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, "SCEPTRE")));
             }
             if (cap != null && !cap.getResearch().isEmpty()) {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch(cap.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(userName, cap.getResearch())));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, cap.getResearch())));
             }
             if (rod != null && !rod.getResearch().isEmpty()) {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch(rod.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(userName, rod.getResearch())));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, rod.getResearch())));
             }
 
             this.addAspectsToIngredients(aspects);

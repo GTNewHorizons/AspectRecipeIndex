@@ -38,9 +38,8 @@ import thaumcraft.client.lib.UtilsFX;
 
 public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
-    protected final String userName = Minecraft.getMinecraft().getSession().getUsername();
     protected ARIClient ariClient = ARIClient.getInstance();
-    protected ArrayList<AspectList> aspectsAmount;
+    protected ArrayList<AspectList> aspectsAmount = new ArrayList<>();
 
     @Override
     public void loadTransferRects() {
@@ -51,9 +50,8 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapelessArcaneRecipe) {
-                    ShapelessArcaneRecipe tcRecipe = (ShapelessArcaneRecipe) o;
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch());
+                if (o instanceof ShapelessArcaneRecipe tcRecipe) {
+                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
                     ArcaneShapelessCachedRecipe recipe = new ArcaneShapelessCachedRecipe(tcRecipe, shouldShowRecipe);
                     if (recipe.isValid()) {
                         this.arecipes.add(recipe);
@@ -74,9 +72,8 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (o instanceof ShapelessArcaneRecipe) {
-                ShapelessArcaneRecipe tcRecipe = (ShapelessArcaneRecipe) o;
-                boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch());
+            if (o instanceof ShapelessArcaneRecipe tcRecipe) {
+                boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
                 ArcaneShapelessCachedRecipe recipe = new ArcaneShapelessCachedRecipe(tcRecipe, shouldShowRecipe);
                 if (recipe.isValid()
                         && NEIServerUtils.areStacksSameTypeCraftingWithNBT(tcRecipe.getRecipeOutput(), result)) {
@@ -90,11 +87,10 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (o instanceof ShapelessArcaneRecipe) {
-                ShapelessArcaneRecipe tcRecipe = (ShapelessArcaneRecipe) o;
+            if (o instanceof ShapelessArcaneRecipe tcRecipe) {
                 ArcaneShapelessCachedRecipe recipe = new ArcaneShapelessCachedRecipe(tcRecipe, true);
                 if (recipe.isValid() && recipe.containsWithNBT(recipe.ingredients, ingredient)
-                        && TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch())) {
+                        && TCUtil.shouldShowRecipe(tcRecipe.getResearch())) {
                     recipe.setIngredientPermutation(recipe.ingredients, ingredient);
                     this.arecipes.add(recipe);
                     this.aspectsAmount.add(getAmounts(tcRecipe));
@@ -159,19 +155,12 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
     @Override
     public void drawExtras(int recipeIndex) {
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
-        if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
-            if (!cachedRecipe.shouldShowRecipe) {
-                String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
-                int y = 30;
-                for (Object text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                    GuiDraw.drawStringC(
-                            (String) text,
-                            82,
-                            y,
-                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                            false);
-                    y += 11;
-                }
+        if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe && !cachedRecipe.shouldShowRecipe) {
+            String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
+            int y = 30;
+            for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
+                GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
+                y += 11;
             }
         }
 
@@ -200,17 +189,15 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
 
     @Override
     public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
-        if (ARIConfig.showResearchKey) {
-            if (GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
-                CachedRecipe cRecipe = arecipes.get(recipeIndex);
-                Point mousePos = GuiDraw.getMousePosition();
+        if (ARIConfig.showResearchKey && GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
+            CachedRecipe cRecipe = arecipes.get(recipeIndex);
+            Point mousePos = GuiDraw.getMousePosition();
 
-                if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
-                    for (ResearchInfo r : cachedRecipe.prereqs) {
-                        Rectangle rect = r.getRect(gui, recipeIndex);
-                        if (rect.contains(mousePos)) {
-                            r.onHover(list);
-                        }
+            if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
+                for (ResearchInfo r : cachedRecipe.prereqs) {
+                    Rectangle rect = r.getRect(gui, recipeIndex);
+                    if (rect.contains(mousePos)) {
+                        r.onHover(list);
                     }
                 }
             }
@@ -225,7 +212,6 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
         protected Object[] overlay;
         protected final List<ResearchInfo> prereqs;
         private final boolean shouldShowRecipe;
-        private final ResearchItem researchItem;
 
         public ArcaneShapelessCachedRecipe(ShapelessArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(recipe.getInput(), recipe.getRecipeOutput());
@@ -233,13 +219,13 @@ public class ArcaneCraftingShapelessHandler extends ShapelessRecipeHandler {
             this.overlay = recipe.getInput().toArray();
             this.aspects = recipe.getAspects();
             this.shouldShowRecipe = shouldShowRecipe;
-            this.researchItem = ResearchCategories.getResearch(recipe.getResearch());
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
             this.prereqs = new ArrayList<>();
             if (researchItem != null && researchItem.key != null) {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(userName, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
             }
             this.addAspectsToIngredients(aspects);
         }

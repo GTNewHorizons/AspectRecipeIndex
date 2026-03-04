@@ -3,7 +3,6 @@ package com.gtnewhorizons.aspectrecipeindex.nei;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
@@ -22,11 +21,9 @@ import thaumcraft.common.Thaumcraft;
 
 public class AspectCombinationHandler extends TemplateThaumHandler {
 
-    private final String userName = Minecraft.getMinecraft().getSession().getUsername();
-
     @Override
     public String getGuiTexture() {
-        return null;
+        return "";
     }
 
     @Override
@@ -38,7 +35,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(ItemStack result) {
         if (result.getItem() instanceof ItemAspect) {
             Aspect aspect = ItemAspect.getAspect(result);
-            if (Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(userName, aspect)) {
+            if (Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(TCUtil.username, aspect)) {
                 new AspectCombinationRecipe(result);
             }
         }
@@ -51,13 +48,12 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
         }
         Aspect aspect = ItemAspect.getAspect(ingredient);
 
-        String username = Minecraft.getMinecraft().getSession().getUsername();
-        if (!TCUtil.shouldShowAspect(username, aspect)) {
+        if (!TCUtil.shouldShowAspect(aspect)) {
             return;
         }
         for (Aspect compoundAspect : Aspect.getCompoundAspects()) {
             if (ArrayUtils.contains(compoundAspect.getComponents(), aspect)
-                    && TCUtil.shouldShowAspect(username, compoundAspect)) {
+                    && TCUtil.shouldShowAspect(compoundAspect)) {
                 ItemStack result = new ItemStack(ModItems.itemAspect);
                 ItemAspect.setAspect(result, compoundAspect);
 

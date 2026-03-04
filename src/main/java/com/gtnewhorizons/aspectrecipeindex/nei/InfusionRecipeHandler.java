@@ -70,7 +70,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                             || TCUtil.getAssociatedItemStack(tcRecipe.getRecipeOutput()) == null) {
                         continue;
                     }
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch());
+                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
                     InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
                     if (recipe.isValid()) {
                         recipe.computeVisuals();
@@ -87,7 +87,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         for (InfusionRecipe tcRecipe : TCUtil.getInfusionRecipes(result)) {
-            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch());
+            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
             InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
             recipe.computeVisuals();
             this.arecipes.add(recipe);
@@ -100,7 +100,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         List<InfusionRecipe> tcRecipeList = TCUtil.getInfusionRecipesByInput(ingredient);
 
         for (InfusionRecipe tcRecipe : tcRecipeList) {
-            if (tcRecipe != null && TCUtil.shouldShowRecipe(this.userName, tcRecipe.getResearch())) {
+            if (tcRecipe != null && TCUtil.shouldShowRecipe(tcRecipe.getResearch())) {
                 // recipe input is invisible unless complete research
                 InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, true);
                 recipe.computeVisuals();
@@ -252,7 +252,6 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected final List<ResearchInfo> prereqs;
         private int instability;
         private final boolean shouldShowRecipe;
-        private final ResearchItem researchItem;
 
         public InfusionCachedRecipe(InfusionRecipe recipe, boolean shouldShowRecipe) {
             this.setIngredients(recipe);
@@ -261,13 +260,13 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             this.setInstability(recipe.getInstability());
             this.shouldShowRecipe = shouldShowRecipe;
             this.addAspectsToIngredients(this.aspects);
-            this.researchItem = ResearchCategories.getResearch(recipe.getResearch());
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
             this.prereqs = new ArrayList<>();
             if (researchItem != null && researchItem.key != null) {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(userName, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
             }
         }
 

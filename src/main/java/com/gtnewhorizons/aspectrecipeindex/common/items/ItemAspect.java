@@ -67,7 +67,7 @@ public class ItemAspect extends Item {
             return StatCollector.translateToLocal("tc.aspect.unknown");
         }
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (player != null && TCUtil.shouldShowAspect(player.getDisplayName(), aspect)) {
+        if (player != null && TCUtil.shouldShowAspect(aspect)) {
             return aspect.getName();
         }
         if (ARIConfig.showUndiscoveredAspects) {
@@ -88,7 +88,7 @@ public class ItemAspect extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack item, EntityPlayer player, List<String> tooltips, boolean advanced) {
         Aspect aspect = getAspect(item);
-        if (item == null || aspect == null || !TCUtil.shouldShowAspect(player.getDisplayName(), aspect)) {
+        if (item == null || aspect == null || !TCUtil.shouldShowAspect(aspect)) {
             tooltips.add(StatCollector.translateToLocal("tc.aspect.unknown"));
         } else {
             tooltips.add(StatCollector.translateToLocal(aspect.getLocalizedDescription()));

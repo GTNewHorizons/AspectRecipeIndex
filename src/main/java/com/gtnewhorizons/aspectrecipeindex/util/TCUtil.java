@@ -34,6 +34,8 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
+    public static final String username = Minecraft.getMinecraft().getSession().getUsername();
+
     private static final ARIClient ariClient = ARIClient.getInstance();
 
     public static List<InfusionRecipe> getInfusionRecipes(ItemStack result) {
@@ -144,31 +146,26 @@ public class TCUtil {
         return list;
     }
 
-    public static boolean shouldShowRecipe(String username, String researchKey) {
-        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(username, researchKey);
+    public static boolean shouldShowRecipe(String researchKey) {
+        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchKey);
     }
 
-    public static boolean shouldShowAspect(String username, Aspect aspect) {
+    public static boolean shouldShowAspect(Aspect aspect) {
         return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
     }
 
     // Fix crash with broken item
     public static ItemStack getAssociatedItemStack(Object o) {
-        if (o instanceof ItemStack stack) {
-            if (stack.getItem() == null) {
-                return stack;
-            }
-        }
+        if (o instanceof ItemStack stack && stack.getItem() == null) return stack;
         return NEIHelper.getAssociatedItemStack(o);
     }
 
     public static void getResearchPrerequisites(List<String> list, ResearchItem researchItem) {
         if (researchItem != null) {
-            String playerName = Minecraft.getMinecraft().getSession().getUsername();
             // Parent research
-            getResearchListByName(list, researchItem.parents, playerName, "parents");
+            getResearchListByName(list, researchItem.parents, username, "parents");
             // Parent hidden research
-            getResearchListByName(list, researchItem.parentsHidden, playerName, "parentsHidden");
+            getResearchListByName(list, researchItem.parentsHidden, username, "parentsHidden");
             // Item scan
             if (researchItem.getItemTriggers() != null && researchItem.getItemTriggers().length != 0) {
                 list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites.item") + ":");
