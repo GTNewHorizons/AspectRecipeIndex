@@ -1,17 +1,18 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
-
-import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
+import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -20,7 +21,6 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
-import thaumcraft.client.lib.UtilsFX;
 
 public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
@@ -58,7 +58,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
         for (CrucibleRecipe tcRecipe : tcRecipeList) {
             if (tcRecipe == null || !TCUtil.shouldShowRecipe(tcRecipe.key)) {
-                continue; // recipe input is invisible unless complete research
+                continue; // recipe input is not shown without research
             }
             AlchemyCachedRecipe recipe = new AlchemyCachedRecipe(tcRecipe, true);
             recipe.computeVisuals();
@@ -73,25 +73,9 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
     }
 
     @Override
-    public void drawBackground(int recipeIndex) {
-        AlchemyCachedRecipe recipe = (AlchemyCachedRecipe) arecipes.get(recipeIndex);
-
-        final int x = 30;
-        final int y = 3;
-        GL11.glPushMatrix();
-        UtilsFX.bindTexture("textures/gui/gui_researchbook_overlay.png");
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glTranslatef((float) x, (float) y, 0.0F);
-        GL11.glScalef(1.75F, 1.75F, 1.0F);
-        GuiDraw.drawTexturedModalRect(0, 0, 0, 3, 56, 17); // Result item icon
-        if (!recipe.shouldShowRecipe) {
-            GL11.glPopMatrix();
-            return;
-        }
-        GuiDraw.drawTexturedModalRect(0, 26, 0, 20, 56, 50); // Crucible outline
-        GuiDraw.drawTexturedModalRect(21, 19, 100, 85, 20, 20); // Input item arrow
-        GL11.glPopMatrix();
+    protected void drawIngredientBackground() {
+        GuiDraw.drawTexturedModalRect(21, 26, 2, 20, 52, 47); // Crucible outline
+        GuiDraw.drawTexturedModalRect(40, 19, 100, 85, 10, 12); // Input item arrow
     }
 
     @Override
@@ -105,7 +89,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             super(shouldShowRecipe);
             this.setIngredient(recipe.catalyst);
             this.setResult(recipe.getRecipeOutput());
-            this.setAspectList(recipe.aspects);
+            this.setAspects(recipe.aspects);
             ResearchItem researchItem = ResearchCategories.getResearch(recipe.key);
             if (researchItem != null && researchItem.key != null) {
                 prereqs.add(
@@ -116,13 +100,21 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             this.addAspectsToIngredients(aspects);
         }
 
+        protected void setIngredient(Object in) {
+            if (in != null && NEIServerUtils.extractRecipeItems(in).length > 0) {
+                PositionedStack stack = new PositionedStack(in, 55, 27, false);
+                stack.setMaxSize(1);
+                this.ingredients = new ArrayList<>(Collections.singletonList(stack));
+            }
+        }
+
         // Math in these looks a little weird to show similarity to other method above.
         protected void addAspectsToIngredients(AspectList aspects) {
             final int aspectsPerRow = 3;
             int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
 
-            final int xBase = 23 + 8;
-            final int yBase = -21 + 107 - (10 * rows);
+            final int xBase = 31;
+            final int yBase = 86 - (10 * rows);
             int count = 0;
 
             for (int row = 0; row < rows; row++) {

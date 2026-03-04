@@ -242,7 +242,7 @@ public class TCUtil {
                 EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"));
         handler.transferRects.add(
                 new TemplateRecipeHandler.RecipeTransferRect(
-                        new Rectangle(162 - stringLength, y, stringLength, 9),
+                        new Rectangle(160 - stringLength, y, stringLength + 2, 10),
                         handler.getOverlayIdentifier()));
     }
 

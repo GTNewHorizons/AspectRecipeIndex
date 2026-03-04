@@ -15,6 +15,7 @@ public class NEIHelper {
     }
 
     public static ItemStack getAssociatedItemStack(Object o) {
+
         return new ItemStack(Blocks.stone);
     }
 

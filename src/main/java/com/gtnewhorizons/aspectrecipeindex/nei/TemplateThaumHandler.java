@@ -12,23 +12,44 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 
+import org.lwjgl.opengl.GL11;
+
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
-import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.client.lib.UtilsFX;
 
 public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
     protected ARIClient ariClient = ARIClient.getInstance();
     protected ArrayList<AspectList> aspects = new ArrayList<>();
+
+    @Override
+    public void drawBackground(int recipeIndex) {
+        CachedThaumRecipe recipe = (CachedThaumRecipe) arecipes.get(recipeIndex);
+        GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        UtilsFX.bindTexture("textures/gui/gui_researchbook_overlay.png");
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glScalef(1.75F, 1.75F, 1.0F);
+        GuiDraw.drawTexturedModalRect(39, 0, 20, 4, 16, 16); // Result item icon
+        if (recipe.shouldShowRecipe) drawIngredientBackground();
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
+    }
+
+    /**
+     * Use this to draw the backgrounds for the ingredients. This is not drawn if the
+     */
+    protected void drawIngredientBackground() {}
 
     @Override
     public void drawExtras(int recipeIndex) {
@@ -46,11 +67,11 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             GuiDraw.drawString(
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
-                    13,
+                    2,
                     ariClient.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof CachedThaumRecipe cachedRecipe) {
-                int recipeY = 23;
+                int recipeY = 12;
                 for (ResearchInfo r : cachedRecipe.prereqs) {
                     r.onDraw(0, recipeY);
                     recipeY += 13;
@@ -58,7 +79,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             }
         }
 
-        TCUtil.drawSeeAllRecipesLabel(13);
+        TCUtil.drawSeeAllRecipesLabel(2);
     }
 
     @Override
@@ -82,7 +103,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadTransferRects() {
-        TCUtil.loadTransferRects(this, 13);
+        TCUtil.loadTransferRects(this, 0);
     }
 
     @Override
@@ -92,23 +113,14 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
     abstract class CachedThaumRecipe extends CachedRecipe {
 
-        protected final List<ResearchInfo> prereqs;
+        protected final List<ResearchInfo> prereqs = new ArrayList<>();
         protected final boolean shouldShowRecipe;
-        public List<PositionedStack> ingredients;
-        public PositionedStack result;
+        protected List<PositionedStack> ingredients;
+        protected PositionedStack result;
         protected AspectList aspects;
 
         CachedThaumRecipe(boolean shouldShowRecipe) {
-            this.prereqs = new ArrayList<>();
             this.shouldShowRecipe = shouldShowRecipe;
-        }
-
-        protected void setIngredient(Object in) {
-            if (in != null && NEIServerUtils.extractRecipeItems(in).length > 0) {
-                PositionedStack stack = new PositionedStack(in, 51, 30, false);
-                stack.setMaxSize(1);
-                this.ingredients = new ArrayList<>(Collections.singletonList(stack));
-            }
         }
 
         @Override
@@ -119,11 +131,11 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
         protected void setResult(ItemStack out) {
             if (out != null) {
-                this.result = new PositionedStack(out, 71, 9, false);
+                this.result = new PositionedStack(out, 74, 4, false);
             }
         }
 
-        protected void setAspectList(AspectList aspects) {
+        protected void setAspects(AspectList aspects) {
             this.aspects = aspects;
         }
 
