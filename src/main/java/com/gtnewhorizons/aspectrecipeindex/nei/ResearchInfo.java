@@ -66,6 +66,8 @@ public class ResearchInfo {
         prevX = x;
         prevY = y;
         GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+        GL11.glEnable(GL11.GL_BLEND);
         if (icon != null) {
             UtilsFX.bindTexture(icon);
         } else {
@@ -81,13 +83,14 @@ public class ResearchInfo {
             GL11.glScaled(1.9, 1.9, 0);
             GuiDraw.drawString("X", 0, 0, 0xAB0000, false);
         }
-
+        GL11.glPopAttrib();
         GL11.glPopMatrix();
     }
 
     public Rectangle getRect(GuiRecipe<?> gui, int recipeIndex) {
         final Point offset = gui.getRecipePosition(recipeIndex);
-        return new Rectangle(gui.guiLeft + offset.x + prevX, gui.guiTop + offset.y + prevY, 24, 13);
+        final int width = isResearched ? 13 : 24;
+        return new Rectangle(gui.guiLeft + offset.x + prevX, gui.guiTop + offset.y + prevY, width, 13);
     }
 
 }
