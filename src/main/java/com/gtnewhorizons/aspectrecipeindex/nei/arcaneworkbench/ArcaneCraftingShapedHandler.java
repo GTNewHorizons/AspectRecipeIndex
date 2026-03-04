@@ -160,7 +160,7 @@ public class ArcaneCraftingShapedHandler extends ShapedRecipeHandler {
 
     @Override
     public String getGuiTexture() {
-        return "";
+        return "nei:textures/gui/recipebg.png";
     }
 
     @SuppressWarnings("unchecked")

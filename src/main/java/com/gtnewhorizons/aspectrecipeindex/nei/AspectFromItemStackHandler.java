@@ -173,7 +173,7 @@ public class AspectFromItemStackHandler extends TemplateThaumHandler {
 
     @Override
     public String getGuiTexture() {
-        return null;
+        return "nei:textures/gui/recipebg.png";
     }
 
     @Override

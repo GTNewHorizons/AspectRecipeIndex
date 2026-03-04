@@ -41,8 +41,4 @@ public class TCAspectStringifyHandler implements IStackStringifyHandler {
         return aspectStack;
     }
 
-    @Override
-    public FluidStack getFluid(ItemStack stack) {
-        return null;
-    }
 }

@@ -23,7 +23,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
     public String getGuiTexture() {
-        return "";
+        return "nei:textures/gui/recipebg.png";
     }
 
     @Override
