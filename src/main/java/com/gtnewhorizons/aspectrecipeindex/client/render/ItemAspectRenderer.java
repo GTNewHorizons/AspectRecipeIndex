@@ -12,8 +12,8 @@ import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
+import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.client.lib.UtilsFX;
 
@@ -42,7 +42,7 @@ public class ItemAspectRenderer implements IItemRenderer {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
         if (aspect != null && player != null) {
-            if (TCUtil.shouldShowAspect(aspect)) {
+            if (ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
                 UtilsFX.drawTag(0, 0, aspect, 0.0F, 0, 0.0F);
                 GL11.glPopMatrix();
                 return;

@@ -19,7 +19,6 @@ import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.research.ResearchCategories;
-import thaumcraft.common.Thaumcraft;
 
 public class AspectCombinationHandler extends TemplateThaumHandler {
 

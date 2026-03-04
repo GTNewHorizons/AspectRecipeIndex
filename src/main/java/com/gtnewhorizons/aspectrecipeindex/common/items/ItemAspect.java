@@ -2,6 +2,7 @@ package com.gtnewhorizons.aspectrecipeindex.common.items;
 
 import java.util.List;
 
+import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,11 +13,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.common.Thaumcraft;
 import thaumcraft.common.lib.network.PacketHandler;
@@ -66,12 +67,12 @@ public class ItemAspect extends Item {
         if (item == null || aspect == null) {
             return StatCollector.translateToLocal("tc.aspect.unknown");
         }
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (player != null && TCUtil.shouldShowAspect(aspect)) {
+        if (TCUtil.shouldShowAspect(aspect)) {
+            EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+            if (ARIConfig.showUndiscoveredAspects && player != null && !ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
+                return StatCollector.translateToLocalFormatted("aspectrecipeindex.aspect.undiscovered", aspect.getName());
+            }
             return aspect.getName();
-        }
-        if (ARIConfig.showUndiscoveredAspects) {
-            return StatCollector.translateToLocalFormatted("aspectrecipeindex.aspect.undiscovered", aspect.getName());
         }
         return StatCollector.translateToLocal("tc.aspect.unknown");
     }

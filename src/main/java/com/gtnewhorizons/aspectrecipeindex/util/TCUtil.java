@@ -34,7 +34,7 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
-    public static final String username = Minecraft.getMinecraft().getSession().getUsername();
+    public static final String username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
 
     private static final ARIClient ariClient = ARIClient.getInstance();
 
@@ -151,7 +151,7 @@ public class TCUtil {
     }
 
     public static boolean shouldShowAspect(Aspect aspect) {
-        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
+        return ARIConfig.showUndiscoveredAspects || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
     }
 
     // Fix crash with broken item
