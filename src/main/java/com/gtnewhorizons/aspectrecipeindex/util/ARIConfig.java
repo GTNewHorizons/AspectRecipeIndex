@@ -42,7 +42,7 @@ public class ARIConfig {
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showResearchKey").getBoolean();
 
         showUndiscoveredAspects = config
-                .get(GENERAL, "showResearchKey", false, "Show icons of unlearned aspects in NEI")
+                .get(GENERAL, "showUndiscoveredAspects", false, "Show icons and names of undiscovered aspects in NEI")
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showUndiscoveredAspects").getBoolean();
 
         if (config.hasChanged()) {

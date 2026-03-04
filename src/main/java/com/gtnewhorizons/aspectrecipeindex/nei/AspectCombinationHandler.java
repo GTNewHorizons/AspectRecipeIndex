@@ -13,6 +13,7 @@ import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.client.DrawUtils;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
@@ -45,20 +46,22 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (ingredient.getItem() instanceof ItemAspect item) {
-            Aspect aspect = ItemAspect.getAspect(ingredient);
+        if (!(ingredient.getItem() instanceof ItemAspect)) {
+            return;
+        }
+        Aspect aspect = ItemAspect.getAspect(ingredient);
 
-            if (Thaumcraft.proxy.playerKnowledge
-                    .hasDiscoveredAspect(Minecraft.getMinecraft().getSession().getUsername(), aspect)) {
-                for (Aspect compoundAspect : Aspect.getCompoundAspects()) {
-                    if (ArrayUtils.contains(compoundAspect.getComponents(), aspect)
-                            && Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(userName, compoundAspect)) {
-                        ItemStack result = new ItemStack(ModItems.itemAspect);
-                        ItemAspect.setAspect(result, compoundAspect);
+        String username = Minecraft.getMinecraft().getSession().getUsername();
+        if (!TCUtil.shouldShowAspect(username, aspect)) {
+            return;
+        }
+        for (Aspect compoundAspect : Aspect.getCompoundAspects()) {
+            if (ArrayUtils.contains(compoundAspect.getComponents(), aspect)
+                    && TCUtil.shouldShowAspect(username, compoundAspect)) {
+                ItemStack result = new ItemStack(ModItems.itemAspect);
+                ItemAspect.setAspect(result, compoundAspect);
 
-                        new AspectCombinationRecipe(result);
-                    }
-                }
+                new AspectCombinationRecipe(result);
             }
         }
     }

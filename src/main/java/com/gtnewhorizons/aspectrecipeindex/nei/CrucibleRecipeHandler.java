@@ -35,7 +35,6 @@ import thaumcraft.client.lib.UtilsFX;
 
 public class CrucibleRecipeHandler extends TemplateThaumHandler {
 
-    private int ySize;
     private final int aspectsPerRow = 3;
 
     @Override
@@ -78,14 +77,14 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
         List<CrucibleRecipe> tcRecipeList = TCUtil.getCrucibleRecipesByInput(ingredient);
 
         for (CrucibleRecipe tcRecipe : tcRecipeList) {
-            if (tcRecipe != null && TCUtil.shouldShowRecipe(this.userName, tcRecipe.key)) {
-                // recipe input is invisible unless complete research
-                CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, true);
-                recipe.computeVisuals();
-                recipe.setIngredientPermutation(recipe.ingredients, ingredient);
-                this.arecipes.add(recipe);
-                this.aspectsAmount.add(recipe.aspects);
+            if (tcRecipe == null || !TCUtil.shouldShowRecipe(this.userName, tcRecipe.key)) {
+                continue; // recipe input is invisible unless complete research
             }
+            CrucibleCachedRecipe recipe = new CrucibleCachedRecipe(tcRecipe, true);
+            recipe.computeVisuals();
+            recipe.setIngredientPermutation(recipe.ingredients, ingredient);
+            this.arecipes.add(recipe);
+            this.aspectsAmount.add(recipe.aspects);
         }
     }
 
@@ -96,7 +95,7 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public String getRecipeName() {
-        return "";
+        return "Alchemy";
     }
 
     @Override
@@ -147,13 +146,8 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
             if (!cachedRecipe.shouldShowRecipe) {
                 String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
                 int y = 38;
-                for (Object text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                    GuiDraw.drawStringC(
-                            (String) text,
-                            82,
-                            y,
-                            ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                            false);
+                for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
+                    GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
                     y += 11;
                 }
             }
@@ -205,14 +199,13 @@ public class CrucibleRecipeHandler extends TemplateThaumHandler {
         protected final List<ResearchInfo> prereqs;
         private AspectList aspects;
         private final boolean shouldShowRecipe;
-        private final ResearchItem researchItem;
 
         public CrucibleCachedRecipe(CrucibleRecipe recipe, boolean shouldShowRecipe) {
             this.setIngredient(recipe.catalyst);
             this.setResult(recipe.getRecipeOutput());
             this.setAspectList(recipe.aspects);
             this.shouldShowRecipe = shouldShowRecipe;
-            this.researchItem = ResearchCategories.getResearch(recipe.key);
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.key);
             this.prereqs = new ArrayList<>();
             if (researchItem != null && researchItem.key != null) {
                 prereqs.add(

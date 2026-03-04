@@ -34,13 +34,12 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
-    private static ARIClient ariClient = ARIClient.getInstance();
+    private static final ARIClient ariClient = ARIClient.getInstance();
 
     public static List<InfusionRecipe> getInfusionRecipes(ItemStack result) {
         List<InfusionRecipe> list = new ArrayList<>();
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
-            if (r instanceof InfusionRecipe && ((InfusionRecipe) r).getRecipeOutput() instanceof ItemStack) {
-                ItemStack output = (ItemStack) ((InfusionRecipe) r).getRecipeOutput();
+            if (r instanceof InfusionRecipe && ((InfusionRecipe) r).getRecipeOutput() instanceof ItemStack output) {
                 if (NEIServerUtils.areStacksSameTypeCraftingWithNBT(output, result)) {
                     list.add((InfusionRecipe) r);
                 }
@@ -146,13 +145,16 @@ public class TCUtil {
     }
 
     public static boolean shouldShowRecipe(String username, String researchKey) {
-        return ThaumcraftApiHelper.isResearchComplete(username, researchKey) || ARIConfig.showLockedRecipes;
+        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(username, researchKey);
+    }
+
+    public static boolean shouldShowAspect(String username, Aspect aspect) {
+        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
     }
 
     // Fix crash with broken item
     public static ItemStack getAssociatedItemStack(Object o) {
-        if (o instanceof ItemStack) {
-            ItemStack stack = (ItemStack) o;
+        if (o instanceof ItemStack stack) {
             if (stack.getItem() == null) {
                 return stack;
             }
@@ -244,8 +246,7 @@ public class TCUtil {
         handler.transferRects.add(
                 new TemplateRecipeHandler.RecipeTransferRect(
                         new Rectangle(162 - stringLength, y, stringLength, 9),
-                        handler.getOverlayIdentifier(),
-                        new Object[0]));
+                        handler.getOverlayIdentifier()));
     }
 
     public static void drawSeeAllRecipesLabel(int y) {

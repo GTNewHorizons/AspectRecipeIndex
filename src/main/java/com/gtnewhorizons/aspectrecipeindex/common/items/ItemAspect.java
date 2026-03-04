@@ -13,6 +13,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
+import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -66,7 +67,7 @@ public class ItemAspect extends Item {
             return StatCollector.translateToLocal("tc.aspect.unknown");
         }
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if (player != null && Thaumcraft.proxy.playerKnowledge.hasDiscoveredAspect(player.getDisplayName(), aspect)) {
+        if (player != null && TCUtil.shouldShowAspect(player.getDisplayName(), aspect)) {
             return aspect.getName();
         }
         if (ARIConfig.showUndiscoveredAspects) {
@@ -82,5 +83,16 @@ public class ItemAspect extends Item {
             setAspect(stack, tag);
             stacks.add(stack);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack item, EntityPlayer player, List<String> tooltips, boolean advanced) {
+        Aspect aspect = getAspect(item);
+        if (item == null || aspect == null || !TCUtil.shouldShowAspect(player.getDisplayName(), aspect)) {
+            tooltips.add(StatCollector.translateToLocal("tc.aspect.unknown"));
+        } else {
+            tooltips.add(StatCollector.translateToLocal(aspect.getLocalizedDescription()));
+        }
+        super.addInformation(item, player, tooltips, advanced);
     }
 }
