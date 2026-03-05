@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.EnumChatFormatting;
@@ -192,6 +193,7 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         // The ItemStack gets copied in the ArcaneWandCachedRecipe's PositionedStack so don't worry about mutation.
         // Yes, this is actually how you set it as a scepter. No, there's no helper method for it like isSceptre.
         wand.setTagInfo("sceptre", new NBTTagByte((byte) 1));
+        Items.feather.setDamage(wand, wand.getItemDamage() * 3 / 2);
         addWandRecipe(wand, rod, cap, true);
     }
 
@@ -201,6 +203,8 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         assert wand != null;
         wand.setRod(stack, rod);
         wand.setCap(stack, cap);
+        // Wand metadata is based on the crafting cost before vis discounts
+        Items.feather.setDamage(stack, NEIHelper.getWandAspectsWandCost(stack).getAmount(Aspect.AIR));
         return stack;
     }
 
