@@ -152,7 +152,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
             }
         }
 

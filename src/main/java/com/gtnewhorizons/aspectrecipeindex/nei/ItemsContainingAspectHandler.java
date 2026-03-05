@@ -57,7 +57,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     protected AspectList getAspectsForItemStack(ItemStack stack) {
         final int hash = ScanManager.generateItemHash(stack.getItem(), stack.getItemDamage());
-        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.username);
+        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.getUsername());
 
         if (list != null && (list.contains("@" + hash) || list.contains("#" + hash))) {
             final AspectList tags = ThaumcraftCraftingManager.getObjectTags(stack);
@@ -120,7 +120,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Aspect aspect : Aspect.aspects.values()) {
-                if (TCUtil.shouldShowAspect(aspect)) {
+                if (!TCUtil.shouldShowAspect(aspect)) {
                     continue;
                 }
                 final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);
@@ -182,7 +182,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     private List<ItemStack> findContainingItemStacks(Aspect aspect) {
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.username);
+        List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.getUsername());
 
         if (list != null) {
             for (String itemStackCache : list) { // every string represents cache of itemstack, like @12921929129

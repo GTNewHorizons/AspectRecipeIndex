@@ -95,7 +95,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
             }
             this.addAspectsToIngredients(aspects);
         }

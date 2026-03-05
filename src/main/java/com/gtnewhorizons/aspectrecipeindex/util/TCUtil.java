@@ -35,7 +35,7 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
-    public static final String username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+    private static String username = null;
 
     private static final ARIClient ariClient = ARIClient.getInstance();
 
@@ -148,19 +148,19 @@ public class TCUtil {
     }
 
     public static boolean shouldShowRecipe(String researchKey) {
-        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchKey);
+        return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchKey);
     }
 
     public static boolean shouldShowAspect(Aspect aspect) {
-        return ARIConfig.showUndiscoveredAspects || ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect);
+        return ARIConfig.showUndiscoveredAspects || ThaumcraftApiHelper.hasDiscoveredAspect(getUsername(), aspect);
     }
 
     public static boolean shouldShowWandRecipe(ItemStack item) {
         if (item == null || !(item.getItem() instanceof ItemWandCasting wand)) return false;
         return ARIConfig.showLockedRecipes || (ThaumcraftApiHelper
-                .isResearchComplete(TCUtil.username, wand.getRod(item).getResearch())
-                && ThaumcraftApiHelper.isResearchComplete(TCUtil.username, wand.getCap(item).getResearch())
-                && (ThaumcraftApiHelper.isResearchComplete(TCUtil.username, "SCEPTRE") || !wand.isSceptre(item)));
+                .isResearchComplete(TCUtil.getUsername(), wand.getRod(item).getResearch())
+                && ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), wand.getCap(item).getResearch())
+                && (ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), "SCEPTRE") || !wand.isSceptre(item)));
     }
 
     // Fix crash with broken item
@@ -172,9 +172,9 @@ public class TCUtil {
     public static void getResearchPrerequisites(List<String> list, ResearchItem researchItem) {
         if (researchItem != null) {
             // Parent research
-            getResearchListByName(list, researchItem.parents, username, "parents");
+            getResearchListByName(list, researchItem.parents, getUsername(), "parents");
             // Parent hidden research
-            getResearchListByName(list, researchItem.parentsHidden, username, "parentsHidden");
+            getResearchListByName(list, researchItem.parentsHidden, getUsername(), "parentsHidden");
             // Item scan
             if (researchItem.getItemTriggers() != null && researchItem.getItemTriggers().length != 0) {
                 list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites.item") + ":");
@@ -262,5 +262,10 @@ public class TCUtil {
                 y,
                 ariClient.getColor("aspectrecipeindex.gui.textColor"),
                 false);
+    }
+
+    public static String getUsername() {
+        if (username == null) username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+        return username;
     }
 }

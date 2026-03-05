@@ -19,6 +19,7 @@ public class NEIConfig implements IConfigureNEI {
         API.registerRecipeHandler(new AlchemyRecipeHandler());
         API.registerRecipeHandler(new InfusionRecipeHandler());
 
+        API.registerUsageHandler(new ItemsContainingAspectHandler());
         API.registerUsageHandler(new AspectCombinationHandler());
         API.registerUsageHandler(new ShapedArcaneRecipeHandler());
         API.registerUsageHandler(new ShapelessArcaneRecipeHandler());

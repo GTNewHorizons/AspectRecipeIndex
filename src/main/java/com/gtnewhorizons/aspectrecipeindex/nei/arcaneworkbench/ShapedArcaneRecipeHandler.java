@@ -376,7 +376,7 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
             }
             this.addAspectsToIngredients(aspects);
         }
@@ -489,19 +489,19 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch("SCEPTRE"),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, "SCEPTRE")));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), "SCEPTRE")));
             }
             if (!cap.getResearch().isEmpty()) {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch(cap.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, cap.getResearch())));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), cap.getResearch())));
             }
             if (!rod.getResearch().isEmpty()) {
                 prereqs.add(
                         new ResearchInfo(
                                 ResearchCategories.getResearch(rod.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.username, rod.getResearch())));
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), rod.getResearch())));
             }
 
             this.addAspectsToIngredients(aspects);
