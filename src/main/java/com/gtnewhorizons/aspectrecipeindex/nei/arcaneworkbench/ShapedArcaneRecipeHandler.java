@@ -281,9 +281,8 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
     @Override
     public void drawBackground(int recipeIndex) {
         CachedRecipe recipe = arecipes.get(recipeIndex);
-        boolean shouldShowRecipe = (recipe instanceof ArcaneShapedCachedRecipe shapedRecipe
-                && shapedRecipe.shouldShowRecipe)
-                || (recipe instanceof ArcaneWandCachedRecipe wandRecipe && wandRecipe.shouldShowRecipe);
+        boolean shouldShowRecipe = recipe instanceof ArcaneShapedCachedRecipe shapedRecipe
+                && shapedRecipe.shouldShowRecipe;
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GuiDraw.changeTexture(THAUM_OVERLAYS);
@@ -315,8 +314,7 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
     @Override
     public void drawExtras(int recipeIndex) {
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
-        if ((cRecipe instanceof ArcaneShapedCachedRecipe cachedRecipe && !cachedRecipe.shouldShowRecipe)
-                || (cRecipe instanceof ArcaneWandCachedRecipe wandRecipe && !wandRecipe.shouldShowRecipe)) {
+        if ((cRecipe instanceof ArcaneShapedCachedRecipe cachedRecipe && !cachedRecipe.shouldShowRecipe)) {
             String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
             int y = 38;
             for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
@@ -350,101 +348,6 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         TCUtil.drawSeeAllRecipesLabel(2);
     }
 
-    private class ArcaneShapedCachedRecipe extends CachedShapedRecipe {
-
-        protected AspectList aspects;
-        protected Object[] overlay;
-        protected final List<ResearchInfo> prereqs;
-        protected int width;
-        protected int height;
-        private final boolean shouldShowRecipe;
-
-        public ArcaneShapedCachedRecipe(ShapedArcaneRecipe recipe, boolean shouldShowRecipe) {
-            super(recipe.width, recipe.height, recipe.getInput(), recipe.getRecipeOutput());
-            this.result = new PositionedStack(
-                    recipe.getRecipeOutput(),
-                    TemplateThaumHandler.OUTPUT_X,
-                    TemplateThaumHandler.OUTPUT_Y);
-            this.aspects = recipe.getAspects();
-            this.overlay = recipe.getInput();
-            this.width = recipe.width;
-            this.height = recipe.height;
-            this.shouldShowRecipe = shouldShowRecipe;
-            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
-            this.prereqs = new ArrayList<>();
-            if (researchItem != null && researchItem.key != null) {
-                prereqs.add(
-                        new ResearchInfo(
-                                researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
-            }
-            this.addAspectsToIngredients(aspects);
-        }
-
-        public boolean isValid() {
-            return !this.ingredients.isEmpty() && this.result != null;
-        }
-
-        @Override
-        public void setIngredients(int width, int height, Object[] items) {
-            if (items == null || items.length == 0) {
-                return;
-            }
-
-            for (int x = 0; x < width; ++x) {
-                for (int y = 0; y < height; ++y) {
-                    Object object = items[y * width + x];
-                    if (!(object instanceof ItemStack) && !(object instanceof ItemStack[])
-                            && !(object instanceof String)
-                            && !(object instanceof List) || (object instanceof List && ((List<?>) object).isEmpty()))
-                        continue;
-                    PositionedStack stack = new PositionedStack(object, XPOS[x], YPOS[y], object instanceof ItemStack);
-                    stack.setMaxSize(1);
-                    this.ingredients.add(stack);
-                }
-            }
-        }
-
-        @Override
-        public List<PositionedStack> getIngredients() {
-            if (!this.shouldShowRecipe) return Collections.emptyList();
-            return super.getIngredients();
-        }
-
-        @Override
-        public void setIngredientPermutation(Collection<PositionedStack> ingredients, ItemStack ingredient) {
-            if (ingredient.getItem() instanceof ItemAspect) return;
-            super.setIngredientPermutation(ingredients, ingredient);
-        }
-
-        @Override
-        public boolean contains(Collection<PositionedStack> ingredients, ItemStack ingredient) {
-            if (ingredient.getItem() instanceof ItemAspect) {
-                Aspect aspect = ItemAspect.getAspect(ingredient);
-                return this.aspects.aspects.containsKey(aspect);
-            }
-            return super.contains(ingredients, ingredient);
-        }
-
-        protected void addAspectsToIngredients(AspectList aspects) {
-            final int baseY = 115;
-            final int spacing = 19;
-
-            Aspect[] sorted = aspects.getAspectsSortedAmount();
-            int columns = sorted.length;
-
-            int startX = 35 + (100 - columns * spacing) / 2;
-
-            for (int i = 0; i < columns; i++) {
-                Aspect aspect = sorted[i];
-                int posX = startX + i * spacing;
-                ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
-                ItemAspect.setAspect(stack, aspect);
-                ingredients.add(new PositionedStack(stack, posX, baseY, false));
-            }
-        }
-    }
-
     @Override
     public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
         if (!ARIConfig.showResearchKey || !GuiContainerManager.shouldShowTooltip(gui) || !list.isEmpty()) {
@@ -459,77 +362,63 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
                     r.onHover(list);
                 }
             }
-        } else if (cRecipe instanceof ArcaneWandCachedRecipe cachedRecipe) {
-            for (ResearchInfo r : cachedRecipe.prereqs) {
-                Rectangle rect = r.getRect(gui, recipeIndex);
-                if (rect.contains(mousePos)) {
-                    r.onHover(list);
-                }
-            }
         }
         return super.handleTooltip(gui, list, recipeIndex);
     }
 
-    private class ArcaneWandCachedRecipe extends CachedShapedRecipe {
+    private class ArcaneShapedCachedRecipe extends CachedShapedRecipe {
 
         protected AspectList aspects;
-        protected Object[] overlay;
-        protected final List<ResearchInfo> prereqs;
-        private final boolean shouldShowRecipe;
+        protected final List<ResearchInfo> prereqs = new ArrayList<>();
+        protected final List<PositionedStack> vis = new ArrayList<>();
+        protected final boolean shouldShowRecipe;
 
-        public ArcaneWandCachedRecipe(WandRod rod, WandCap cap, ItemStack result, boolean isScepter,
+        protected ArcaneShapedCachedRecipe(int width, int height, Object[] input, ItemStack output,
                 boolean shouldShowRecipe) {
-            super(3, 3, isScepter ? NEIHelper.buildScepterInput(rod, cap) : NEIHelper.buildWandInput(rod, cap), result);
-            this.overlay = isScepter ? NEIHelper.buildScepterInput(rod, cap) : NEIHelper.buildWandInput(rod, cap);
-            this.result = new PositionedStack(result, TemplateThaumHandler.OUTPUT_X, TemplateThaumHandler.OUTPUT_Y);
-            this.aspects = NEIHelper.getPrimalAspectListFromAmounts(NEIHelper.getWandAspectsWandCost(result));
+            super(width, height, input, output);
+            this.result = new PositionedStack(output, TemplateThaumHandler.OUTPUT_X, TemplateThaumHandler.OUTPUT_Y);
             this.shouldShowRecipe = shouldShowRecipe;
-            this.prereqs = new ArrayList<>();
-            if (isScepter) {
-                prereqs.add(
-                        new ResearchInfo(
-                                ResearchCategories.getResearch("SCEPTRE"),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), "SCEPTRE")));
-            }
-            if (!cap.getResearch().isEmpty()) {
-                prereqs.add(
-                        new ResearchInfo(
-                                ResearchCategories.getResearch(cap.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), cap.getResearch())));
-            }
-            if (!rod.getResearch().isEmpty()) {
-                prereqs.add(
-                        new ResearchInfo(
-                                ResearchCategories.getResearch(rod.getResearch()),
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), rod.getResearch())));
-            }
+        }
 
-            this.addAspectsToIngredients(aspects);
+        public ArcaneShapedCachedRecipe(ShapedArcaneRecipe recipe, boolean shouldShowRecipe) {
+            this(recipe.width, recipe.height, recipe.getInput(), recipe.getRecipeOutput(), shouldShowRecipe);
+
+            this.aspects = recipe.getAspects();
+
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
+            if (researchItem != null && researchItem.key != null) addResearch(researchItem.key);
+
+            addAspects(aspects);
+        }
+
+        public boolean isValid() {
+            return !ingredients.isEmpty() && result != null;
         }
 
         @Override
         public List<PositionedStack> getIngredients() {
-            if (!this.shouldShowRecipe) return Collections.emptyList();
+            if (!shouldShowRecipe) return Collections.emptyList();
             return super.getIngredients();
         }
 
         @Override
         public void setIngredients(int width, int height, Object[] items) {
-            if (items == null || items.length <= 0) {
-                return;
-            }
+            if (items == null || items.length == 0) return;
 
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
+
                     Object object = items[y * width + x];
 
                     if (!(object instanceof ItemStack) && !(object instanceof ItemStack[])
                             && !(object instanceof String)
                             && !(object instanceof List) || (object instanceof List && ((List<?>) object).isEmpty()))
                         continue;
+
                     PositionedStack stack = new PositionedStack(object, XPOS[x], YPOS[y], object instanceof ItemStack);
+
                     stack.setMaxSize(1);
-                    this.ingredients.add(stack);
+                    ingredients.add(stack);
                 }
             }
         }
@@ -544,12 +433,12 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         public boolean contains(Collection<PositionedStack> ingredients, ItemStack ingredient) {
             if (ingredient.getItem() instanceof ItemAspect) {
                 Aspect aspect = ItemAspect.getAspect(ingredient);
-                return this.aspects.aspects.containsKey(aspect);
+                return aspects.aspects.containsKey(aspect);
             }
             return super.contains(ingredients, ingredient);
         }
 
-        protected void addAspectsToIngredients(AspectList aspects) {
+        protected void addAspects(AspectList aspects) {
             final int baseY = 115;
             final int spacing = 19;
 
@@ -561,10 +450,45 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
             for (int i = 0; i < columns; i++) {
                 Aspect aspect = sorted[i];
                 int posX = startX + i * spacing;
+
                 ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
                 ItemAspect.setAspect(stack, aspect);
-                ingredients.add(new PositionedStack(stack, posX, baseY, false));
+
+                vis.add(new PositionedStack(stack, posX, baseY, false));
             }
+        }
+
+        @Override
+        public List<PositionedStack> getOtherStacks() {
+            return vis;
+        }
+
+        protected void addResearch(String name) {
+            prereqs.add(
+                    new ResearchInfo(
+                            ResearchCategories.getResearch(name),
+                            ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), name)));
+        }
+    }
+
+    private class ArcaneWandCachedRecipe extends ArcaneShapedCachedRecipe {
+
+        public ArcaneWandCachedRecipe(WandRod rod, WandCap cap, ItemStack result, boolean isScepter,
+                boolean shouldShowRecipe) {
+            super(
+                    3,
+                    3,
+                    isScepter ? NEIHelper.buildScepterInput(rod, cap) : NEIHelper.buildWandInput(rod, cap),
+                    result,
+                    shouldShowRecipe);
+
+            this.aspects = NEIHelper.getPrimalAspectListFromAmounts(NEIHelper.getWandAspectsWandCost(result));
+
+            if (isScepter) addResearch("SCEPTRE");
+            if (!cap.getResearch().isEmpty()) addResearch(cap.getResearch());
+            if (!rod.getResearch().isEmpty()) addResearch(rod.getResearch());
+
+            addAspects(aspects);
         }
     }
 }

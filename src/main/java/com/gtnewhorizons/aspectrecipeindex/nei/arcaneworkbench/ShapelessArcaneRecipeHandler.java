@@ -217,9 +217,9 @@ public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
     private class ArcaneShapelessCachedRecipe extends CachedShapelessRecipe {
 
         private final AspectList aspects;
-        protected Object[] overlay;
         protected final List<ResearchInfo> prereqs;
         private final boolean shouldShowRecipe;
+        private final List<PositionedStack> vis = new ArrayList<>();
 
         public ArcaneShapelessCachedRecipe(ShapelessArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(recipe.getInput(), recipe.getRecipeOutput());
@@ -227,7 +227,6 @@ public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
                     recipe.getRecipeOutput(),
                     TemplateThaumHandler.OUTPUT_X,
                     TemplateThaumHandler.OUTPUT_Y);
-            this.overlay = recipe.getInput().toArray();
             this.aspects = recipe.getAspects();
             this.shouldShowRecipe = shouldShowRecipe;
             ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
@@ -238,7 +237,7 @@ public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
                                 researchItem,
                                 ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
             }
-            this.addAspectsToIngredients(aspects);
+            this.addAspects(aspects);
         }
 
         public boolean isValid() {
@@ -285,7 +284,12 @@ public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
             return super.contains(ingredients, ingredient);
         }
 
-        protected void addAspectsToIngredients(AspectList aspects) {
+        @Override
+        public List<PositionedStack> getOtherStacks() {
+            return vis;
+        }
+
+        protected void addAspects(AspectList aspects) {
             final int baseY = 115;
             final int spacing = 19;
 
@@ -301,7 +305,7 @@ public class ShapelessArcaneRecipeHandler extends ShapelessRecipeHandler {
                 ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
 
                 ItemAspect.setAspect(stack, aspect);
-                ingredients.add(new PositionedStack(stack, posX, baseY, false));
+                vis.add(new PositionedStack(stack, posX, baseY, false));
             }
         }
     }

@@ -1,11 +1,14 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneOverlayHandler;
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneSlotPositioner;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapedArcaneRecipeHandler;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapelessArcaneRecipeHandler;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
+import thaumcraft.client.gui.GuiArcaneWorkbench;
 
 public class NEIConfig implements IConfigureNEI {
 
@@ -26,6 +29,15 @@ public class NEIConfig implements IConfigureNEI {
         API.registerUsageHandler(new AlchemyRecipeHandler());
         API.registerUsageHandler(new InfusionRecipeHandler());
 
+        ArcaneSlotPositioner positioner = new ArcaneSlotPositioner();
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, "thaumcraft.arcane.shaped", positioner);
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, "thaumcraft.arcane.shapeless", positioner);
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, "crafting", positioner);
+
+        ArcaneOverlayHandler handler = new ArcaneOverlayHandler();
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "thaumcraft.arcane.shaped");
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "thaumcraft.arcane.shapeless");
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "crafting");
         try {
             API.registerStackStringifyHandler(new TCAspectStringifyHandler());
         } catch (NoSuchMethodError ignored) {}
