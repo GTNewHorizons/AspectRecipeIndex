@@ -70,12 +70,14 @@ public class ItemAspect extends Item {
         return item;
     }
 
+    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack item) {
         Aspect aspect = getAspect(item);
         if (item == null || aspect == null) {
             return StatCollector.translateToLocal("tc.aspect.unknown");
         }
         if (TCUtil.shouldShowAspect(aspect)) {
+            TCUtil.getUsername();
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
             if (ARIConfig.showUndiscoveredAspects && player != null
                     && !ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {

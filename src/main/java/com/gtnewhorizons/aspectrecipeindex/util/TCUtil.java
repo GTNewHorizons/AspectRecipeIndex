@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.glease.tc4tweak.api.infusionrecipe.EnhancedInfusionRecipe;
 import net.glease.tc4tweak.api.infusionrecipe.InfusionRecipeExt;
 import net.minecraft.client.Minecraft;
@@ -264,6 +266,7 @@ public class TCUtil {
                 false);
     }
 
+    @SideOnly(Side.CLIENT)
     public static String getUsername() {
         if (username == null) username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
         return username;
