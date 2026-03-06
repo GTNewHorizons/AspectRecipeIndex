@@ -1,7 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -27,8 +25,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
                 if (o instanceof CrucibleRecipe tcRecipe) {
-                    boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.key);
-                    new AlchemyCachedRecipe(tcRecipe, shouldShowRecipe);
+                    new AlchemyCachedRecipe(tcRecipe, TCUtil.shouldShowRecipe(tcRecipe.key));
                 }
             }
         } else if (outputId.equals("item")) {
@@ -39,10 +36,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
     @Override
     public void loadCraftingRecipes(ItemStack result) {
         for (CrucibleRecipe tcRecipe : TCUtil.getCrucibleRecipes(result)) {
-            boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.key);
-            AlchemyCachedRecipe recipe = new AlchemyCachedRecipe(tcRecipe, shouldShowRecipe);
-            recipe.computeVisuals();
-            this.arecipes.add(recipe);
+            new AlchemyCachedRecipe(tcRecipe, TCUtil.shouldShowRecipe(tcRecipe.key));
         }
     }
 
@@ -54,10 +48,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             if (tcRecipe == null || !TCUtil.shouldShowRecipe(tcRecipe.key)) {
                 continue; // recipe input is not shown without research
             }
-            AlchemyCachedRecipe recipe = new AlchemyCachedRecipe(tcRecipe, true);
-            recipe.computeVisuals();
-            recipe.setIngredientPermutation(recipe.ingredients, ingredient);
-            this.arecipes.add(recipe);
+            new AlchemyCachedRecipe(tcRecipe, true);
         }
     }
 
@@ -93,7 +84,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             if (in != null && NEIServerUtils.extractRecipeItems(in).length > 0) {
                 PositionedStack stack = new PositionedStack(in, 54, 27, false);
                 stack.setMaxSize(1);
-                this.ingredients = new ArrayList<>(Collections.singletonList(stack));
+                this.ingredients.add(stack);
             }
         }
 

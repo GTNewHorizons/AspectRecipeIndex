@@ -26,6 +26,7 @@ import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import thaumcraft.api.ThaumcraftApiHelper;
+import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.common.Thaumcraft;
@@ -45,7 +46,6 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
     public void drawBackground(int recipeIndex) {
         CachedThaumRecipe recipe = (CachedThaumRecipe) arecipes.get(recipeIndex);
         GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GuiDraw.changeTexture(THAUM_OVERLAYS);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glScalef(1.75F, 1.75F, 1.0F);
@@ -53,7 +53,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         GuiDraw.drawTexturedModalRect(39, 0, 20, 4, 16, 16); // Result item icon
         GL11.glTranslatef(-0.3F, -0.4F, 0);
         if (recipe.shouldShowRecipe) drawIngredientBackground();
-        GL11.glPopAttrib();
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
     }
 
@@ -127,15 +127,15 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         return "nei:textures/gui/recipebg.png";
     }
 
-    abstract class CachedThaumRecipe extends CachedRecipe {
+    public abstract class CachedThaumRecipe extends CachedRecipe {
 
         protected final List<ResearchInfo> prereqs = new ArrayList<>();
         protected final boolean shouldShowRecipe;
-        protected List<PositionedStack> ingredients;
+        protected List<PositionedStack> ingredients = new ArrayList<>();
         protected PositionedStack result;
         protected AspectList aspects;
 
-        CachedThaumRecipe(boolean shouldShowRecipe) {
+        protected CachedThaumRecipe(boolean shouldShowRecipe) {
             this.shouldShowRecipe = shouldShowRecipe;
         }
 
@@ -186,9 +186,20 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         @Override
         public boolean contains(Collection<PositionedStack> ingredients, ItemStack ingredient) {
             if (ingredient.getItem() instanceof ItemAspect) {
-                return false;
+                Aspect aspect = ItemAspect.getAspect(ingredient);
+                return aspects.aspects.containsKey(aspect);
             }
             return super.contains(ingredients, ingredient);
+        }
+
+        @Override
+        public boolean containsWithNBT(Collection<PositionedStack> ingredients, ItemStack ingredient) {
+            if (ingredient.getItem() instanceof ItemAspect) {
+                Aspect aspect = ItemAspect.getAspect(ingredient);
+                return aspects.aspects.containsKey(aspect);
+            }
+
+            return super.containsWithNBT(ingredients, ingredient);
         }
 
         public void computeVisuals() {
@@ -202,6 +213,14 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             computeVisuals();
             arecipes.add(this);
             TemplateThaumHandler.this.aspects.add(aspects);
+        }
+
+        public boolean shouldShowRecipe() {
+            return shouldShowRecipe;
+        }
+
+        public List<ResearchInfo> getPrereqs() {
+            return prereqs;
         }
     }
 }

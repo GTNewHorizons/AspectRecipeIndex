@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapedArcaneRecipeHandler;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapelessArcaneRecipeHandler;
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.WandRecipeHandler;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
 
@@ -12,6 +13,7 @@ public class IMCForNEI {
     public static void IMCSender() {
         // Arcane Crafting Table
         registerHandlerInfo(ShapedArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 138);
+        registerHandlerInfo(WandRecipeHandler.class.getName(), "Thaumcraft:WandCasting", 138);
         registerHandlerInfo(ShapelessArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 138);
         // Crucible
         registerHandlerInfo(AlchemyRecipeHandler.class.getName(), "Thaumcraft:blockMetalDevice", 136);
@@ -21,6 +23,7 @@ public class IMCForNEI {
         registerHandlerInfo(AspectCombinationHandler.class.getName(), "Thaumcraft:blockTable:2", 43);
 
         registerCatalystInfo(new ShapedArcaneRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");
+        registerCatalystInfo(new WandRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");
         registerCatalystInfo(new ShapelessArcaneRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");
         // Crucible
         registerCatalystInfo(new AlchemyRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockMetalDevice");

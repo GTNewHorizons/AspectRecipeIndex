@@ -90,10 +90,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(ItemStack result) {
         for (InfusionRecipe tcRecipe : TCUtil.getInfusionRecipes(result)) {
             final boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
-            InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
-            recipe.computeVisuals();
-            this.arecipes.add(recipe);
-            this.aspects.add(recipe.aspects);
+            new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
         }
         loadRunicCraftingRecipe(result);
     }
@@ -237,7 +234,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
         protected void setIngredients(InfusionRecipe recipe) {
             EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipe);
-            this.ingredients = new ArrayList<>();
+            this.ingredients.clear();
             this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 62));
             addSurroundingItems(r.getComponentsExt());
         }
@@ -341,7 +338,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         }
 
         private void setIngredients(List<ItemStack> items, int charge, int permutation) {
-            ingredients = new ArrayList<>();
+            ingredients.clear();
             PositionedStack center = new PositionedStack(items, OUTPUT_X, 62);
             if (permutation >= 0) {
                 center.setPermutationToRender(permutation);
