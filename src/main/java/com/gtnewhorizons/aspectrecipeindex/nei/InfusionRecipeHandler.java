@@ -19,8 +19,8 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.lwjgl.opengl.GL11;
+import org.spongepowered.libraries.com.google.common.base.Stopwatch;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
@@ -29,7 +29,6 @@ import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
-import org.spongepowered.libraries.com.google.common.base.Stopwatch;
 import thaumcraft.api.IRunicArmor;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;

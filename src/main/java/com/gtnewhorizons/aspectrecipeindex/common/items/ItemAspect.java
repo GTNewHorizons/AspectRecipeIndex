@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
@@ -21,7 +22,7 @@ import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.common.Thaumcraft;
 import thaumcraft.common.lib.network.PacketHandler;
-import thaumcraft.common.lib.network.playerdata.PacketSyncAspects;
+import thaumcraft.common.lib.network.playerdata.PacketAspectPool;
 import thaumcraft.common.lib.research.ResearchManager;
 
 public class ItemAspect extends Item {
@@ -51,10 +52,16 @@ public class ItemAspect extends Item {
     public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
         if (!world.isRemote) {
             Aspect aspect = getAspect(item);
-            if (aspect != null) {
-                Thaumcraft.proxy.playerKnowledge.addAspectPool(player.getCommandSenderName(), aspect, (short) 1);
-                ResearchManager.scheduleSave(player);
-                PacketHandler.INSTANCE.sendTo(new PacketSyncAspects(player), (EntityPlayerMP) player);
+            Thaumcraft.proxy.playerKnowledge.addAspectPool(player.getCommandSenderName(), aspect, (short) 1);
+            ResearchManager.scheduleSave(player);
+            if (player instanceof EntityPlayerMP playerMP && !(player instanceof FakePlayer)) {
+                PacketHandler.INSTANCE.sendTo(
+                        new PacketAspectPool(
+                                aspect.getTag(),
+                                (short) 1,
+                                Thaumcraft.proxy.playerKnowledge
+                                        .getAspectPoolFor(player.getCommandSenderName(), aspect)),
+                        playerMP);
             }
         }
 
