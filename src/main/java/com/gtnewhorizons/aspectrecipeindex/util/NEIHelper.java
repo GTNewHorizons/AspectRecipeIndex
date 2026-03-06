@@ -10,7 +10,6 @@ import thaumcraft.api.wands.WandRod;
 import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.items.wands.ItemWandCasting;
 
-// TODO this whole class
 public class NEIHelper {
 
     public static AspectList getWandAspectsWandCost(ItemStack item) {
@@ -24,6 +23,7 @@ public class NEIHelper {
         return costs;
     }
 
+    // TODO Figure out what this is supposed to do and if it's still needed
     public static ItemStack getAssociatedItemStack(Object o) {
         return new ItemStack(Blocks.stone);
     }
@@ -35,13 +35,5 @@ public class NEIHelper {
 
     public static ItemStack[] buildWandInput(WandRod rod, WandCap cap) {
         return new ItemStack[] { null, null, cap.getItem(), null, rod.getItem(), null, cap.getItem(), null, null };
-    }
-
-    public static AspectList getPrimalAspectListFromAmounts(AspectList aspects) {
-        AspectList primals = new AspectList();
-        for (Aspect aspect : aspects.getAspects()) {
-            if (aspect != null && aspect.isPrimal()) primals.add(aspect, aspects.getAmount(aspect));
-        }
-        return primals;
     }
 }
