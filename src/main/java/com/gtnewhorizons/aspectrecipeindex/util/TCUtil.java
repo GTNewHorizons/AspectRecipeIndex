@@ -8,8 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.glease.tc4tweak.api.infusionrecipe.EnhancedInfusionRecipe;
 import net.glease.tc4tweak.api.infusionrecipe.InfusionRecipeExt;
 import net.minecraft.client.Minecraft;
@@ -24,6 +22,8 @@ import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -37,6 +37,7 @@ import tuhljin.automagy.config.ModResearchItems;
 
 public class TCUtil {
 
+    @SideOnly(Side.CLIENT)
     private static String username = null;
 
     private static final ARIClient ariClient = ARIClient.getInstance();

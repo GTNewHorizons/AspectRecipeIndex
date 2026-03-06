@@ -1,6 +1,7 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -168,7 +169,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
         @Override
         public List<PositionedStack> getOtherStacks() {
-            return vis;
+            return this.shouldShowRecipe ? vis : Collections.emptyList();
         }
 
         protected void addResearch(String name) {

@@ -175,8 +175,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
         @Override
         public List<PositionedStack> getIngredients() {
-            if (!this.shouldShowRecipe) return Collections.emptyList();
-            return this.ingredients;
+            return this.shouldShowRecipe ? this.ingredients : Collections.emptyList();
         }
 
         public boolean isValid() {
@@ -213,14 +212,6 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             computeVisuals();
             arecipes.add(this);
             TemplateThaumHandler.this.aspects.add(aspects);
-        }
-
-        public boolean shouldShowRecipe() {
-            return shouldShowRecipe;
-        }
-
-        public List<ResearchInfo> getPrereqs() {
-            return prereqs;
         }
     }
 }

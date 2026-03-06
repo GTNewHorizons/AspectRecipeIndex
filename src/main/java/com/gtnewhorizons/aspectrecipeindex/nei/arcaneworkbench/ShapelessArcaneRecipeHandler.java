@@ -1,21 +1,12 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
-import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
-import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
-import codechicken.nei.guihook.GuiContainerManager;
-import codechicken.nei.recipe.GuiRecipe;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 
@@ -79,28 +70,6 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
         }
     }
 
-    private boolean isValidInput(Object input) {
-        return NEIServerUtils.extractRecipeItems(input).length != 0;
-    }
-
-    @Override
-    public List<String> handleTooltip(GuiRecipe<?> gui, List<String> list, int recipeIndex) {
-        if (ARIConfig.showResearchKey && GuiContainerManager.shouldShowTooltip(gui) && list.isEmpty()) {
-            CachedRecipe cRecipe = arecipes.get(recipeIndex);
-            Point mousePos = GuiDraw.getMousePosition();
-
-            if (cRecipe instanceof ArcaneShapelessCachedRecipe cachedRecipe) {
-                for (ResearchInfo r : cachedRecipe.getPrereqs()) {
-                    Rectangle rect = r.getRect(gui, recipeIndex);
-                    if (rect.contains(mousePos)) {
-                        r.onHover(list);
-                    }
-                }
-            }
-        }
-        return super.handleTooltip(gui, list, recipeIndex);
-    }
-
     private class ArcaneShapelessCachedRecipe extends ArcaneShapedCachedRecipe {
 
         public ArcaneShapelessCachedRecipe(ShapelessArcaneRecipe recipe, boolean shouldShowRecipe) {
@@ -119,7 +88,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
                 return;
             }
             for (int x = 0; x < items.length; ++x) {
-                if (items[x] == null || !isValidInput(items[x])) {
+                if (items[x] == null || NEIServerUtils.extractRecipeItems(items[x]).length == 0) {
                     continue;
                 }
                 PositionedStack stack = new PositionedStack(
