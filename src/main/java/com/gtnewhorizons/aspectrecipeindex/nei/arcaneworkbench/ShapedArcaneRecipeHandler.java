@@ -101,7 +101,9 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         if (ariClient.areWandRecipesDeleted()) return;
         // Also handles staves since they extend WandRod and are stored in the same place
         for (WandRod rod : WandRod.rods.values()) {
+            if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
             for (WandCap cap : WandCap.caps.values()) {
+                if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
                 addWandAndScepterRecipe(rod, cap);
             }
         }
@@ -170,16 +172,20 @@ public class ShapedArcaneRecipeHandler extends ShapedRecipeHandler {
         }
         if (ariClient.areWandRecipesDeleted()) return;
         for (WandRod rod : WandRod.rods.values()) {
+            if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
             if (OreDictionary.itemMatches(rod.getItem(), ingredient, true)) {
                 for (WandCap cap : WandCap.caps.values()) {
+                    if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
                     addWandAndScepterRecipe(rod, cap);
                 }
                 break;
             }
         }
         for (WandCap cap : WandCap.caps.values()) {
+            if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
             if (OreDictionary.itemMatches(cap.getItem(), ingredient, true)) {
                 for (WandRod rod : WandRod.rods.values()) {
+                    if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
                     addWandAndScepterRecipe(rod, cap);
                 }
                 break;
