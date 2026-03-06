@@ -25,7 +25,9 @@ import codechicken.nei.PositionedStack;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.recipe.GuiRecipe;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.research.ResearchItem;
 import thaumcraft.common.Thaumcraft;
 
 public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
@@ -137,6 +139,15 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             this.shouldShowRecipe = shouldShowRecipe;
         }
 
+        protected void tryAddResearch(ResearchItem researchItem) {
+            if (researchItem != null && researchItem.key != null) {
+                prereqs.add(
+                        new ResearchInfo(
+                                researchItem,
+                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
+            }
+        }
+
         @Override
         public void setIngredientPermutation(Collection<PositionedStack> ingredients, ItemStack ingredient) {
             if (ingredient.getItem() instanceof ItemAspect) return;
@@ -184,6 +195,13 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             for (PositionedStack p : this.ingredients) {
                 p.generatePermutations();
             }
+        }
+
+        public void addIfValid() {
+            if (!isValid()) return;
+            computeVisuals();
+            arecipes.add(this);
+            TemplateThaumHandler.this.aspects.add(aspects);
         }
     }
 }

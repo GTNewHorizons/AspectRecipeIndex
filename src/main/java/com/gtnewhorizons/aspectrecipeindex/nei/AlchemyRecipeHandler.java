@@ -15,12 +15,10 @@ import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import thaumcraft.api.ThaumcraftApi;
-import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.research.ResearchCategories;
-import thaumcraft.api.research.ResearchItem;
 
 public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
@@ -30,11 +28,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
                 if (o instanceof CrucibleRecipe tcRecipe) {
                     boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.key);
-                    AlchemyCachedRecipe recipe = new AlchemyCachedRecipe(tcRecipe, shouldShowRecipe);
-                    if (recipe.isValid()) {
-                        recipe.computeVisuals();
-                        this.arecipes.add(recipe);
-                    }
+                    new AlchemyCachedRecipe(tcRecipe, shouldShowRecipe);
                 }
             }
         } else if (outputId.equals("item")) {
@@ -90,14 +84,9 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
             this.setIngredient(recipe.catalyst);
             this.setResult(recipe.getRecipeOutput());
             this.setAspects(recipe.aspects);
-            ResearchItem researchItem = ResearchCategories.getResearch(recipe.key);
-            if (researchItem != null && researchItem.key != null) {
-                prereqs.add(
-                        new ResearchInfo(
-                                researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
-            }
+            tryAddResearch(ResearchCategories.getResearch(recipe.key));
             this.addAspectsToIngredients(aspects);
+            addIfValid();
         }
 
         protected void setIngredient(Object in) {

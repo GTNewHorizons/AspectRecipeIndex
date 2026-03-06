@@ -3,16 +3,23 @@ package com.gtnewhorizons.aspectrecipeindex.nei;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.glease.tc4tweak.api.infusionrecipe.EnhancedInfusionRecipe;
 import net.glease.tc4tweak.api.infusionrecipe.InfusionRecipeExt;
 import net.glease.tc4tweak.api.infusionrecipe.RecipeIngredient;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
@@ -22,17 +29,21 @@ import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
+import org.spongepowered.libraries.com.google.common.base.Stopwatch;
+import thaumcraft.api.IRunicArmor;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
-import thaumcraft.api.research.ResearchItem;
+import thaumcraft.common.config.ConfigItems;
+import thaumcraft.common.lib.events.EventHandlerRunic;
 
 public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     private final int aspectsPerRow = 7;
+    private static final Map<Integer, ArrayList<ItemStack>> runicArmor = new HashMap<>();
 
     @Override
     public String getRecipeName() {
@@ -61,16 +72,18 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                         continue;
                     }
                     final boolean shouldShowRecipe = TCUtil.shouldShowRecipe(tcRecipe.getResearch());
-                    InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
-                    if (recipe.isValid()) {
-                        recipe.computeVisuals();
-                        this.arecipes.add(recipe);
-                        this.aspects.add(recipe.aspects);
-                    }
+                    new InfusionCachedRecipe(tcRecipe, shouldShowRecipe);
                 }
             }
+            loadAllRunicCraftingRecipes();
         } else if (outputId.equals("item")) {
             this.loadCraftingRecipes((ItemStack) results[0]);
+        }
+    }
+
+    private void loadAllRunicCraftingRecipes() {
+        for (int i : runicArmor.keySet()) {
+            new RunicShieldCachedRecipe(runicArmor.get(i), i + 1, -1);
         }
     }
 
@@ -83,6 +96,21 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             this.arecipes.add(recipe);
             this.aspects.add(recipe.aspects);
         }
+        loadRunicCraftingRecipe(result);
+    }
+
+    private void loadRunicCraftingRecipe(ItemStack result) {
+        if (!(result.getItem() instanceof IRunicArmor) || !result.hasTagCompound()) {
+            return;
+        }
+        int bonus = EventHandlerRunic.getHardening(result);
+        if (bonus <= 0) {
+            return;
+        }
+        ItemStack copy = result.copy();
+        int charge = EventHandlerRunic.getFinalCharge(result);
+        copy.stackTagCompound.setByte("RS.HARDEN", (byte) (charge - 1));
+        new RunicShieldCachedRecipe(Collections.singletonList(copy), charge, -1);
     }
 
     @Override
@@ -94,11 +122,25 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 continue; // recipe input is not shown without research
             }
             InfusionCachedRecipe recipe = new InfusionCachedRecipe(tcRecipe, true);
-            recipe.computeVisuals();
             recipe.setIngredientPermutation(recipe.ingredients, ingredient);
-            this.arecipes.add(recipe);
-            this.aspects.add(recipe.aspects);
         }
+        if (ingredient.getItem() instanceof IRunicArmor) {
+            new RunicShieldCachedRecipe(
+                    Collections.singletonList(ingredient),
+                    EventHandlerRunic.getFinalCharge(ingredient) + 1,
+                    -1);
+        } else if (isRunicUpgradeIngredient(ingredient)) {
+            loadAllRunicCraftingRecipes();
+        }
+    }
+
+    private static boolean isRunicUpgradeIngredient(ItemStack ingredient) {
+        if (ingredient.getItem() instanceof ItemAspect) {
+            final Aspect aspect = ItemAspect.getAspect(ingredient);
+            return aspect == Aspect.ENERGY || aspect == Aspect.ARMOR || aspect == Aspect.MAGIC;
+        }
+        return ingredient.getItem() == Items.diamond
+                || (ingredient.getItem() == ConfigItems.itemResource && ingredient.getItemDamage() == 14);
     }
 
     @Override
@@ -136,37 +178,75 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         GuiDraw.drawString(text, 83 - GuiDraw.fontRenderer.getStringWidth(text) / 2, 120, color, false);
     }
 
+    public static void init() {
+        runicArmor.clear();
+        Stopwatch s = Stopwatch.createStarted();
+
+        for (Object obj : Item.itemRegistry) {
+            if (!(obj instanceof Item item) || !(item instanceof IRunicArmor runic)) {
+                continue;
+            }
+
+            if (!item.getHasSubtypes()) {
+                addStack(runic, new ItemStack(item));
+                continue;
+            }
+
+            List<ItemStack> subItems = new ArrayList<>();
+            try {
+                item.getSubItems(item, item.getCreativeTab(), subItems);
+            } catch (Exception ignored) {}
+
+            if (subItems.isEmpty()) {
+                subItems.add(new ItemStack(item));
+            }
+
+            for (ItemStack stack : subItems) {
+                addStack(runic, stack);
+            }
+        }
+    }
+
+    private static void addStack(IRunicArmor runic, ItemStack stack) {
+        int charge = runic.getRunicCharge(stack);
+        runicArmor.computeIfAbsent(charge, k -> new ArrayList<>()).add(stack);
+    }
+
     private class InfusionCachedRecipe extends CachedThaumRecipe {
 
         private final int instability;
 
         public InfusionCachedRecipe(InfusionRecipe recipe, boolean shouldShowRecipe) {
             super(shouldShowRecipe);
-            this.setIngredients(recipe);
-            this.setResult(recipe);
-            this.setAspects(recipe.getAspects());
-            this.instability = recipe.getInstability();
-            this.addAspectsToIngredients(this.aspects);
-            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
-            if (researchItem != null && researchItem.key != null) {
-                prereqs.add(
-                        new ResearchInfo(
-                                researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
-            }
+            setIngredients(recipe);
+            setResult(recipe);
+            setAspects(recipe.getAspects());
+            instability = recipe.getInstability();
+            addAspectsToIngredients();
+            tryAddResearch(ResearchCategories.getResearch(recipe.getResearch()));
+            addIfValid();
+        }
+
+        protected InfusionCachedRecipe(int instability, boolean shouldShowRecipe) {
+            super(shouldShowRecipe);
+            this.instability = instability;
         }
 
         protected int getInstability() {
             return this.instability;
         }
 
-        protected void setIngredients(InfusionRecipe recipeLegacy) {
-            EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipeLegacy);
+        protected void setIngredients(InfusionRecipe recipe) {
+            EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipe);
             this.ingredients = new ArrayList<>();
-            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), 75, 62));
+            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 62));
+            addSurroundingItems(r.getComponentsExt());
+        }
+
+        protected void addSurroundingItems(List<RecipeIngredient> r) {
             int x = 27;
             int y = -31;
-            int le = r.getComponentsExt().size();
+            int le = r.size();
             ArrayList<Point> coords = new ArrayList<>();
             float pieSlice = 360f / le;
             float currentRot = -90.0F;
@@ -175,8 +255,8 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             int sx;
             int sy;
             for (total = 0; total < le; ++total) {
-                sx = (int) (MathHelper.cos(currentRot / 180.0F * 3.141593F) * 40.0F) - 8;
-                sy = (int) (MathHelper.sin(currentRot / 180.0F * 3.141593F) * 40.0F) - 8;
+                sx = (int) (MathHelper.cos((float) (currentRot / 180.0F * Math.PI)) * 40.0F) - 8;
+                sy = (int) (MathHelper.sin((float) (currentRot / 180.0F * Math.PI)) * 40.0F) - 8;
                 currentRot += pieSlice;
                 coords.add(new Point(sx, sy));
             }
@@ -185,7 +265,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             sx = x + 56;
             sy = y + 102;
 
-            for (RecipeIngredient ingredient : r.getComponentsExt()) {
+            for (RecipeIngredient ingredient : r) {
                 int vx = sx + coords.get(total).x;
                 int vy = sy + coords.get(total).y;
                 this.ingredients.add(new PositionedStack(ingredient.getRepresentativeStacks(), vx, vy));
@@ -222,7 +302,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             return super.contains(ingredients, ingredient);
         }
 
-        protected void addAspectsToIngredients(AspectList aspects) {
+        protected void addAspectsToIngredients() {
             int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
             final int baseX = 35;
             final int baseY = 130;
@@ -242,5 +322,56 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 }
             }
         }
+    }
+
+    private class RunicShieldCachedRecipe extends InfusionCachedRecipe {
+
+        public static final String RESEARCH = "RUNICAUGMENTATION";
+
+        public RunicShieldCachedRecipe(List<ItemStack> items, int charge, int permutation) {
+            super(5 + charge / 2, TCUtil.shouldShowRecipe(RESEARCH));
+            setAspects(charge);
+            setIngredients(items, charge, permutation);
+            setResult(items, permutation);
+            addAspectsToIngredients();
+            prereqs.add(
+                    new ResearchInfo(
+                            ResearchCategories.getResearch(RESEARCH),
+                            ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), RESEARCH)));
+            addIfValid();
+        }
+
+        private void setIngredients(List<ItemStack> items, int charge, int permutation) {
+            ingredients = new ArrayList<>();
+            PositionedStack center = new PositionedStack(items, OUTPUT_X, 62);
+            if (permutation >= 0) {
+                center.setPermutationToRender(permutation);
+                result.setPermutationToRender(permutation);
+            }
+            ingredients.add(center);
+            List<RecipeIngredient> outer = new ArrayList<>();
+            outer.add(RecipeIngredient.item(false, new ItemStack(Items.diamond)));
+            for (int i = 0; i < charge; i++) {
+                outer.add(RecipeIngredient.item(false, new ItemStack(ConfigItems.itemResource, 1, 14)));
+            }
+            addSurroundingItems(outer);
+        }
+
+        protected void setResult(List<ItemStack> items, int permutation) {
+            ItemStack item = items.get(0).copy(); // Output stacks don't show permutations so only use the first one
+            int bonus = EventHandlerRunic.getHardening(item) + 1;
+            item.setTagInfo("RS.HARDEN", new NBTTagByte((byte) bonus));
+            this.result = new PositionedStack(item, OUTPUT_X, OUTPUT_Y, false);
+            if (permutation >= 0) result.setPermutationToRender(permutation);
+        }
+
+        public void setAspects(int charge) {
+            aspects = new AspectList();
+            int cost = 8 << charge; // 8 * 2^charge
+            aspects.add(Aspect.ENERGY, cost * 2);
+            aspects.add(Aspect.ARMOR, cost);
+            aspects.add(Aspect.MAGIC, cost);
+        }
+
     }
 }
