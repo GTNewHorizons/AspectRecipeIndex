@@ -21,6 +21,8 @@ public class ItemAspectRenderer implements IItemRenderer {
 
     private static final ResourceLocation UNKNOWN = new ResourceLocation("thaumcraft", "textures/aspects/_unknown.png");
 
+    private static final Tessellator TESS = Tessellator.instance;
+
     @Override
     public boolean handleRenderType(ItemStack item, ItemRenderType type) {
         return true;
@@ -33,62 +35,64 @@ public class ItemAspectRenderer implements IItemRenderer {
 
     @Override
     public void renderItem(ItemRenderType type, ItemStack stack, Object... data) {
+        Minecraft mc = Minecraft.getMinecraft();
+        EntityPlayer player = mc.thePlayer;
+
         GL11.glPushMatrix();
         GL11.glDisable(GL11.GL_CULL_FACE);
 
         setupTransform(type);
 
         Aspect aspect = ItemAspect.getAspect(stack);
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
         if (aspect != null && player != null) {
-            if (ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
-                UtilsFX.drawTag(0, 0, aspect, 0.0F, 0, 0.0F);
+            String name = player.getCommandSenderName();
+
+            if (ThaumcraftApiHelper.hasDiscoveredAspect(name, aspect)) {
+                UtilsFX.drawTag(0, 0, aspect, 0F, 0, 0F);
+                GL11.glEnable(GL11.GL_CULL_FACE);
                 GL11.glPopMatrix();
                 return;
             }
         }
 
-        renderUnknown();
+        renderUnknown(mc);
 
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glPopMatrix();
     }
 
-    private void renderUnknown() {
-        Minecraft mc = Minecraft.getMinecraft();
+    private void renderUnknown(Minecraft mc) {
         mc.getTextureManager().bindTexture(UNKNOWN);
-        GL11.glPushMatrix();
+
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        UtilsFX.bindTexture("textures/aspects/_unknown.png");
         GL11.glColor4f(0.5F, 0.5F, 0.5F, 0.75F);
-        Tessellator tess = Tessellator.instance;
-        tess.startDrawingQuads();
-        tess.addVertexWithUV(0, 16, 0.0F, 0.0D, 1.0D);
-        tess.addVertexWithUV(16, 16, 0.0F, 1.0D, 1.0D);
-        tess.addVertexWithUV(16, 0, 0.0F, 1.0D, 0.0D);
-        tess.addVertexWithUV(0, 0, 0.0F, 0.0D, 0.0D);
-        tess.draw();
+
+        TESS.startDrawingQuads();
+        TESS.addVertexWithUV(0, 16, 0, 0, 1);
+        TESS.addVertexWithUV(16, 16, 0, 1, 1);
+        TESS.addVertexWithUV(16, 0, 0, 1, 0);
+        TESS.addVertexWithUV(0, 0, 0, 0, 0);
+        TESS.draw();
+
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glPopMatrix();
     }
 
     private void setupTransform(ItemRenderType type) {
         switch (type) {
-            case ENTITY:
+            case ENTITY -> {
                 GL11.glScalef(0.05F, -0.05F, 0.05F);
                 GL11.glRotatef(90F, 0, 1, 0);
                 GL11.glTranslatef(-8F, -8F, 0F);
-                break;
-            case EQUIPPED, EQUIPPED_FIRST_PERSON:
+            }
+            case EQUIPPED, EQUIPPED_FIRST_PERSON -> {
                 GL11.glScalef(0.08F, 0.08F, 0.08F);
                 GL11.glRotatef(-45F, 0, 1, 0);
                 GL11.glRotatef(180F, 1, 0, 0);
                 GL11.glTranslatef(0F, -20F, 0F);
-                break;
-            default:
-                break;
+            }
+            default -> {}
         }
     }
 }
