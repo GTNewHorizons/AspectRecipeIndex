@@ -23,8 +23,11 @@ import thaumcraft.api.wands.WandRod;
 import thaumcraft.common.config.ConfigItems;
 import thaumcraft.common.items.ItemResource;
 import thaumcraft.common.items.wands.ItemWandCasting;
+import thaumcraft.common.lib.research.ResearchManager;
 
 public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
+
+    public static final String SCEPTRE = "SCEPTRE";
 
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
@@ -60,9 +63,9 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
      */
     private void loadAllWandRecipes() {
         for (WandRod rod : WandRod.rods.values()) {
-            if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
+            if (invalidResearch(rod.getResearch())) continue;
             for (WandCap cap : WandCap.caps.values()) {
-                if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
+                if (invalidResearch(cap.getResearch())) continue;
                 addWandAndScepterRecipe(rod, cap);
             }
         }
@@ -70,9 +73,9 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
     private void loadAllScepterRecipes() {
         for (WandRod rod : WandRod.rods.values()) {
-            if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
+            if (invalidResearch(rod.getResearch())) continue;
             for (WandCap cap : WandCap.caps.values()) {
-                if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
+                if (invalidResearch(cap.getResearch())) continue;
                 addScepterRecipe(createWand(rod, cap), rod, cap);
             }
         }
@@ -106,7 +109,8 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
             loadWandUsageRecipesForIngredient(ingredient);
             return;
         }
-        if (ingredient.getItem() instanceof ItemResource && ingredient.getItemDamage() == 15) {
+        if (ingredient.getItem() instanceof ItemResource && ingredient.getItemDamage() == 15
+                && ResearchManager.isResearchComplete(TCUtil.getUsername(), SCEPTRE)) {
             loadAllScepterRecipes();
             return;
         } else if (ingredient.getItem() instanceof ItemAspect && ItemAspect.getAspect(ingredient).isPrimal()) {
@@ -114,20 +118,20 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
             return;
         }
         for (WandRod rod : WandRod.rods.values()) {
-            if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
+            if (invalidResearch(rod.getResearch())) continue;
             if (OreDictionary.itemMatches(rod.getItem(), ingredient, true)) {
                 for (WandCap cap : WandCap.caps.values()) {
-                    if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
+                    if (invalidResearch(cap.getResearch())) continue;
                     addWandAndScepterRecipe(rod, cap);
                 }
                 break;
             }
         }
         for (WandCap cap : WandCap.caps.values()) {
-            if (ResearchCategories.getResearch(cap.getResearch()) == null) continue;
+            if (invalidResearch(cap.getResearch())) continue;
             if (OreDictionary.itemMatches(cap.getItem(), ingredient, true)) {
                 for (WandRod rod : WandRod.rods.values()) {
-                    if (ResearchCategories.getResearch(rod.getResearch()) == null) continue;
+                    if (invalidResearch(rod.getResearch())) continue;
                     addWandAndScepterRecipe(rod, cap);
                 }
                 break;
@@ -135,10 +139,16 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         }
     }
 
+    private static boolean invalidResearch(String research) {
+        return !research.equals("CAP_iron") && !research.equals("ROD_wood")
+            && (ResearchCategories.getResearch(research) == null
+            || !ResearchManager.isResearchComplete(TCUtil.getUsername(), research));
+    }
+
     private void addWandAndScepterRecipe(WandRod rod, WandCap cap) {
         ItemStack wand = createWand(rod, cap);
         new ArcaneWandCachedRecipe(rod, cap, wand, false, TCUtil.shouldShowWandRecipe(wand));
-        addScepterRecipe(wand, rod, cap);
+        if (ResearchManager.isResearchComplete(TCUtil.getUsername(), SCEPTRE)) addScepterRecipe(wand, rod, cap);
     }
 
     private void addScepterRecipe(ItemStack wand, WandRod rod, WandCap cap) {
@@ -227,7 +237,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
                     shouldShowRecipe,
                     NEIHelper.getWandAspectsWandCost(result));
 
-            if (isScepter) addResearch("SCEPTRE");
+            if (isScepter) addResearch(SCEPTRE);
             addResearch(cap.getResearch());
             addResearch(rod.getResearch());
         }
