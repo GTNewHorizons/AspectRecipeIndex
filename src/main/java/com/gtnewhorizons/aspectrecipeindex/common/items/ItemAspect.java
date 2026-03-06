@@ -52,6 +52,7 @@ public class ItemAspect extends Item {
     public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
         if (!world.isRemote) {
             Aspect aspect = getAspect(item);
+            if (aspect == null) return item;
             Thaumcraft.proxy.playerKnowledge.addAspectPool(player.getCommandSenderName(), aspect, (short) 1);
             ResearchManager.scheduleSave(player);
             if (player instanceof EntityPlayerMP playerMP && !(player instanceof FakePlayer)) {
