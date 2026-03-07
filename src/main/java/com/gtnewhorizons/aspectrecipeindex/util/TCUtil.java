@@ -227,7 +227,7 @@ public class TCUtil {
             list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites." + keysName) + ":");
             for (String researchKey : researchKeys) {
                 String researchName = ResearchCategories
-                        .getCategoryName(ResearchCategories.getResearch(researchKey).category) + " : "
+                        .getCategoryName(ResearchCategories.getResearch(researchKey).category) + ": "
                         + ResearchCategories.getResearch(researchKey).getName();
                 if (ResearchManager.isResearchComplete(playerName, researchKey)) {
                     if (researchKeys.length <= 10) {
