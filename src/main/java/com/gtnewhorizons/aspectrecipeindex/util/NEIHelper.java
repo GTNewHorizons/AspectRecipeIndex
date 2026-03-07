@@ -3,6 +3,8 @@ package com.gtnewhorizons.aspectrecipeindex.util;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
+import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.WandRecipeHandler;
+
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.wands.WandCap;
@@ -16,7 +18,12 @@ public class NEIHelper {
         AspectList costs = new AspectList();
         if (!(item.getItem() instanceof ItemWandCasting wand)) return costs;
         int cost = wand.getRod(item).getCraftCost() * wand.getCap(item).getCraftCost();
-        if (wand.isSceptre(item)) cost = cost * 3 / 2; // *= 1.5
+        if (wand.isSceptre(item)) {
+            cost = cost * 3 / 2; // *= 1.5
+        } else if (wand.getRod(item).getResearch().equals(WandRecipeHandler.ROD_WOOD)
+                && wand.getCap(item).getResearch().equals(WandRecipeHandler.CAP_IRON)) {
+                    return costs; // Stick + iron cap wand (not scepter) costs no vis
+                }
         for (Aspect aspect : Aspect.getPrimalAspects()) {
             costs.add(aspect, cost);
         }

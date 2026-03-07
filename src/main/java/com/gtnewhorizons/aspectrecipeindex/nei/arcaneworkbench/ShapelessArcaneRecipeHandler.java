@@ -13,11 +13,6 @@ import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
 
     @Override
-    public void loadTransferRects() {
-        TCUtil.loadTransferRects(this, 7);
-    }
-
-    @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals("item")) {
             this.loadCraftingRecipes((ItemStack) results[0]);

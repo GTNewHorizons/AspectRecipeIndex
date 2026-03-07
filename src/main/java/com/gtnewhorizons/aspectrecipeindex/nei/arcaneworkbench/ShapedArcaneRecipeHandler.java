@@ -111,7 +111,6 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
             setAspects(aspects);
             setIngredients(width, height, input);
             this.result = new PositionedStack(output, OUTPUT_X, OUTPUT_Y);
-            addAspects();
             addIfValid();
         }
 
@@ -147,7 +146,10 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
             }
         }
 
-        protected void addAspects() {
+        @Override
+        protected void setAspects(AspectList aspects) {
+            super.setAspects(aspects);
+            if (aspects.size() == 0) return;
             final int baseY = 115;
             final int spacing = 19;
 
