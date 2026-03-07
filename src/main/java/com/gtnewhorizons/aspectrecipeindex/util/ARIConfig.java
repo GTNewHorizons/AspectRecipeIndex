@@ -35,7 +35,7 @@ public class ARIConfig {
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showLockedRecipes").getBoolean();
 
         showInstabilityNumber = config
-                .get(GENERAL, "showInstabilityNumber", true, "Show the number of instability of infusion")
+                .get(GENERAL, "showInstabilityNumber", true, "Show the number of instability for infusion recipes")
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showInstabilityNumber").getBoolean();
 
         showResearchKey = config.get(GENERAL, "showResearchKey", true, "Show research key")

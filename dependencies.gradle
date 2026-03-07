@@ -1,14 +1,14 @@
 // Add your dependencies here
 
 dependencies {
-    implementation 'com.github.GTNewHorizons:NotEnoughItems:2.8.72-GTNH:dev'
+    implementation("com.github.GTNewHorizons:NotEnoughItems:2.8.72-GTNH:dev")
 
-    implementation 'thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev'
+    implementation("thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev")
 
-    implementation 'net.glease:tc4recipelib:1.5.37:dev'
+    implementation("net.glease:tc4recipelib:1.5.37:dev")
 
-    compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'curse.maven:automagy-222153:2285272'
+    compileOnly("org.jetbrains:annotations:23.0.0")
+    compileOnly("curse.maven:automagy-222153:2285272")
 
-    runtimeOnly 'com.github.GTNewHorizons:Baubles-Expanded:2.2.9-GTNH:dev'
+    runtimeOnly("com.github.GTNewHorizons:Baubles-Expanded:2.2.9-GTNH:dev")
 }
