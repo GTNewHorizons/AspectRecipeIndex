@@ -141,8 +141,8 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
     private static boolean invalidResearch(String research) {
         return !research.equals("CAP_iron") && !research.equals("ROD_wood")
-            && (ResearchCategories.getResearch(research) == null
-            || !ResearchManager.isResearchComplete(TCUtil.getUsername(), research));
+                && (ResearchCategories.getResearch(research) == null
+                        || !ResearchManager.isResearchComplete(TCUtil.getUsername(), research));
     }
 
     private void addWandAndScepterRecipe(WandRod rod, WandCap cap) {
