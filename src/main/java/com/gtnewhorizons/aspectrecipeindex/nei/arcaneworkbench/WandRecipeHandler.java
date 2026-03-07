@@ -5,18 +5,17 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
-import codechicken.nei.NEIServerUtils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
 
-import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.NEIHelper;
 import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
 
+import codechicken.nei.NEIServerUtils;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
@@ -48,7 +47,8 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         if (!ariClient.areWandRecipesDeleted()) {
             forEachRodCap((rod, cap) -> generateRecipes(rod, cap, VALID_RESEARCH), VALID_RESEARCH);
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapedArcaneRecipe recipe && recipe.getRecipeOutput().getItem() instanceof ItemWandCasting) {
+                if (o instanceof ShapedArcaneRecipe recipe
+                        && recipe.getRecipeOutput().getItem() instanceof ItemWandCasting) {
                     new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
                 }
             }
@@ -63,8 +63,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
             WandCap cap = wand.getCap(recipe.getRecipeOutput());
             if (rod != null && cap != null) {
                 final boolean shouldShowRecipe = (!wand.isSceptre(recipe.getRecipeOutput())
-                        || TCUtil.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
-                        && show(rod.getResearch());
+                        || TCUtil.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch()) && show(rod.getResearch());
                 new ArcaneShapedCachedRecipe(
                         3,
                         3,
@@ -83,23 +82,26 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         }
         WandRod rod = wand.getRod(result);
         WandCap cap = wand.getCap(result);
-        if (!validResearch(cap.getResearch()) || !validResearch(rod.getResearch())) {
-            return;
-        }
         boolean showRecipe = (!wand.isSceptre(result) || TCUtil.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
                 && show(rod.getResearch());
-        if (!ARIClient.getInstance().areWandRecipesDeleted()) {
+        if (ariClient.areWandRecipesDeleted()) {
+            loadShapedCraftingRecipesForWands(result, wand, showRecipe);
+            return;
+        }
+        // Find items like Casting Bracelets from Thaumic Bases
+        if (result.getItem().getClass() != ItemWandCasting.class) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
                 if (o instanceof ShapedArcaneRecipe recipe
-                    && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
+                        && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
                     new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
                     return;
                 }
             }
-            new ArcaneWandCachedRecipe(rod, cap, result, wand.isSceptre(result), showRecipe);
-        } else {
-            loadShapedCraftingRecipesForWands(result, wand, showRecipe);
         }
+        if (!validResearch(cap.getResearch()) || !validResearch(rod.getResearch())) {
+            return;
+        }
+        new ArcaneWandCachedRecipe(rod, cap, result, wand.isSceptre(result), showRecipe);
     }
 
     @Override
