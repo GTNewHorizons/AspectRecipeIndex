@@ -50,8 +50,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        // Thaumic Bases' Casting Bracelets extend ItemWandCasting but have regular ShapedArcaneRecipes
-        if (result.getItem() instanceof ItemWandCasting && !result.getUnlocalizedName().equals("tb.bracelet")) {
+        if (result.getItem() instanceof ItemWandCasting) {
             return;
         }
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
