@@ -9,6 +9,8 @@ import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
+import thaumcraft.api.research.ResearchCategories;
+import thaumcraft.api.research.ResearchItem;
 
 public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
 
@@ -75,6 +77,8 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
                     recipe.getRecipeOutput(),
                     shouldShowRecipe,
                     recipe.aspects);
+            ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
+            if (researchItem != null) addResearch(researchItem.key);
         }
 
         @Override
