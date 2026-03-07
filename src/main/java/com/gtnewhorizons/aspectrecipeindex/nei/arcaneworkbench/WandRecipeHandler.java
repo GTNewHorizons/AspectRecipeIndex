@@ -32,7 +32,6 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
     public static final String SCEPTRE = "SCEPTRE";
     public static final String ROD_WOOD = "ROD_wood";
     public static final String CAP_IRON = "CAP_iron";
-    public static final String TB_BRACELET = "item.tb.bracelet";
 
     private static final Predicate<String> VALID_RESEARCH = WandRecipeHandler::validResearch;
     private static final Predicate<String> VISIBLE_RESEARCH = WandRecipeHandler::show;
@@ -81,24 +80,22 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
     public void loadCraftingRecipes(ItemStack result) {
         if (!(result.getItem() instanceof ItemWandCasting wand)) {
             return;
-        } else if (result.getUnlocalizedName().startsWith(TB_BRACELET)) {
-            for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapedArcaneRecipe recipe
-                    && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
-                    new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
-                }
-            }
-            return;
         }
         WandRod rod = wand.getRod(result);
         WandCap cap = wand.getCap(result);
         if (!validResearch(cap.getResearch()) || !validResearch(rod.getResearch())) {
             return;
         }
-
         boolean showRecipe = (!wand.isSceptre(result) || TCUtil.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
                 && show(rod.getResearch());
         if (!ARIClient.getInstance().areWandRecipesDeleted()) {
+            for (Object o : ThaumcraftApi.getCraftingRecipes()) {
+                if (o instanceof ShapedArcaneRecipe recipe
+                    && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
+                    new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
+                    return;
+                }
+            }
             new ArcaneWandCachedRecipe(rod, cap, result, wand.isSceptre(result), showRecipe);
         } else {
             loadShapedCraftingRecipesForWands(result, wand, showRecipe);
