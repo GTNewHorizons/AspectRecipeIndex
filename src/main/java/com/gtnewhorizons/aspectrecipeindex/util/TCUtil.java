@@ -155,7 +155,8 @@ public class TCUtil {
     }
 
     public static boolean shouldShowAspect(Aspect aspect) {
-        return ARIConfig.showUndiscoveredAspects || ThaumcraftApiHelper.hasDiscoveredAspect(getUsername(), aspect);
+        return ARIConfig.showUndiscoveredAspectRecipes
+                || ThaumcraftApiHelper.hasDiscoveredAspect(getUsername(), aspect);
     }
 
     public static boolean shouldShowWandRecipe(ItemStack item) {

@@ -19,7 +19,8 @@ public class ARIConfig {
     public static boolean showLockedRecipes;
     public static boolean showInstabilityNumber;
     public static boolean showResearchKey;
-    public static boolean showUndiscoveredAspects;
+    public static boolean showUndiscoveredAspectNames;
+    public static boolean showUndiscoveredAspectRecipes;
 
     public static void init(File file) {
         config = new Configuration(file);
@@ -41,9 +42,21 @@ public class ARIConfig {
         showResearchKey = config.get(GENERAL, "showResearchKey", true, "Show research key")
                 .setLanguageKey(LANG_PREFIX + GENERAL + ".showResearchKey").getBoolean();
 
-        showUndiscoveredAspects = config
-                .get(GENERAL, "showUndiscoveredAspects", false, "Show names and recipes of undiscovered aspects in NEI")
-                .setLanguageKey(LANG_PREFIX + GENERAL + ".showUndiscoveredAspects").getBoolean();
+        showUndiscoveredAspectNames = config
+                .get(
+                        GENERAL,
+                        "showUndiscoveredAspectNames",
+                        false,
+                        "Show names of undiscovered aspects when hovered in NEI")
+                .setLanguageKey(LANG_PREFIX + GENERAL + ".showUndiscoveredAspectNames").getBoolean();
+
+        showUndiscoveredAspectRecipes = config
+                .get(
+                        GENERAL,
+                        "showUndiscoveredAspectRecipes",
+                        false,
+                        "Show combination recipes of undiscovered aspects in NEI")
+                .setLanguageKey(LANG_PREFIX + GENERAL + ".showUndiscoveredAspectRecipes").getBoolean();
 
         if (config.hasChanged()) {
             config.save();

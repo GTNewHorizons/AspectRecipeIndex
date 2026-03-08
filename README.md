@@ -25,7 +25,8 @@ A new and improved mod that adds NEI support for Thaumcraft, originally based on
   * The Wand Recipe handler also supports custom wand recipes. If a mod adds custom recipes for wands and removes the original ArcaneWandRecipe and ArcaneSceptreRecipe, it will display the new recipes instead.
 * Aspect Combination handler, to see what an aspect's parents are (or show if it is primal) and what aspects it can be combined with to create new ones.
   * Combinations are hidden until learned by default.
-    * Enable `showUndiscoveredAspects` to always show undiscovered aspects' combination recipes and names.
+    * Enable `showUndiscoveredAspectNames` to see names of undiscovered aspects when hovered anywhere in NEI.
+    * Enable `showUndiscoveredAspectRecipes` to show combination recipes for undiscovered aspects.
 * Items Containing Aspect handler, to quickly find any items you have scanned that contain a specific aspect.
 * Alchemy handler for recipes made in the Crucible and Thaumatorium.
 * Infusion handler which shows the required items and essentia as well as the infusion's instability.

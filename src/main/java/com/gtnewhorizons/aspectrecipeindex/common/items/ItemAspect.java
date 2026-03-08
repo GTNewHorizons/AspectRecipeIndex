@@ -79,7 +79,7 @@ public class ItemAspect extends Item {
         if (TCUtil.shouldShowAspect(aspect)) {
             TCUtil.getUsername();
             EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-            if (ARIConfig.showUndiscoveredAspects && player != null
+            if (ARIConfig.showUndiscoveredAspectNames && player != null
                     && !ThaumcraftApiHelper.hasDiscoveredAspect(player.getCommandSenderName(), aspect)) {
                 return StatCollector
                         .translateToLocalFormatted("aspectrecipeindex.aspect.undiscovered", aspect.getName());
@@ -101,7 +101,9 @@ public class ItemAspect extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack item, EntityPlayer player, List<String> tooltips, boolean advanced) {
         Aspect aspect = getAspect(item);
-        if (item == null || aspect == null || !TCUtil.shouldShowAspect(aspect)) {
+        if (item == null || aspect == null
+                || !ARIConfig.showUndiscoveredAspectNames
+                || !ThaumcraftApiHelper.hasDiscoveredAspect(TCUtil.getUsername(), aspect)) {
             tooltips.add(StatCollector.translateToLocal("tc.aspect.unknown"));
         } else {
             tooltips.add(StatCollector.translateToLocal(aspect.getLocalizedDescription()));
