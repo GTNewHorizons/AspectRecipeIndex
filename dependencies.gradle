@@ -11,4 +11,16 @@ dependencies {
     compileOnly("curse.maven:automagy-222153:2285272")
 
     runtimeOnly("com.github.GTNewHorizons:Baubles-Expanded:2.2.9-GTNH:dev")
+    runtimeOnly("com.github.GTNewHorizons:ThaumicBases:1.9.7:dev")
+    runtimeOnly("com.github.GTNewHorizons:ThaumicHorizons:1.8.11:dev")
+
+
 }
+project.getConfigurations().configureEach(c -> {
+    final DependencySubstitutions ds = c.getResolutionStrategy()
+        .getDependencySubstitution()
+    ds.substitute(ds.module("com.github.GTNewHorizons:Baubles"))
+        .using(ds.module("com.github.GTNewHorizons:Baubles-Expanded:2.2.6-GTNH"))
+        .withClassifier("dev")
+        .because("Baubles-Expanded replaces Baubles")
+})
