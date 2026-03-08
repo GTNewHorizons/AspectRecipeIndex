@@ -98,8 +98,8 @@ public class ItemAspect extends Item {
     public void addInformation(ItemStack item, EntityPlayer player, List<String> tooltips, boolean advanced) {
         Aspect aspect = getAspect(item);
         if (item == null || aspect == null
-                || !ARIConfig.showUndiscoveredAspectNames
-                || !ThaumcraftApiHelper.hasDiscoveredAspect(TCUtil.getUsername(), aspect)) {
+                || !(ARIConfig.showUndiscoveredAspectNames
+                        || ThaumcraftApiHelper.hasDiscoveredAspect(TCUtil.getUsername(), aspect))) {
             tooltips.add(StatCollector.translateToLocal("tc.aspect.unknown"));
         } else {
             tooltips.add(StatCollector.translateToLocal(aspect.getLocalizedDescription()));
