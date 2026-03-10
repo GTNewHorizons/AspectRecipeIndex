@@ -2,6 +2,8 @@ package com.gtnewhorizons.aspectrecipeindex.proxy;
 
 import net.minecraftforge.client.MinecraftForgeClient;
 
+import com.gtnewhorizon.gtnhlib.config.ConfigException;
+import com.gtnewhorizon.gtnhlib.config.ConfigurationManager;
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.client.render.ItemAspectRenderer;
@@ -18,7 +20,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        ARIConfig.init(event.getSuggestedConfigurationFile());
         FMLCommonHandler.instance().bus().register(ARIClient.getInstance());
         ARIClient.getInstance().registerResourceReloadListener();
         super.preInit(event);
@@ -29,10 +30,10 @@ public class ClientProxy extends CommonProxy {
         super.init(event);
         IMCForNEI.IMCSender();
         MinecraftForgeClient.registerItemRenderer(ModItems.itemAspect, new ItemAspectRenderer());
-    }
-
-    @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        super.postInit(event);
+        try {
+            ConfigurationManager.registerConfig(ARIConfig.class);
+        } catch (ConfigException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

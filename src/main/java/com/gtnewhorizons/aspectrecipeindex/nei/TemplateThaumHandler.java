@@ -58,15 +58,11 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
     }
 
     /**
-     * Use this to draw the backgrounds for the ingredients. This is not drawn if the
+     * Use this to draw the background graphics for the ingredients. This is only drawn if the ingredients are shown.
+     * {@link CachedThaumRecipe::shouldShowRecipe}
      */
     protected void drawIngredientBackground() {}
 
-    /**
-     * Changes made here must also be made in ShapedArcaneRecipeHandler and ShapelessArcaneRecipeHandler!
-     *
-     * @param recipeIndex The recipeIndex being drawn
-     */
     @Override
     public void drawExtras(int recipeIndex) {
         CachedRecipe cRecipe = arecipes.get(recipeIndex);
