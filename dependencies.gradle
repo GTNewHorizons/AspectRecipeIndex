@@ -1,26 +1,14 @@
 // Add your dependencies here
 
 dependencies {
-    implementation("com.github.GTNewHorizons:NotEnoughItems:2.8.72-GTNH:dev")
-
+    implementation("com.github.GTNewHorizons:NotEnoughItems:2.8.75-GTNH:dev")
     implementation("thaumcraft:Thaumcraft:1.7.10-4.2.3.5:dev")
-
     implementation("net.glease:tc4recipelib:1.5.37:dev")
 
+    compileOnly("com.github.GTNewHorizons:Salis-Arcana:1.1.49-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:GTNHLib:0.9.39:dev")
     compileOnly("org.jetbrains:annotations:23.0.0")
     compileOnly("curse.maven:automagy-222153:2285272")
 
-    runtimeOnly("com.github.GTNewHorizons:Baubles-Expanded:2.2.9-GTNH:dev")
-    runtimeOnly("com.github.GTNewHorizons:ThaumicBases:1.9.7:dev")
-    runtimeOnly("com.github.GTNewHorizons:ThaumicHorizons:1.8.11:dev")
-
-
+    runtimeOnlyNonPublishable("com.github.GTNewHorizons:Baubles-Expanded:2.2.11-GTNH:dev")
 }
-project.getConfigurations().configureEach(c -> {
-    final DependencySubstitutions ds = c.getResolutionStrategy()
-        .getDependencySubstitution()
-    ds.substitute(ds.module("com.github.GTNewHorizons:Baubles"))
-        .using(ds.module("com.github.GTNewHorizons:Baubles-Expanded:2.2.6-GTNH"))
-        .withClassifier("dev")
-        .because("Baubles-Expanded replaces Baubles")
-})

@@ -5,6 +5,7 @@ A new and improved mod that adds NEI support for Thaumcraft, originally based on
 * [NotEnoughItems](https://github.com/GTNewHorizons/NotEnoughItems)
 * [UniMixins](https://github.com/LegacyModdingMC/UniMixins)
 * [Thaumcraft 4](https://www.curseforge.com/minecraft/mc-mods/thaumcraft/files/all?page=1&pageSize=20&version=1.7.10&showAlphaFiles=hide)
+* [GTNHLib](https://github.com/GTNewHorizons/GTNHLib)
 * TC4RecipeLib (part of [TC4Tweaks](https://github.com/Glease/TC4Tweaks/))
 
 ## Features:
