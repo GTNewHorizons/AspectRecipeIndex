@@ -1,8 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
@@ -10,10 +7,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
-import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
-import com.gtnewhorizons.aspectrecipeindex.client.DrawUtils;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
@@ -34,11 +29,8 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspect(result);
-            if (TCUtil.shouldShowAspect(aspect)) {
-                new AspectCombinationRecipe(result);
-            }
+        if (result.getItem() instanceof ItemAspect && Util.shouldShowAspect(ItemAspect.getAspect(result))) {
+            new AspectCombinationRecipe(result);
         }
     }
 
@@ -47,7 +39,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
         if (inputId.equals("item")) loadCraftingRecipes((ItemStack) results[0]);
         if (!inputId.equals(this.getOverlayIdentifier())) return;
         for (Aspect aspect : Aspect.aspects.values()) {
-            if (!TCUtil.shouldShowAspect(aspect)) continue;
+            if (!Util.shouldShowAspect(aspect)) continue;
             ItemStack result = new ItemStack(ModItems.itemAspect);
             ItemAspect.setAspect(result, aspect);
             new AspectCombinationRecipe(result);
@@ -61,15 +53,13 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
         }
         Aspect aspect = ItemAspect.getAspect(ingredient);
 
-        if (!TCUtil.shouldShowAspect(aspect)) {
+        if (!Util.shouldShowAspect(aspect)) {
             return;
         }
         for (Aspect compoundAspect : Aspect.getCompoundAspects()) {
-            if (ArrayUtils.contains(compoundAspect.getComponents(), aspect)
-                    && TCUtil.shouldShowAspect(compoundAspect)) {
+            if (ArrayUtils.contains(compoundAspect.getComponents(), aspect) && Util.shouldShowAspect(compoundAspect)) {
                 ItemStack result = new ItemStack(ModItems.itemAspect);
                 ItemAspect.setAspect(result, compoundAspect);
-
                 new AspectCombinationRecipe(result);
             }
         }
@@ -86,32 +76,18 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
         AspectCombinationRecipe cachedRecipe = (AspectCombinationRecipe) arecipes.get(recipe);
         if (cachedRecipe.getIngredients().isEmpty()) {
             super.drawBackground(recipe);
-            int startY = 25;
             GuiDraw.drawStringC(
                     StatCollector.translateToLocal("tc.aspect.primal"),
-                    ARIClient.NEI_GUI_WIDTH / 2,
-                    startY,
-                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
+                    84,
+                    25,
+                    Util.getColor("aspectrecipeindex.gui.textColor"),
                     false);
         } else {
-            GL11.glTranslatef(-32F, 8, 0F);
+            GL11.glTranslatef(-33F, 8, 0F);
             super.drawBackground(recipe);
-            GL11.glTranslatef(32F, -8F, 0F);
-            int spaceX = 16;
-            int startX = ARIClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
-            int startY = 13;
-            DrawUtils.drawXYCenteredString(
-                    "=",
-                    startX + 24,
-                    startY + 8,
-                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                    false);
-            DrawUtils.drawXYCenteredString(
-                    "+",
-                    startX + 56,
-                    startY + 8,
-                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
-                    false);
+            GL11.glTranslatef(33F, -8F, 0F);
+            GuiDraw.drawStringC("=", 68, 17, Util.getColor("aspectrecipeindex.gui.textColor"), false);
+            GuiDraw.drawStringC("+", 100, 17, Util.getColor("aspectrecipeindex.gui.textColor"), false);
         }
     }
 
@@ -130,9 +106,6 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     private class AspectCombinationRecipe extends CachedThaumRecipe {
 
-        private final List<PositionedStack> ingredients = new ArrayList<>();
-        private final PositionedStack result;
-
         public AspectCombinationRecipe(ItemStack aspectStack) {
             super(true);
             arecipes.add(this);
@@ -143,12 +116,11 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
             ItemAspect.setAspect(aspectStack, aspect);
 
             if (aspect.isPrimal()) {
-                this.result = new PositionedStack(aspectStack, ARIClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
+                this.result = new PositionedStack(aspectStack, TemplateThaumHandler.OUTPUT_X, 5);
             } else {
-                int spaceX = 16;
-                int startX = ARIClient.NEI_GUI_WIDTH / 2 - (16 + (16 + spaceX) * 2) / 2;
+                int spaceX = 33;
 
-                this.result = new PositionedStack(aspectStack, startX, 13);
+                this.result = new PositionedStack(aspectStack, TemplateThaumHandler.OUTPUT_X - spaceX, 13);
 
                 Aspect[] components = aspect.getComponents();
 
@@ -157,19 +129,9 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
                 ItemStack secondIngred = new ItemStack(ModItems.itemAspect);
                 ItemAspect.setAspect(secondIngred, components[1]);
 
-                ingredients.add(new PositionedStack(firstIngred, startX + (spaceX + 16), 13));
-                ingredients.add(new PositionedStack(secondIngred, startX + (spaceX + 16) * 2, 13));
+                ingredients.add(new PositionedStack(firstIngred, TemplateThaumHandler.OUTPUT_X, 13));
+                ingredients.add(new PositionedStack(secondIngred, TemplateThaumHandler.OUTPUT_X + spaceX, 13));
             }
-        }
-
-        @Override
-        public PositionedStack getResult() {
-            return result;
-        }
-
-        @Override
-        public List<PositionedStack> getIngredients() {
-            return ingredients;
         }
     }
 }

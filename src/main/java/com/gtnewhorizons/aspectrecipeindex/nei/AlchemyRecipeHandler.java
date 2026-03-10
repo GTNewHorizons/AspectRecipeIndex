@@ -1,5 +1,6 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -7,7 +8,7 @@ import net.minecraft.util.StatCollector;
 
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
@@ -24,8 +25,8 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof CrucibleRecipe tcRecipe) {
-                    new AlchemyCachedRecipe(tcRecipe, TCUtil.shouldShowRecipe(tcRecipe.key));
+                if (o instanceof CrucibleRecipe recipe) {
+                    new AlchemyCachedRecipe(recipe, Util.shouldShowRecipe(recipe.key));
                 }
             }
         } else if (outputId.equals("item")) {
@@ -35,20 +36,29 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        for (CrucibleRecipe tcRecipe : TCUtil.getCrucibleRecipes(result)) {
-            new AlchemyCachedRecipe(tcRecipe, TCUtil.shouldShowRecipe(tcRecipe.key));
+        List<CrucibleRecipe> list = new ArrayList<>();
+        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
+            if (o instanceof CrucibleRecipe recipe
+                    && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
+                list.add(recipe);
+            }
+        }
+        for (CrucibleRecipe recipe : list) {
+            new AlchemyCachedRecipe(recipe, Util.shouldShowRecipe(recipe.key));
         }
     }
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        List<CrucibleRecipe> tcRecipeList = TCUtil.getCrucibleRecipesByInput(ingredient);
-
-        for (CrucibleRecipe tcRecipe : tcRecipeList) {
-            if (tcRecipe == null || !TCUtil.shouldShowRecipe(tcRecipe.key)) {
-                continue; // recipe input is not shown without research
+        for (Object r : ThaumcraftApi.getCraftingRecipes()) {
+            if (!(r instanceof CrucibleRecipe recipe)) continue;
+            if (ingredient.getItem() instanceof ItemAspect
+                    && !recipe.aspects.aspects.containsKey(ItemAspect.getAspect(ingredient))
+                    || !Util.shouldShowRecipe(recipe.key)) {
+                continue;
             }
-            new AlchemyCachedRecipe(tcRecipe, true);
+            if (!recipe.catalystMatches(ingredient) || !Util.shouldShowRecipe(recipe.key)) continue;
+            new AlchemyCachedRecipe(recipe, true);
         }
     }
 

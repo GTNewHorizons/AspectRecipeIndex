@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -75,7 +75,7 @@ public class ItemAspect extends Item {
         if (item == null || aspect == null) {
             return StatCollector.translateToLocal("tc.aspect.unknown");
         }
-        String username = TCUtil.getUsername();
+        String username = Util.getUsername();
         if (ThaumcraftApiHelper.hasDiscoveredAspect(username, aspect)) {
             return aspect.getName();
         }
@@ -99,7 +99,7 @@ public class ItemAspect extends Item {
         Aspect aspect = getAspect(item);
         if (item == null || aspect == null
                 || !(ARIConfig.showUndiscoveredAspectNames
-                        || ThaumcraftApiHelper.hasDiscoveredAspect(TCUtil.getUsername(), aspect))) {
+                        || ThaumcraftApiHelper.hasDiscoveredAspect(Util.getUsername(), aspect))) {
             tooltips.add(StatCollector.translateToLocal("tc.aspect.unknown"));
         } else {
             tooltips.add(StatCollector.translateToLocal(aspect.getLocalizedDescription()));

@@ -13,10 +13,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
-import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
@@ -38,8 +37,8 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
             "textures/gui/itemstack_background.png");
     private static final int STACKS_OVERLAY_WIDTH = 163;
     private static final int STACKS_OVERLAY_HEIGHT = 74;
-    private static final int STACKS_OVERLAY_START_X = ARIClient.NEI_GUI_WIDTH / 2 - STACKS_OVERLAY_WIDTH / 2;
-    private static final int STACKS_OVERLAY_START_Y = ARIClient.NEI_GUI_HEIGHT - STACKS_OVERLAY_HEIGHT;
+    private static final int STACKS_OVERLAY_START_X = TemplateThaumHandler.OUTPUT_X - STACKS_OVERLAY_WIDTH / 2 + 8;
+    private static final int STACKS_OVERLAY_START_Y = 116 - STACKS_OVERLAY_HEIGHT;
     private int ticks;
 
     private ITooltipLineHandler aspectsTooltipLineHandler = null;
@@ -57,7 +56,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     protected AspectList getAspectsForItemStack(ItemStack stack) {
         final int hash = ScanManager.generateItemHash(stack.getItem(), stack.getItemDamage());
-        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.getUsername());
+        final List<String> list = Thaumcraft.proxy.getScannedObjects().get(Util.getUsername());
 
         if (list != null && (list.contains("@" + hash) || list.contains("#" + hash))) {
             final AspectList tags = ThaumcraftCraftingManager.getObjectTags(stack);
@@ -104,14 +103,10 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack ingredient) {
-        if (ingredient.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspect(ingredient);
-
-            if (TCUtil.shouldShowAspect(aspect)) {
-                final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);
-                if (!containingItemStacks.isEmpty()) {
-                    new AspectCachedRecipe(aspect, containingItemStacks);
-                }
+        if (ingredient.getItem() instanceof ItemAspect && Util.shouldShowAspect(ItemAspect.getAspect(ingredient))) {
+            final List<ItemStack> containingItemStacks = findContainingItemStacks(ItemAspect.getAspect(ingredient));
+            if (!containingItemStacks.isEmpty()) {
+                new AspectCachedRecipe(ItemAspect.getAspect(ingredient), containingItemStacks);
             }
         }
     }
@@ -120,7 +115,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Aspect aspect : Aspect.aspects.values()) {
-                if (!TCUtil.shouldShowAspect(aspect)) {
+                if (!Util.shouldShowAspect(aspect)) {
                     continue;
                 }
                 final List<ItemStack> containingItemStacks = findContainingItemStacks(aspect);
@@ -143,7 +138,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
                             ThaumcraftHooks.getTotalToLoad()),
                     2,
                     32,
-                    ariClient.getColor("aspectrecipeindex.gui.loadingTextColor"),
+                    Util.getColor("aspectrecipeindex.gui.loadingTextColor"),
                     true);
         }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -182,7 +177,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     private List<ItemStack> findContainingItemStacks(Aspect aspect) {
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        List<String> list = Thaumcraft.proxy.getScannedObjects().get(TCUtil.getUsername());
+        List<String> list = Thaumcraft.proxy.getScannedObjects().get(Util.getUsername());
 
         if (list != null) {
             for (String itemStackCache : list) { // every string represents cache of itemstack, like @12921929129
@@ -232,7 +227,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
             final ItemStack aspectStack = new ItemStack(ModItems.itemAspect);
             ItemAspect.setAspect(aspectStack, aspect);
-            this.result = new PositionedStack(aspectStack, ARIClient.NEI_GUI_WIDTH / 2 - 16 / 2, 5);
+            this.result = new PositionedStack(aspectStack, TemplateThaumHandler.OUTPUT_X, 5);
             prereqs.add(new ResearchInfo(ResearchCategories.getResearch("ASPECTS"), true));
 
             arecipes.add(this);

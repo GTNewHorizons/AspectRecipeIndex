@@ -3,7 +3,7 @@ package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
@@ -25,7 +25,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
         }
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (o instanceof ShapelessArcaneRecipe recipe) {
-                new ArcaneShapelessCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
+                new ArcaneShapelessCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
             }
         }
     }
@@ -45,7 +45,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (o instanceof ShapelessArcaneRecipe recipe
                     && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
-                new ArcaneShapelessCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
+                new ArcaneShapelessCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
             }
         }
     }
@@ -59,7 +59,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
                     @Override
                     public boolean isValid() {
                         return super.isValid() && containsWithNBT(ingredients, ingredient)
-                                && TCUtil.shouldShowRecipe(recipe.getResearch());
+                                && Util.shouldShowRecipe(recipe.getResearch());
                     }
                 };
                 r.setIngredientPermutation(r.getIngredients(), ingredient);

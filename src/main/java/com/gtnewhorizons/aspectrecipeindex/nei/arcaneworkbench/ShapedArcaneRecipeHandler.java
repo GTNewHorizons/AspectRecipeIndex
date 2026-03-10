@@ -13,7 +13,7 @@ import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.nei.ResearchInfo;
 import com.gtnewhorizons.aspectrecipeindex.nei.TemplateThaumHandler;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
@@ -43,7 +43,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
         }
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (o instanceof ShapedArcaneRecipe recipe && !(recipe.output.getItem() instanceof ItemWandCasting)) {
-                new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
+                new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
             }
         }
     }
@@ -56,7 +56,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (o instanceof ShapedArcaneRecipe recipe
                     && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
-                new ArcaneShapedCachedRecipe(recipe, TCUtil.shouldShowRecipe(recipe.getResearch()));
+                new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
             }
         }
     }
@@ -72,8 +72,8 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
                 @Override
                 public boolean isValid() {
-                    return super.isValid() && containsWithNBT(ingredients, ingredient)
-                            && TCUtil.shouldShowRecipe(recipe.getResearch());
+                    return super.isValid() && contains(ingredients, ingredient)
+                            && Util.shouldShowRecipe(recipe.getResearch());
                 }
             };
             r.setIngredientPermutation(r.getIngredients(), ingredient);
@@ -102,6 +102,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     class ArcaneShapedCachedRecipe extends CachedThaumRecipe {
 
+        // Intentionally not added to ingredients unlike essentia in other handlers
         protected final List<PositionedStack> vis = new ArrayList<>();
 
         protected ArcaneShapedCachedRecipe(int width, int height, Object[] input, ItemStack output,
@@ -178,7 +179,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
             prereqs.add(
                     new ResearchInfo(
                             ResearchCategories.getResearch(name),
-                            ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), name)));
+                            ThaumcraftApiHelper.isResearchComplete(Util.getUsername(), name)));
         }
     }
 }

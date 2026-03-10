@@ -15,10 +15,9 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import com.gtnewhorizons.aspectrecipeindex.client.ARIClient;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
-import com.gtnewhorizons.aspectrecipeindex.util.TCUtil;
+import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
@@ -39,7 +38,6 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
     public static final int OUTPUT_X = 75;
     public static final int OUTPUT_Y = 5;
 
-    protected ARIClient ariClient = ARIClient.getInstance();
     protected ArrayList<AspectList> aspects = new ArrayList<>();
 
     @Override
@@ -70,7 +68,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
             int y = 38;
             for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                GuiDraw.drawStringC(text, 82, y, ariClient.getColor("aspectrecipeindex.gui.textColor"), false);
+                GuiDraw.drawStringC(text, 82, y, Util.getColor("aspectrecipeindex.gui.textColor"), false);
                 y += 11;
             }
         }
@@ -80,7 +78,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     2,
-                    ariClient.getColor("aspectrecipeindex.gui.textColor"),
+                    Util.getColor("aspectrecipeindex.gui.textColor"),
                     false);
             if (cRecipe instanceof CachedThaumRecipe cachedRecipe) {
                 int recipeY = 12;
@@ -91,7 +89,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             }
         }
 
-        TCUtil.drawSeeAllRecipesLabel(2);
+        drawSeeAllRecipesLabel(2);
     }
 
     @Override
@@ -115,12 +113,26 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
 
     @Override
     public void loadTransferRects() {
-        TCUtil.loadTransferRects(this, 0);
+        int stringLength = GuiDraw.getStringWidth(
+                EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"));
+        ((TemplateRecipeHandler) this).transferRects.add(
+                new RecipeTransferRect(
+                        new Rectangle(160 - stringLength, 0, stringLength + 2, 10),
+                        getOverlayIdentifier()));
     }
 
     @Override
     public String getGuiTexture() {
         return "nei:textures/gui/recipebg.png";
+    }
+
+    private static void drawSeeAllRecipesLabel(int y) {
+        GuiDraw.drawStringR(
+                EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"),
+                162,
+                y,
+                Util.getColor("aspectrecipeindex.gui.textColor"),
+                false);
     }
 
     public abstract class CachedThaumRecipe extends CachedRecipe {
@@ -140,7 +152,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                 prereqs.add(
                         new ResearchInfo(
                                 researchItem,
-                                ThaumcraftApiHelper.isResearchComplete(TCUtil.getUsername(), researchItem.key)));
+                                ThaumcraftApiHelper.isResearchComplete(Util.getUsername(), researchItem.key)));
             }
         }
 

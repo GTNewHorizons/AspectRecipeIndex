@@ -29,14 +29,12 @@ public class TCAspectStringifyHandler implements IStackStringifyHandler {
 
     @Override
     public ItemStack convertNBTToItemStack(NBTTagCompound nbtTag) {
-        if (!nbtTag.hasKey("TCAspect")) {
+        if (nbtTag == null || !nbtTag.hasKey("TCAspect")) {
             return null;
         }
 
-        Aspect aspect = Aspect.getAspect(nbtTag.getString("TCAspect"));
-        int amount = nbtTag.getInteger("Count");
-        ItemStack aspectStack = new ItemStack(ModItems.itemAspect, amount, 0);
-        ItemAspect.setAspect(aspectStack, aspect);
+        ItemStack aspectStack = new ItemStack(ModItems.itemAspect, nbtTag.getInteger("Count"));
+        ItemAspect.setAspect(aspectStack, Aspect.getAspect(nbtTag.getString("TCAspect")));
         return aspectStack;
     }
 
