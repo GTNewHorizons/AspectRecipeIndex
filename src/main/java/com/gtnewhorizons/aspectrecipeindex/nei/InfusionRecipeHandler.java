@@ -146,9 +146,9 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     protected void drawIngredientBackground() {
-        GL11.glTranslatef(-0.5F, -0.4F, 0);
-        GuiDraw.drawTexturedModalRect(27, 20, 207, 78, 42, 42); // Runic matrix drawing
-        GL11.glTranslatef(0.5F, 0.4F, 0);
+        GL11.glTranslatef(-0.5F, -1F, 0);
+        GuiDraw.drawTexturedModalRect(27, 21, 207, 78, 42, 42); // Runic matrix drawing
+        GL11.glTranslatef(0.5F, 1F, 0);
     }
 
     @Override
@@ -235,7 +235,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected void setIngredients(InfusionRecipe recipe) {
             EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipe);
             this.ingredients.clear();
-            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 62));
+            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 63));
             addSurroundingItems(r.getComponentsExt());
         }
 
