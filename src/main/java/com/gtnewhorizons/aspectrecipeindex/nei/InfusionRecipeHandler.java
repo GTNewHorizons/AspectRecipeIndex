@@ -263,7 +263,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         if (o instanceof ItemStack stack && stack.getItem() != null) return true;
         if (o instanceof Object[]arr && arr.length >= 2 && arr[0] instanceof String) return true;
         AspectRecipeIndex.LOGGER
-                .info("Invalid output for infusion recipe: {}. Please report to Aspect Recipe Index!", o);
+                .warn("Invalid output for infusion recipe: {}. Please report to Aspect Recipe Index!", o);
         return false;
     }
 
