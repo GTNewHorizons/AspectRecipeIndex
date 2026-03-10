@@ -1,19 +1,18 @@
 {
-	"modListVersion": 2,
-	"modList": [{
-		"modid": "${modId}",
-		"name": "${modName}",
-		"description": "New and improved compatibility for Thaumcraft in NEI.",
-		"version": "${modVersion}",
-		"mcversion": "${minecraftVersion}",
-		"url": "https://github.com/TimeConqueror/aspectrecipeindex",
-		"updateUrl": "",
-		"authorList": [
-			"Time_Conqueror",
+    "modListVersion": 2,
+    "modList": [{
+        "modid": "${modId}",
+        "name": "${modName}",
+        "description": "New and improved compatibility for Thaumcraft in NEI.",
+        "version": "${modVersion}",
+        "mcversion": "${minecraftVersion}",
+        "url": "https://github.com/GTNewHorizons/AspectRecipeIndex",
+        "updateUrl": "",
+        "authorList": [
             "koolkrafter5"
-		],
-		"credits": "",
-		"logoFile": "",
-		"screenshots": []
-	}]
+        ],
+        "credits": "Azanor's Thaumcraft, jan2048's Thaumcraft NEI Plugin, and Time_Conqueror's TCNEIAdditions",
+        "logoFile": "",
+        "screenshots": []
+    }]
 }
