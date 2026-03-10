@@ -2,44 +2,47 @@ package com.gtnewhorizons.aspectrecipeindex.mixins.late.thaumcraft;
 
 import java.util.Map;
 
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.gtnewhorizons.aspectrecipeindex.client.ThaumcraftHooks;
 
 import thaumcraft.client.gui.MappingThread;
 
-@Mixin(value = MappingThread.class)
+@Mixin(value = MappingThread.class, remap = false)
 public class MappingThreadMixin {
 
-    @Shadow(remap = false)
+    @Shadow
     Map<String, Integer> idMappings;
 
-    @Inject(method = "run", at = @At(value = "HEAD"), remap = false)
+    /**
+     * @author TimeConqueror
+     * @reason Count iterations of idMappings for loading progress of Items Containing Aspect handler.
+     */
+    @Inject(method = "run", at = @At(value = "HEAD"))
     public void retrieveTotalToLoad(CallbackInfo ci) {
         ThaumcraftHooks.setTotalToLoad(idMappings.size());
     }
 
     /**
-     * Loaded in the start of main while-loop before try-catch block.
+     * @author koolkrafter5
+     * @reason Count iterations of idMappings for loading progress of Items Containing Aspect handler.
      */
     @Inject(
             method = "run",
-            at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.AFTER),
-            slice = @Slice(
-                    to = @At(
-                            value = "INVOKE",
-                            target = "Lnet/minecraft/item/Item;getItemById(I)Lnet/minecraft/item/Item;")))
-    public void onEveryLoadedItem(CallbackInfo ci) {
+            at = @At(value = "INVOKE", target = "Ljava/util/Iterator;next()Ljava/lang/Object;", ordinal = 0))
+    private void onLoopIteration(CallbackInfo ci) {
         ThaumcraftHooks.incrementLoadedItems();
     }
 
-    @Inject(method = "run", at = @At(value = "TAIL"), remap = false)
+    /**
+     * @author TimeConqueror
+     * @reason Count iterations of idMappings for loading progress of Items Containing Aspect handler.
+     */
+    @Inject(method = "run", at = @At(value = "TAIL"))
     public void onAllDataLoaded(CallbackInfo ci) {
         ThaumcraftHooks.setAllDataLoaded();
     }

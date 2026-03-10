@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -54,13 +55,14 @@ public class ClientTickEventsFMLMixin {
         final List<String> list = Thaumcraft.proxy.getScannedObjects().get(player.getCommandSenderName());
 
         if (list != null && (list.contains("@" + hash) || list.contains("#" + hash))) {
-            renderAspects(gui, player, stack);
+            aspectRecipeIndex$renderAspects(gui, player, stack);
             ci.cancel();
         }
 
     }
 
-    private static void renderAspects(GuiContainer gui, EntityPlayer player, ItemStack stack) {
+    @Unique
+    private static void aspectRecipeIndex$renderAspects(GuiContainer gui, EntityPlayer player, ItemStack stack) {
         AspectList tags = ThaumcraftCraftingManager.getObjectTags(stack);
         tags = ThaumcraftCraftingManager.getBonusTags(stack, tags);
 
