@@ -1,6 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -198,13 +197,12 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         return stack;
     }
 
-    @SuppressWarnings("unchecked")
     public void loadShapedCraftingRecipesForWands(ItemStack wandStack, ItemWandCasting wand) {
         WandRod rod = wand.getRod(wandStack);
         WandCap cap = wand.getCap(wandStack);
         boolean isSceptre = wand.isSceptre(wandStack);
 
-        for (Object o : (List<Object>) ThaumcraftApi.getCraftingRecipes()) {
+        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (!(o instanceof ShapedArcaneRecipe recipe)) continue;
 
             ItemStack output = recipe.output;
