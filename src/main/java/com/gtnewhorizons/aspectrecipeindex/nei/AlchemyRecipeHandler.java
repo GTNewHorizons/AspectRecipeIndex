@@ -51,14 +51,12 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(r instanceof CrucibleRecipe recipe)) continue;
+            if (!(r instanceof CrucibleRecipe recipe) || !Util.shouldShowRecipe(recipe.key)) continue;
             if (ingredient.getItem() instanceof ItemAspect
-                    && !recipe.aspects.aspects.containsKey(ItemAspect.getAspect(ingredient))
-                    || !Util.shouldShowRecipe(recipe.key)) {
-                continue;
+                    && recipe.aspects.aspects.containsKey(ItemAspect.getAspect(ingredient))
+                    || recipe.catalystMatches(ingredient)) {
+                new AlchemyCachedRecipe(recipe, true);
             }
-            if (!recipe.catalystMatches(ingredient) || !Util.shouldShowRecipe(recipe.key)) continue;
-            new AlchemyCachedRecipe(recipe, true);
         }
     }
 
