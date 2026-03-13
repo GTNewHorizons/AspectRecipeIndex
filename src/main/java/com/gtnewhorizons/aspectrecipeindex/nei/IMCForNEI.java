@@ -12,16 +12,18 @@ public class IMCForNEI {
 
     public static void IMCSender() {
         // Arcane Crafting Table
-        registerHandlerInfo(ShapedArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 138);
-        registerHandlerInfo(WandRecipeHandler.class.getName(), "Thaumcraft:WandCasting", 138);
-        registerHandlerInfo(ShapelessArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 138);
+        registerHandlerInfo(ShapedArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 144);
+        registerHandlerInfo(WandRecipeHandler.class.getName(), "Thaumcraft:WandCasting", 144);
+        registerHandlerInfo(ShapelessArcaneRecipeHandler.class.getName(), "Thaumcraft:blockTable:15", 144);
         // Crucible
         registerHandlerInfo(AlchemyRecipeHandler.class.getName(), "Thaumcraft:blockMetalDevice", 136);
         // Runic Matrix
         registerHandlerInfo(InfusionRecipeHandler.class.getName(), "Thaumcraft:blockStoneDevice:2", 152);
         registerHandlerInfo(ItemsContainingAspectHandler.class.getName(), "Thaumcraft:ItemResearchNotes", 147);
+        // Research Table
         registerHandlerInfo(AspectCombinationHandler.class.getName(), "Thaumcraft:blockTable:2", 43);
 
+        // Arcane Crafting Table
         registerCatalystInfo(new ShapedArcaneRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");
         registerCatalystInfo(new WandRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");
         registerCatalystInfo(new ShapelessArcaneRecipeHandler().getOverlayIdentifier(), "Thaumcraft:blockTable:15");

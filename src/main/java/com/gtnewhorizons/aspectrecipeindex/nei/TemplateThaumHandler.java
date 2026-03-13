@@ -48,7 +48,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glScalef(1.75F, 1.75F, 1.0F);
         GL11.glTranslatef(0.3F, 0.4F, 0);
-        GuiDraw.drawTexturedModalRect(39, 0, 20, 4, 16, 16); // Result item icon
+        GuiDraw.drawTexturedModalRect(39, -1, 20, 3, 16, 17); // Result item icon
         GL11.glTranslatef(-0.3F, -0.4F, 0);
         if (recipe.shouldShowRecipe) drawIngredientBackground();
         GL11.glDisable(GL11.GL_BLEND);

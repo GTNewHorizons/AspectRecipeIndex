@@ -30,7 +30,7 @@ import thaumcraft.common.items.wands.ItemWandCasting;
 public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     public final static int[] XPOS = new int[] { 47, 75, 103 };
-    public final static int[] YPOS = new int[] { 33, 60, 87 };
+    public final static int[] YPOS = new int[] { 38, 65, 92 };
 
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
@@ -92,11 +92,11 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public void drawIngredientBackground() {
-        GuiDraw.drawTexturedModalRect(20, 13, 112, 15, 52, 52); // Crafting grid
+        GuiDraw.drawTexturedModalRect(20, 16, 112, 15, 52, 52); // Crafting grid
         GL11.glPushMatrix();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.4F);
         GL11.glScalef(1.25F, 1.25F, 1.0F);
-        GuiDraw.drawTexturedModalRect(0, 49, 68, 76, 12, 12); // Wand icon
+        GuiDraw.drawTexturedModalRect(0, 52, 68, 76, 12, 12); // Wand icon
         GL11.glPopMatrix();
     }
 
@@ -150,7 +150,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
         protected void setAspects(AspectList aspects) {
             super.setAspects(aspects);
             if (aspects.size() == 0) return;
-            final int baseY = 115;
+            final int baseY = 122;
             final int spacing = 19;
 
             Aspect[] sorted = aspects.getAspectsSortedAmount();
