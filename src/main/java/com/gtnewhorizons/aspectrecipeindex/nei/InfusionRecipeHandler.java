@@ -230,7 +230,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             }
             if (recipe == null) continue;
 
-            if (recipe.getCentral() == null || validOutput(recipe.getRecipeOutput())) {
+            if (recipe.getCentral() == null || !validOutput(recipe.getRecipeOutput())) {
                 continue;
             }
 
