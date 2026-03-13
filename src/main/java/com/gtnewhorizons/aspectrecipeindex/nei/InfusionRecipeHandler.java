@@ -211,6 +211,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     private static List<InfusionRecipe> getInfusionRecipesByInput(ItemStack input) {
         final ArrayList<InfusionRecipe> list = new ArrayList<>();
 
+        List<Aspect> inputAspects = Util.getEssentiaFromItem(input);
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
             if (!(r instanceof InfusionRecipe raw)) continue;
 
@@ -231,7 +232,6 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 list.add(recipe);
                 continue;
             }
-            List<Aspect> inputAspects = Util.getEssentiaFromItem(input);
             if (recipe.getAspects() != null && recipe.getAspects().aspects != null && !inputAspects.isEmpty()) {
                 for (Aspect a : inputAspects) {
                     if (recipe.getAspects().aspects.containsKey(a)) {
