@@ -44,11 +44,11 @@ The mod currently mostly only contains localization for English. If you know ano
 ### Other Supported Mods
 Normal features added by most Thaumcraft addons (e.g. new aspects, recipes, and wand components) should automatically be supported without any extra changes. The following mods have special features that need explicit support:
 * Automagy
-  * Kill + Scan tasks are properly shown in the research widget if required.
+  * Kill + Scan requirements are properly shown in the research widget.
 
 Aspect Recipe Index **will** function in an environment with the original TCNEIPlugin (with or without TCNEIAdditions), but you will see **duplicate recipes** for items due to both mods registering their own handlers. For best results, remove TCNEIPlugin and TCNEIAdditions if they are present. If there are any features missing, please feel free to make a feature suggestion on the Issues tab.
 
-Mods written to support features from the original TCNEIPlugin (interacting with its aspect items, autofilling items in crafting grids with NEI's overlay button for Arcane Workbench handlers, etc.) ***will need explicit support added for Aspect Recipe Index***.
+Mods written to support features from the original TCNEIPlugin (interacting with its aspect items, autofilling items in crafting grids with NEI's overlay button for Arcane Workbench handlers, etc.) ***will need explicit support added for Aspect Recipe Index***. Many have already recieved compat, but if you find one has been missed, please make an issue reporting it.
 
 ### License
 
