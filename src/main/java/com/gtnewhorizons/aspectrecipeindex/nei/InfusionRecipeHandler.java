@@ -245,14 +245,15 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     }
 
     private static boolean outerInputsContainIngredient(ItemStack input, EnhancedInfusionRecipe recipe) {
-        return recipe.getComponentsExt() != null && !recipe.getComponentsExt().isEmpty()
-                && recipe.getComponentsExt().stream().anyMatch(c -> {
-                    try {
-                        return c != null && c.matches(input);
-                    } catch (Throwable t) {
-                        return false;
-                    }
-                });
+        List<RecipeIngredient> components = recipe.getComponentsExt();
+        if (components != null && !components.isEmpty()) {
+            for (RecipeIngredient c : components) {
+                try {
+                    if (c != null && c.matches(input)) return true;
+                } catch (Throwable ignored) {}
+            }
+        }
+        return false;
     }
 
     // TODO Figure out if anything else is valid
