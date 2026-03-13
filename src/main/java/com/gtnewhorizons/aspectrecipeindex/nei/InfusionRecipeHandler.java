@@ -225,11 +225,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             } catch (RuntimeException e) {
                 continue;
             }
-            if (recipe == null) continue;
-
-            if (recipe.getCentral() == null || !validOutput(recipe.getRecipeOutput())) {
-                continue;
-            }
+            if (recipe == null || recipe.getCentral() == null || !validOutput(recipe.getRecipeOutput())) continue;
 
             if (recipe.getCentral().matches(input) || outerInputsContainIngredient(input, recipe)) {
                 list.add(recipe);
