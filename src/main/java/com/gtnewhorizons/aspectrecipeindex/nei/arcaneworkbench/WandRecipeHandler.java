@@ -85,10 +85,8 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         }
         WandRod rod = wand.getRod(result);
         WandCap cap = wand.getCap(result);
-        boolean showRecipe = (!wand.isSceptre(result) || Util.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
-                && show(rod.getResearch());
         if (wandRecipesDeleted) {
-            loadShapedCraftingRecipesForWands(result, wand, showRecipe);
+            loadShapedCraftingRecipesForWands(result, wand);
             return;
         }
         // Find items like Casting Bracelets from Thaumic Bases
@@ -104,7 +102,13 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         if (!validResearch(cap.getResearch()) || !validResearch(rod.getResearch())) {
             return;
         }
-        new ArcaneWandCachedRecipe(rod, cap, result, wand.isSceptre(result), showRecipe);
+        new ArcaneWandCachedRecipe(
+                rod,
+                cap,
+                result,
+                wand.isSceptre(result),
+                (!wand.isSceptre(result) || Util.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
+                        && show(rod.getResearch()));
     }
 
     @Override
@@ -195,7 +199,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadShapedCraftingRecipesForWands(ItemStack wandStack, ItemWandCasting wand, boolean shouldShowRecipe) {
+    public void loadShapedCraftingRecipesForWands(ItemStack wandStack, ItemWandCasting wand) {
         WandRod rod = wand.getRod(wandStack);
         WandCap cap = wand.getCap(wandStack);
         boolean isSceptre = wand.isSceptre(wandStack);
@@ -215,7 +219,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
             if (!outputRod.getTag().equals(rod.getTag()) || !outputCap.getTag().equals(cap.getTag())) continue;
 
             // this needs to be ArcaneShapedCachedRecipe instead of ArcaneWandCachedRecipe because of modified recipe
-            new ArcaneShapedCachedRecipe(recipe, shouldShowRecipe);
+            new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.research));
         }
     }
 
