@@ -382,7 +382,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
         private void setIngredients(List<ItemStack> items, int charge) {
             ingredients.clear();
-            ingredients.add(new PositionedStack(items, OUTPUT_X, 62));
+            ingredients.add(new PositionedStack(items, OUTPUT_X, 63));
             List<RecipeIngredient> outer = new ArrayList<>();
             outer.add(RecipeIngredient.item(false, new ItemStack(Items.diamond)));
             for (int i = 0; i < charge; i++) {
