@@ -267,7 +267,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
                 && (ThaumcraftApiHelper.isResearchComplete(Util.getUsername(), "SCEPTRE") || !wand.isSceptre(item)));
     }
 
-    private class ArcaneWandCachedRecipe extends ArcaneShapedCachedRecipe {
+    protected class ArcaneWandCachedRecipe extends ArcaneShapedCachedRecipe {
 
         public ArcaneWandCachedRecipe(WandRod rod, WandCap cap, ItemStack result, boolean isScepter,
                 boolean shouldShowRecipe) {

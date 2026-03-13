@@ -104,7 +104,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
         }
     }
 
-    private class AspectCombinationRecipe extends CachedThaumRecipe {
+    protected class AspectCombinationRecipe extends CachedThaumRecipe {
 
         public AspectCombinationRecipe(ItemStack aspectStack) {
             super(true);

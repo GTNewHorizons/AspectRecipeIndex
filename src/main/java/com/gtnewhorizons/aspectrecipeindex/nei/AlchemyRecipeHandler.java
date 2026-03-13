@@ -84,7 +84,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
         return "thaumcraft.alchemy";
     }
 
-    private class AlchemyCachedRecipe extends CachedThaumRecipe {
+    protected class AlchemyCachedRecipe extends CachedThaumRecipe {
 
         public AlchemyCachedRecipe(CrucibleRecipe recipe, boolean shouldShowRecipe) {
             super(shouldShowRecipe);

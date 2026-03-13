@@ -100,7 +100,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
         GL11.glPopMatrix();
     }
 
-    class ArcaneShapedCachedRecipe extends CachedThaumRecipe {
+    protected class ArcaneShapedCachedRecipe extends CachedThaumRecipe {
 
         // Intentionally not added to ingredients unlike essentia in other handlers
         protected final List<PositionedStack> vis = new ArrayList<>();

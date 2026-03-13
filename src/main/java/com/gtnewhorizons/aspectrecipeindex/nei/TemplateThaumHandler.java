@@ -135,7 +135,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                 false);
     }
 
-    public abstract class CachedThaumRecipe extends CachedRecipe {
+    protected abstract class CachedThaumRecipe extends CachedRecipe {
 
         protected final List<ResearchInfo> prereqs = new ArrayList<>();
         protected final boolean shouldShowRecipe;

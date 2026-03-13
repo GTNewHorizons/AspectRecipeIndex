@@ -206,7 +206,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
         return stacks;
     }
 
-    private class AspectCachedRecipe extends CachedThaumRecipe {
+    protected class AspectCachedRecipe extends CachedThaumRecipe {
 
         private static final int STACKS_COUNT = 36;
         private final Aspect aspect;

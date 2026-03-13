@@ -67,7 +67,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
         }
     }
 
-    private class ArcaneShapelessCachedRecipe extends ArcaneShapedCachedRecipe {
+    protected class ArcaneShapelessCachedRecipe extends ArcaneShapedCachedRecipe {
 
         public ArcaneShapelessCachedRecipe(ShapelessArcaneRecipe recipe, boolean shouldShowRecipe) {
             super(

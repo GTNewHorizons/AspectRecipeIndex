@@ -265,7 +265,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         return false;
     }
 
-    private class InfusionCachedRecipe extends CachedThaumRecipe {
+    protected class InfusionCachedRecipe extends CachedThaumRecipe {
 
         private final int instability;
 
