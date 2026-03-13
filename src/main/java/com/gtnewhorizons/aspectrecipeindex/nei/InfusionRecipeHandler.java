@@ -188,12 +188,19 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     }
 
     private static boolean isRunicUpgradeIngredient(ItemStack ingredient) {
-        if (ingredient.getItem() instanceof ItemAspect) {
-            final Aspect aspect = ItemAspect.getAspect(ingredient);
-            return aspect == Aspect.ENERGY || aspect == Aspect.ARMOR || aspect == Aspect.MAGIC;
+        if (ingredient.getItem() == Items.diamond
+                || (ingredient.getItem() == ConfigItems.itemResource && ingredient.getItemDamage() == 14)) {
+            return true;
         }
-        return ingredient.getItem() == Items.diamond
-                || (ingredient.getItem() == ConfigItems.itemResource && ingredient.getItemDamage() == 14);
+        List<Aspect> inputAspects = Util.getEssentiaFromItem(ingredient);
+        if (!inputAspects.isEmpty()) {
+            for (Aspect a : inputAspects) {
+                if (a == Aspect.ENERGY || a == Aspect.ARMOR || a == Aspect.MAGIC) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void addRunicItem(IRunicArmor runic, ItemStack stack) {
@@ -203,16 +210,6 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     private static List<InfusionRecipe> getInfusionRecipesByInput(ItemStack input) {
         final ArrayList<InfusionRecipe> list = new ArrayList<>();
-
-        Aspect inputAspect = null;
-        if (input.getItem() instanceof ItemAspect) {
-            Aspect aspect = ItemAspect.getAspect(input);
-            if (aspect != null) {
-                inputAspect = aspect;
-            } else {
-                return list;
-            }
-        }
 
         for (Object r : ThaumcraftApi.getCraftingRecipes()) {
             if (!(r instanceof InfusionRecipe raw)) continue;
@@ -234,16 +231,20 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                 continue;
             }
 
-            if (recipe.getAspects() != null && recipe.getAspects().aspects != null
-                    && recipe.getAspects().aspects.containsKey(inputAspect)) {
+            if (recipe.getCentral().matches(input) || outerInputsContainIngredient(input, recipe)) {
                 list.add(recipe);
-            } else if (recipe.getCentral().matches(input)) {
-                list.add(recipe);
-            } else if (outerInputsContainIngredient(input, recipe)) {
-                list.add(recipe);
+                continue;
+            }
+            List<Aspect> inputAspects = Util.getEssentiaFromItem(input);
+            if (recipe.getAspects() != null && recipe.getAspects().aspects != null && !inputAspects.isEmpty()) {
+                for (Aspect a : inputAspects) {
+                    if (recipe.getAspects().aspects.containsKey(a)) {
+                        list.add(recipe);
+                        break;
+                    }
+                }
             }
         }
-
         return list;
     }
 

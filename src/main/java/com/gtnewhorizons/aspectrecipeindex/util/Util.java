@@ -1,20 +1,27 @@
 package com.gtnewhorizons.aspectrecipeindex.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IEssentiaContainerItem;
+import thaumcraft.common.items.ItemWispEssence;
 
 public class Util {
 
@@ -65,5 +72,22 @@ public class Util {
 
     public static int getColor(String key) {
         return colors.get(key) != null ? colors.get(key) : 0x000000;
+    }
+
+    public static List<Aspect> getEssentiaFromItem(ItemStack input) {
+        List<Aspect> inputAspects = new ArrayList<>();
+        if (input.getItem() instanceof ItemAspect) {
+            Aspect aspect = ItemAspect.getAspect(input);
+            if (aspect != null) {
+                inputAspects.add(aspect);
+            }
+        } else if (!(input.getItem() instanceof ItemWispEssence)
+                && input.getItem() instanceof IEssentiaContainerItem container) {
+                    AspectList aspects = container.getAspects(input);
+                    if (aspects != null && aspects.size() > 0) {
+                        inputAspects.addAll(aspects.aspects.keySet());
+                    }
+                }
+        return inputAspects;
     }
 }
