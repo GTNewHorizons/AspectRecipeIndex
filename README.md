@@ -11,6 +11,7 @@ A new and improved mod that adds NEI support for Thaumcraft, originally based on
 ## Features:
 * Items representing each aspect that are visible in NEI.
   * Searching for their recipes and uses shows the relevant recipes using that aspect as vis or essentia in all handlers.
+    * Searching for uses of items that contain essentia (phials, jars, etc.) will show uses for that essentia in the crucible and infusion handlers.
   * Aspect items are automatically generated based on all existing aspects and automatically account for any aspects added by Thaumcraft's addons.
   * Right-click with one in hand to consume it and instantly gain a research point. Works to discover undiscovered aspects. They are unobtainable without cheating by default, but it should be possible for modpack makers to add real recipes for them if desired.
 * All handlers show the required research for their recipes
