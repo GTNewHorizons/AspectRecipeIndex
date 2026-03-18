@@ -19,7 +19,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
         name = AspectRecipeIndex.NAME,
         version = AspectRecipeIndex.VERSION,
         dependencies = AspectRecipeIndex.DEPENDENCIES,
-        guiFactory = AspectRecipeIndex.GUI_FACTORY,
         acceptableRemoteVersions = "*",
         acceptedMinecraftVersions = "[1.7.10]")
 public class AspectRecipeIndex {
@@ -28,7 +27,6 @@ public class AspectRecipeIndex {
     public static final String NAME = "Aspect Recipe Index";
     public static final String VERSION = Tags.VERSION;
     public static final String DEPENDENCIES = "required-after:Thaumcraft;required-after:gtnhmixins;after:Automagy";
-    public static final String GUI_FACTORY = "com.gtnewhorizons.aspectrecipeindex.client.gui.GuiFactory";
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
