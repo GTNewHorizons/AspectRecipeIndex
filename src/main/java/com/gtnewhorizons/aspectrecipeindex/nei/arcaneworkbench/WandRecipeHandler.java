@@ -172,21 +172,30 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         }
     }
 
-    private void makeScepter(ItemStack wand) {
+    /**
+     * Turns the passed wand into a scepter. Adds the "sceptre" nbt tag and adjusts the metadata accordingly.
+     */
+    public static void makeScepter(ItemStack wand) {
         wand.setTagInfo("sceptre", new NBTTagByte((byte) 1));
         Items.feather.setDamage(wand, wand.getItemDamage() * 3 / 2);
     }
 
-    private static boolean validResearch(String research) {
+    public static boolean validResearch(String research) {
         return research.equals(ROD_WOOD) || research.equals(CAP_IRON)
                 || ResearchCategories.getResearch(research) != null;
     }
 
-    private static boolean show(String research) {
+    /**
+     * @return whether a recipe that requires this research is valid and should be shown to the player.
+     */
+    public static boolean show(String research) {
         return validResearch(research) && Util.shouldShowRecipe(research);
     }
 
-    private ItemStack createWand(WandRod rod, WandCap cap) {
+    /**
+     * @return a new wand with from the provided rod and cap with the correct metadata.
+     */
+    public static ItemStack createWand(WandRod rod, WandCap cap) {
         ItemStack stack = new ItemStack(ConfigItems.itemWandCasting);
         ItemWandCasting wand = (ItemWandCasting) stack.getItem();
         assert wand != null;

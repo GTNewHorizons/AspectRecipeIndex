@@ -8,6 +8,7 @@ import com.gtnewhorizons.aspectrecipeindex.util.Util;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
 import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
@@ -79,6 +80,11 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
                     recipe.aspects);
             ResearchItem researchItem = ResearchCategories.getResearch(recipe.getResearch());
             if (researchItem != null) addResearch(researchItem.key);
+        }
+
+        protected ArcaneShapelessCachedRecipe(Object[] input, ItemStack output, boolean shouldShowRecipe,
+                AspectList aspects) {
+            super(Math.max(input.length, 3), input.length / 3 + 1, input, output, shouldShowRecipe, aspects);
         }
 
         @Override
