@@ -33,16 +33,16 @@ public class NEIConfig implements IConfigureNEI {
         API.registerUsageHandler(new InfusionRecipeHandler());
 
         ArcaneSlotPositioner positioner = new ArcaneSlotPositioner();
-        API.registerGuiOverlay(GuiArcaneWorkbench.class, "thaumcraft.arcane.shaped", positioner);
-        API.registerGuiOverlay(GuiArcaneWorkbench.class, "thaumcraft.arcane.shapeless", positioner);
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, ShapedArcaneRecipeHandler.OVERLAY, positioner);
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, ShapelessArcaneRecipeHandler.OVERLAY, positioner);
+        API.registerGuiOverlay(GuiArcaneWorkbench.class, WandRecipeHandler.OVERLAY, positioner);
         API.registerGuiOverlay(GuiArcaneWorkbench.class, "crafting", positioner);
-        API.registerGuiOverlay(GuiArcaneWorkbench.class, "thaumcraft.wands", positioner);
 
         ArcaneOverlayHandler handler = new ArcaneOverlayHandler();
-        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "thaumcraft.arcane.shaped");
-        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "thaumcraft.arcane.shapeless");
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, ShapedArcaneRecipeHandler.OVERLAY);
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, ShapelessArcaneRecipeHandler.OVERLAY);
+        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, WandRecipeHandler.OVERLAY);
         API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "crafting");
-        API.registerGuiOverlayHandler(GuiArcaneWorkbench.class, handler, "thaumcraft.wands");
         try {
             API.registerStackStringifyHandler(new TCAspectStringifyHandler());
         } catch (NoSuchMethodError ignored) {}

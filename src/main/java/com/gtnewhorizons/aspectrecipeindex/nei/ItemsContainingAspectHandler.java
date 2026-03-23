@@ -39,6 +39,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
     private static final int STACKS_OVERLAY_HEIGHT = 74;
     private static final int STACKS_OVERLAY_START_X = TemplateThaumHandler.OUTPUT_X - STACKS_OVERLAY_WIDTH / 2 + 8;
     private static final int STACKS_OVERLAY_START_Y = 116 - STACKS_OVERLAY_HEIGHT;
+    public static final String OVERLAY = "thaumcraft.items_containing_aspect";
     private int ticks;
 
     private ITooltipLineHandler aspectsTooltipLineHandler = null;
@@ -51,7 +52,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.items_containing_aspect";
+        return OVERLAY;
     }
 
     protected AspectList getAspectsForItemStack(ItemStack stack) {

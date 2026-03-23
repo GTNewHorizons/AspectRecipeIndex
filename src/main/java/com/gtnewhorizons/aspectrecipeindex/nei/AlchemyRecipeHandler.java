@@ -21,6 +21,8 @@ import thaumcraft.api.research.ResearchCategories;
 
 public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
+    public static final String OVERLAY = "thaumcraft.alchemy";
+
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
@@ -81,7 +83,7 @@ public class AlchemyRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.alchemy";
+        return OVERLAY;
     }
 
     protected class AlchemyCachedRecipe extends CachedThaumRecipe {

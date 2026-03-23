@@ -41,6 +41,7 @@ import thaumcraft.common.lib.events.EventHandlerRunic;
 
 public class InfusionRecipeHandler extends TemplateThaumHandler {
 
+    public static final String OVERLAY = "thaumcraft.infusion";
     private final int aspectsPerRow = 7;
     private static final Map<Integer, ArrayList<ItemStack>> runicArmor = new TreeMap<>();
 
@@ -51,7 +52,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.infusion";
+        return OVERLAY;
     }
 
     @Override

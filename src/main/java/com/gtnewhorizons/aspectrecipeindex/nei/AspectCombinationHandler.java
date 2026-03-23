@@ -17,6 +17,8 @@ import thaumcraft.api.research.ResearchCategories;
 
 public class AspectCombinationHandler extends TemplateThaumHandler {
 
+    public static final String OVERLAY = "thaumcraft.aspects";
+
     @Override
     public String getRecipeName() {
         return StatCollector.translateToLocal("aspectrecipeindex.aspect_combination.title");
@@ -24,7 +26,7 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.aspects";
+        return OVERLAY;
     }
 
     @Override

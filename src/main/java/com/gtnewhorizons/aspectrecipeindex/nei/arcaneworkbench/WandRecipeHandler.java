@@ -29,6 +29,7 @@ import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
+    public static final String OVERLAY = "thaumcraft.wands";
     public static final String SCEPTRE = "SCEPTRE";
     public static final String ROD_WOOD = "ROD_wood";
     public static final String CAP_IRON = "CAP_iron";
@@ -137,7 +138,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.wands";
+        return OVERLAY;
     }
 
     @Override

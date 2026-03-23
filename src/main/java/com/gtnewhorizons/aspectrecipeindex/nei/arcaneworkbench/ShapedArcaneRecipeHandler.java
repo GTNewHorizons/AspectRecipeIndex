@@ -29,6 +29,7 @@ import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
+    public static final String OVERLAY = "thaumcraft.arcane.shaped";
     public final static int[] XPOS = new int[] { 47, 75, 103 };
     public final static int[] YPOS = new int[] { 38, 65, 92 };
 
@@ -82,7 +83,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.arcane.shaped";
+        return OVERLAY;
     }
 
     @Override

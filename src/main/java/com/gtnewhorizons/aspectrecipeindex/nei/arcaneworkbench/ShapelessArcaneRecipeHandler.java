@@ -15,6 +15,8 @@ import thaumcraft.api.research.ResearchItem;
 
 public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
 
+    public static final String OVERLAY = "thaumcraft.arcane.shapeless";
+
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals("item")) {
@@ -33,7 +35,7 @@ public class ShapelessArcaneRecipeHandler extends ShapedArcaneRecipeHandler {
 
     @Override
     public String getOverlayIdentifier() {
-        return "thaumcraft.arcane.shapeless";
+        return OVERLAY;
     }
 
     @Override
