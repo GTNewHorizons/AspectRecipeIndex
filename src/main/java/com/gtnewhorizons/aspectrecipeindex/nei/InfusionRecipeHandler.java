@@ -2,6 +2,7 @@ package com.gtnewhorizons.aspectrecipeindex.nei;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -283,6 +284,14 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             addIfValid();
         }
 
+        @Override
+        public void setIngredientPermutation(Collection<PositionedStack> ingredients, ItemStack ingredient) {
+            super.setIngredientPermutation(ingredients, ingredient);
+            if (result.item.getItemDamage() == Short.MAX_VALUE && ingredient.getItem() == result.item.getItem()) {
+                Items.feather.setDamage(result.item, ingredient.getItemDamage());
+            }
+        }
+
         protected InfusionCachedRecipe(int instability, boolean shouldShowRecipe) {
             super(shouldShowRecipe);
             this.instability = instability;
@@ -342,6 +351,14 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             }
 
             this.setResult(res);
+        }
+
+        @Override
+        public PositionedStack getResult() {
+            if (result.item.getItemDamage() == Short.MAX_VALUE) {
+                Items.feather.setDamage(result.item, 0);
+            }
+            return this.result;
         }
 
         protected void addAspectsToIngredients() {
