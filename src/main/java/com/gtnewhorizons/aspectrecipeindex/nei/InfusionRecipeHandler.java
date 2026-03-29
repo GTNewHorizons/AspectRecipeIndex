@@ -66,8 +66,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     public void loadCraftingRecipes(String outputId, Object... results) {
         if (outputId.equals(this.getOverlayIdentifier())) {
             for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof InfusionRecipe recipe && recipe.getRecipeInput() != null
-                        && validOutput(recipe.getRecipeOutput())) {
+                if (o instanceof InfusionRecipe recipe && recipe.getRecipeInput() != null && validOutput(recipe)) {
                     final boolean shouldShowRecipe = Util.shouldShowRecipe(recipe.getResearch());
                     new InfusionCachedRecipe(recipe, shouldShowRecipe);
                 }
@@ -227,7 +226,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             } catch (RuntimeException e) {
                 continue;
             }
-            if (recipe == null || recipe.getCentral() == null || !validOutput(recipe.getRecipeOutput())) continue;
+            if (recipe == null || recipe.getCentral() == null || !validOutput(recipe)) continue;
 
             if (recipe.getCentral().matches(input) || outerInputsContainIngredient(input, recipe)) {
                 list.add(recipe);
@@ -258,11 +257,14 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     }
 
     // TODO Figure out if anything else is valid
-    private static boolean validOutput(Object o) {
+    private static boolean validOutput(InfusionRecipe recipe) {
+        Object o = recipe.getRecipeOutput();
         if (o instanceof ItemStack stack && stack.getItem() != null) return true;
         if (o instanceof Object[]arr && arr.length >= 2 && arr[0] instanceof String) return true;
-        AspectRecipeIndex.LOGGER
-                .warn("Invalid output for infusion recipe: {}. Please report to Aspect Recipe Index!", o);
+        AspectRecipeIndex.LOGGER.warn("Invalid output for infusion recipe, please report to Aspect Recipe Index:");
+        AspectRecipeIndex.LOGGER.warn("Research: {}", recipe.getResearch());
+        AspectRecipeIndex.LOGGER.warn("Center Item: {}", recipe.getRecipeInput());
+        AspectRecipeIndex.LOGGER.warn("Output: {}", o);
         return false;
     }
 
