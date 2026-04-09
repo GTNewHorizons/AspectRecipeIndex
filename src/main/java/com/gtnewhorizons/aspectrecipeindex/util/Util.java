@@ -25,8 +25,6 @@ import thaumcraft.common.items.ItemWispEssence;
 
 public class Util {
 
-    @SideOnly(Side.CLIENT)
-    private static String username = null;
     private static final String[] UNLOCALIZED_COLORS = { "aspectrecipeindex.gui.textColor",
             "aspectrecipeindex.gui.instabilityColor0", "aspectrecipeindex.gui.instabilityColor1",
             "aspectrecipeindex.gui.instabilityColor2", "aspectrecipeindex.gui.instabilityColor3",
@@ -50,8 +48,10 @@ public class Util {
 
     @SideOnly(Side.CLIENT)
     public static String getUsername() {
-        if (username == null) username = Minecraft.getMinecraft().thePlayer.getCommandSenderName();
-        return username;
+        if (Minecraft.getMinecraft().thePlayer != null) {
+            return Minecraft.getMinecraft().thePlayer.getCommandSenderName();
+        }
+        return "   "; // return invalid username
     }
 
     public static void updateColorOverride() {
