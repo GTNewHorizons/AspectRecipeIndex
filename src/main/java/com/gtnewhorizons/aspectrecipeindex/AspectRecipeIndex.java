@@ -26,7 +26,10 @@ public class AspectRecipeIndex {
     public static final String MODID = "aspectrecipeindex";
     public static final String NAME = "Aspect Recipe Index";
     public static final String VERSION = Tags.VERSION;
-    public static final String DEPENDENCIES = "required-after:Thaumcraft;required-after:gtnhmixins;after:Automagy";
+    public static final String DEPENDENCIES = "required-after:Thaumcraft;" + "required-after:gtnhmixins;"
+            + "required-after:gtnhlib;"
+            + "required-after:TC4Tweaks|API|InfusionRecipeLib;"
+            + "after:Automagy";
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
