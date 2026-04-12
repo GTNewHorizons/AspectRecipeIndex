@@ -25,7 +25,6 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.ShapedArcaneRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
-import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
@@ -43,7 +42,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
             return;
         }
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (o instanceof ShapedArcaneRecipe recipe && !(recipe.output.getItem() instanceof ItemWandCasting)) {
+            if (o instanceof ShapedArcaneRecipe recipe) {
                 new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
             }
         }
@@ -51,9 +50,6 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (result.getItem() instanceof ItemWandCasting) {
-            return;
-        }
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
             if (o instanceof ShapedArcaneRecipe recipe
                     && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
@@ -65,8 +61,7 @@ public class ShapedArcaneRecipeHandler extends TemplateThaumHandler {
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
         for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(o instanceof ShapedArcaneRecipe recipe)
-                    || recipe.getRecipeOutput().getItem() instanceof ItemWandCasting) {
+            if (!(o instanceof ShapedArcaneRecipe recipe)) {
                 continue;
             }
             ArcaneShapedCachedRecipe r = new ArcaneShapedCachedRecipe(recipe, true) {

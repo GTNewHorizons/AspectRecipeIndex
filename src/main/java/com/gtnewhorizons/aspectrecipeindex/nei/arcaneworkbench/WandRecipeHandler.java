@@ -1,6 +1,5 @@
 package com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
@@ -13,9 +12,13 @@ import net.minecraftforge.oredict.OreDictionary;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.Util;
+import com.gtnewhorizons.tcwands.api.GTTier;
+import com.gtnewhorizons.tcwands.api.TCWandAPI;
+import com.gtnewhorizons.tcwands.api.wrappers.AbstractWandWrapper;
+import com.gtnewhorizons.tcwands.api.wrappers.CapWrapper;
+import com.gtnewhorizons.tcwands.api.wrappers.SceptreWrapper;
 
-import codechicken.nei.NEIServerUtils;
-import thaumcraft.api.ThaumcraftApi;
+import cpw.mods.fml.common.Loader;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -24,7 +27,6 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.wands.WandCap;
 import thaumcraft.api.wands.WandRod;
 import thaumcraft.common.config.ConfigItems;
-import thaumcraft.common.items.ItemResource;
 import thaumcraft.common.items.wands.ItemWandCasting;
 
 public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
@@ -36,7 +38,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
     private static final Predicate<String> VALID_RESEARCH = WandRecipeHandler::validResearch;
     private static final Predicate<String> VISIBLE_RESEARCH = WandRecipeHandler::show;
-    public static boolean wandRecipesDeleted = false;
+    private static final boolean GTNH_WAND_RECIPES = Loader.isModLoaded("gtnhtcwands");
 
     @Override
     public void loadCraftingRecipes(String outputId, Object... results) {
@@ -47,34 +49,17 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         if (!outputId.equals(this.getOverlayIdentifier())) {
             return;
         }
-        if (!wandRecipesDeleted) {
-            forEachRodCap((rod, cap) -> generateRecipes(rod, cap, VALID_RESEARCH), VALID_RESEARCH);
-            for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapedArcaneRecipe recipe
-                        && recipe.getRecipeOutput().getItem() instanceof ItemWandCasting) {
-                    new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
+        if (GTNH_WAND_RECIPES) {
+            for (AbstractWandWrapper wand : TCWandAPI.getWandWrappers()) {
+                if (!validResearch(wand.getResearchName())) continue;
+                for (CapWrapper cap : TCWandAPI.getCaps()) {
+                    if (!validResearch(cap.getResearch())) continue;
+                    ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+                    new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
                 }
             }
-            return;
-        }
-        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(o instanceof ShapedArcaneRecipe recipe
-                    && recipe.getRecipeOutput().getItem() instanceof ItemWandCasting wand)) {
-                continue;
-            }
-            WandRod rod = wand.getRod(recipe.getRecipeOutput());
-            WandCap cap = wand.getCap(recipe.getRecipeOutput());
-            if (rod != null && cap != null) {
-                final boolean shouldShowRecipe = (!wand.isSceptre(recipe.getRecipeOutput())
-                        || Util.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch()) && show(rod.getResearch());
-                new ArcaneShapedCachedRecipe(
-                        3,
-                        3,
-                        recipe.input,
-                        recipe.getRecipeOutput(),
-                        shouldShowRecipe,
-                        recipe.aspects);
-            }
+        } else {
+            forEachRodCap((rod, cap) -> generateRecipes(rod, cap, VALID_RESEARCH), VALID_RESEARCH);
         }
     }
 
@@ -85,39 +70,28 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         }
         WandRod rod = wand.getRod(result);
         WandCap cap = wand.getCap(result);
-        if (wandRecipesDeleted) {
-            loadShapedCraftingRecipesForWands(result, wand);
-            return;
-        }
-        // Find items like Casting Bracelets from Thaumic Bases
-        if (result.getItem().getClass() != ItemWandCasting.class) {
-            for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-                if (o instanceof ShapedArcaneRecipe recipe
-                        && NEIServerUtils.areStacksSameTypeCraftingWithNBT(recipe.getRecipeOutput(), result)) {
-                    new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.getResearch()));
-                    return;
-                }
-            }
-        }
+        boolean scepter = wand.isSceptre(result);
         if (!validResearch(cap.getResearch()) || !validResearch(rod.getResearch())) {
             return;
         }
-        new ArcaneWandCachedRecipe(
-                rod,
-                cap,
-                result,
-                wand.isSceptre(result),
-                (!wand.isSceptre(result) || Util.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
-                        && show(rod.getResearch()));
+        boolean shouldShowRecipe = (!scepter || Util.shouldShowRecipe(SCEPTRE)) && show(cap.getResearch())
+                && show(rod.getResearch());
+        if (GTNH_WAND_RECIPES) {
+            AbstractWandWrapper wandWrapper = TCWandAPI.getWrapperForRod(rod, scepter);
+            CapWrapper capWrapper = TCWandAPI.getWrapperForCap(cap);
+            new GTNHWandCachedRecipe(wandWrapper.getRecipe(capWrapper), wandWrapper, capWrapper, shouldShowRecipe);
+            return;
+        }
+        new ArcaneWandCachedRecipe(rod, cap, result, wand.isSceptre(result), shouldShowRecipe);
     }
 
     @Override
     public void loadUsageRecipes(ItemStack ingredient) {
-        if (wandRecipesDeleted) {
-            loadWandUsageRecipesForIngredient(ingredient);
+        if (GTNH_WAND_RECIPES) {
+            loadGTNHUsageRecipes(ingredient);
             return;
         }
-        if (ingredient.getItem() instanceof ItemResource && ingredient.getItemDamage() == 15 && show(SCEPTRE)) {
+        if (ingredient.getItem() == ConfigItems.itemResource && ingredient.getItemDamage() == 15 && show(SCEPTRE)) {
             forEachRodCap((rod, cap) -> {
                 if (validResearch(rod.getResearch()) && validResearch(cap.getResearch())) {
                     generateScepterRecipe(createWand(rod, cap), rod, cap);
@@ -207,48 +181,91 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
         return stack;
     }
 
-    public void loadShapedCraftingRecipesForWands(ItemStack wandStack, ItemWandCasting wand) {
-        WandRod rod = wand.getRod(wandStack);
-        WandCap cap = wand.getCap(wandStack);
-        boolean isSceptre = wand.isSceptre(wandStack);
+    public void loadGTNHUsageRecipes(ItemStack component) {
+        usagesForGTNHPrimalCharms(component);
+        usagesForGTNHRods(component);
+        usagesForGTNHCaps(component);
+        usagesForGTNHScrewsAndConductors(component);
+        usagesForGTNHVis(component);
+    }
 
-        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(o instanceof ShapedArcaneRecipe recipe)) continue;
-
-            ItemStack output = recipe.output;
-            if (!(output.getItem() instanceof ItemWandCasting) || isSceptre != wand.isSceptre(output)
-                    || output.getItem().getClass() != Objects.requireNonNull(wandStack.getItem()).getClass()) {
-                continue;
+    private void usagesForGTNHPrimalCharms(ItemStack component) {
+        if (!(component.getItem() == ConfigItems.itemResource) || component.getItemDamage() != 15 || !show(SCEPTRE)) {
+            return;
+        }
+        for (AbstractWandWrapper wand : TCWandAPI.getWandWrappers()) {
+            if (!(wand instanceof SceptreWrapper && show(wand.getResearchName()))) continue;
+            for (CapWrapper cap : TCWandAPI.getCaps()) {
+                if (!show(cap.getResearch())) continue;
+                ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+                new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
             }
-
-            WandRod outputRod = wand.getRod(output);
-            WandCap outputCap = wand.getCap(output);
-
-            if (!outputRod.getTag().equals(rod.getTag()) || !outputCap.getTag().equals(cap.getTag())) continue;
-
-            // this needs to be ArcaneShapedCachedRecipe instead of ArcaneWandCachedRecipe because of modified recipe
-            new ArcaneShapedCachedRecipe(recipe, Util.shouldShowRecipe(recipe.research));
         }
     }
 
-    public void loadWandUsageRecipesForIngredient(ItemStack component) {
-        for (Object o : ThaumcraftApi.getCraftingRecipes()) {
-            if (!(o instanceof ShapedArcaneRecipe recipe)) {
-                continue;
-            }
-            ItemStack output = recipe.output;
-            if (!(output.getItem() instanceof ItemWandCasting)) continue;
-            new ArcaneShapedCachedRecipe(recipe, true) {
-
-                @Override
-                public boolean isValid() {
-                    return super.isValid()
-                            && (containsWithNBT(ingredients, component) || (component.getItem() instanceof ItemAspect
-                                    && ItemAspect.getAspect(component).isPrimal()))
-                            && shouldShowWandRecipe(output);
-                }
-            };
+    private void usagesForGTNHRods(ItemStack component) {
+        AbstractWandWrapper wand = TCWandAPI.getWrapperForRod(component, false);
+        if (wand == null || !show(wand.getResearchName())) {
+            return;
         }
+        AbstractWandWrapper scepter = TCWandAPI.getWrapperForRod(component, true);
+        for (CapWrapper cap : TCWandAPI.getCaps()) {
+            if (!show(cap.getResearch())) continue;
+            ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+            new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
+            if (scepter == null || !show(SCEPTRE)) continue;
+            recipe = scepter.getRecipe(cap);
+            new GTNHWandCachedRecipe(recipe, scepter, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
+        }
+    }
+
+    private void usagesForGTNHCaps(ItemStack component) {
+        CapWrapper cap = TCWandAPI.getWrapperForCap(component);
+        if (cap == null || !show(cap.getResearch())) {
+            return;
+        }
+        for (AbstractWandWrapper wand : TCWandAPI.getWandWrappers()) {
+            if ((!show(wand.getResearchName()) || wand instanceof SceptreWrapper) && !show(SCEPTRE)) continue;
+            ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+            new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
+        }
+    }
+
+    private void usagesForGTNHVis(ItemStack component) {
+        if (!(component.getItem() instanceof ItemAspect) || !ItemAspect.getAspect(component).isPrimal()) return;
+        for (AbstractWandWrapper wand : TCWandAPI.getWandWrappers()) {
+            if ((!show(wand.getResearchName()) || wand instanceof SceptreWrapper) && !show(SCEPTRE)) continue;
+            for (CapWrapper cap : TCWandAPI.getCaps()) {
+                if (!show(cap.getResearch())) continue;
+                ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+                new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
+            }
+        }
+    }
+
+    private void usagesForGTNHScrewsAndConductors(ItemStack component) {
+        for (GTTier value : GTTier.values()) {
+            if (!isScrewOrConductor(component, value)) continue;
+            for (AbstractWandWrapper wand : TCWandAPI.getWandWrappers()) {
+                if (wand.getDetails().tier() != value || !show(wand.getResearchName())
+                        || (wand instanceof SceptreWrapper) && !show(SCEPTRE))
+                    continue;
+                for (CapWrapper cap : TCWandAPI.getCaps()) {
+                    if (!show(cap.getResearch())) continue;
+                    ShapedArcaneRecipe recipe = wand.getRecipe(cap);
+                    new GTNHWandCachedRecipe(recipe, wand, cap, shouldShowWandRecipe(recipe.getRecipeOutput()));
+                }
+            }
+            return;
+        }
+    }
+
+    private static boolean isScrewOrConductor(ItemStack component, GTTier value) {
+        int screwID = OreDictionary.getOreID("screw" + value.getMaterial().mName);
+        for (int oreID : OreDictionary.getOreIDs(component)) {
+            if (oreID == screwID) return true;
+        }
+        return OreDictionary.itemMatches(component, value.getConductor(), true);
     }
 
     public static AspectList getWandVisCost(ItemStack item) {
@@ -299,6 +316,17 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
         public static ItemStack[] buildWandInput(WandRod rod, WandCap cap) {
             return new ItemStack[] { null, null, cap.getItem(), null, rod.getItem(), null, cap.getItem(), null, null };
+        }
+    }
+
+    protected class GTNHWandCachedRecipe extends ArcaneShapedCachedRecipe {
+
+        public GTNHWandCachedRecipe(ShapedArcaneRecipe recipe, AbstractWandWrapper wandWrapper, CapWrapper capWrapper,
+                boolean shouldShowRecipe) {
+            super(recipe, shouldShowRecipe);
+            if (wandWrapper instanceof SceptreWrapper) addResearch(SCEPTRE);
+            addResearch(capWrapper.getResearch());
+            addResearch(wandWrapper.getResearchName());
         }
     }
 }
