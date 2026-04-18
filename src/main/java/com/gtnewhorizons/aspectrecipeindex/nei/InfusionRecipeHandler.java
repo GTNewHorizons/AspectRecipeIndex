@@ -310,7 +310,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
         protected void addSurroundingItems(List<RecipeIngredient> r) {
             int x = 27;
-            int y = -31;
+            int y = -31 + itemOffset();
             int le = r.size();
             ArrayList<Point> coords = new ArrayList<>();
             float pieSlice = 360f / le;
@@ -364,7 +364,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected void addAspectsToIngredients() {
             int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
             final int baseX = 35;
-            final int baseY = 130;
+            final int baseY = 130 + itemOffset();
             int count = 0;
             for (int row = 0; row < rows; row++) {
                 int reversedRow = -row + rows - 1;
@@ -380,6 +380,10 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
                     this.ingredients.add(new PositionedStack(stack, posX, posY, false));
                 }
             }
+        }
+
+        protected int itemOffset() {
+            return 0;
         }
     }
 

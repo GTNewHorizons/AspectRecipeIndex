@@ -126,7 +126,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
         return "nei:textures/gui/recipebg.png";
     }
 
-    private static void drawSeeAllRecipesLabel(int y) {
+    protected static void drawSeeAllRecipesLabel(int y) {
         GuiDraw.drawStringR(
                 EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"),
                 162,
