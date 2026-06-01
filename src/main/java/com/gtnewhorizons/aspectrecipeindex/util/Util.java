@@ -47,22 +47,18 @@ public class Util {
 
     public static class ColorUtils {
 
-        private static final ColorResource.Factory color = new ColorResource.Factory("mymod");
+        private static final ColorResource.Factory color = new ColorResource.Factory("aspectrecipeindex");
 
         public static final ColorResource
         // spotless:off
-          text             = color.rgb("text",            "#404040"),
-          instabilityOff   = color.rgb("instabilityOff",  "#FFFFFF"),
-          instability0     = color.rgb("instability0",    "#0000AA"),
-          instability1     = color.rgb("instability1",    "#5555FF"),
-          instability2     = color.rgb("instability2",    "#AA00AA"),
-          instability3     = color.rgb("instability3",    "#FFFF55"),
-          instability4     = color.rgb("instability4",    "#FFAA00"),
-          instability5     = color.rgb("instability5",    "#AA0000");
-        //researchName     = color.rgb("researchName",    "#000000"),
-        //loadingText      = color.rgb("loadingText",     "#00CC00");
-
-
+          text             = color.rgb("text",            "0x404040"),
+          instabilityOff   = color.rgb("instabilityOff",  "0xFFFFFF"),
+          instability0     = color.rgb("instability0",    "0x0000AA"),
+          instability1     = color.rgb("instability1",    "0x5555FF"),
+          instability2     = color.rgb("instability2",    "0xAA00AA"),
+          instability3     = color.rgb("instability3",    "0xFFFF55"),
+          instability4     = color.rgb("instability4",    "0xFFAA00"),
+          instability5     = color.rgb("instability5",    "0xAA0000");
       // spotless:on
     }
 
