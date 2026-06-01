@@ -1,7 +1,6 @@
 package com.gtnewhorizons.aspectrecipeindex.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -10,9 +9,8 @@ import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 
-import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizon.gtnhlib.color.ColorResource;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 
 import cpw.mods.fml.relauncher.Side;
@@ -24,13 +22,6 @@ import thaumcraft.api.aspects.IEssentiaContainerItem;
 import thaumcraft.common.items.ItemWispEssence;
 
 public class Util {
-
-    private static final String[] UNLOCALIZED_COLORS = { "aspectrecipeindex.gui.textColor",
-            "aspectrecipeindex.gui.instabilityColor0", "aspectrecipeindex.gui.instabilityColor1",
-            "aspectrecipeindex.gui.instabilityColor2", "aspectrecipeindex.gui.instabilityColor3",
-            "aspectrecipeindex.gui.instabilityColor4", "aspectrecipeindex.gui.instabilityColor5",
-            "aspectrecipeindex.gui.researchNameColor", "aspectrecipeindex.gui.loadingTextColor" };
-    private static HashMap<String, Integer> colors;
 
     public static boolean shouldShowRecipe(String researchKey) {
         return ARIConfig.showLockedRecipes || ThaumcraftApiHelper.isResearchComplete(Util.getUsername(), researchKey);
@@ -54,24 +45,25 @@ public class Util {
         return "   "; // return invalid username
     }
 
-    public static void updateColorOverride() {
-        colors = new HashMap<>();
-        for (String c : UNLOCALIZED_COLORS) {
-            String hex = StatCollector.translateToLocal(c);
-            int color = 0x000000;
-            if (hex.length() <= 6) {
-                try {
-                    color = Integer.parseUnsignedInt(hex, 16);
-                } catch (NumberFormatException e) {
-                    AspectRecipeIndex.LOGGER.warn("Couldn't format color correctly for: {}", c);
-                }
-            }
-            colors.put(c, color);
-        }
-    }
+    public static class ColorUtils {
 
-    public static int getColor(String key) {
-        return colors.get(key) != null ? colors.get(key) : 0x000000;
+        private static final ColorResource.Factory color = new ColorResource.Factory("mymod");
+
+        public static final ColorResource
+        // spotless:off
+          text             = color.rgb("text",            "#404040"),
+          instabilityOff   = color.rgb("instabilityOff",  "#FFFFFF"),
+          instability0     = color.rgb("instability0",    "#0000AA"),
+          instability1     = color.rgb("instability1",    "#5555FF"),
+          instability2     = color.rgb("instability2",    "#AA00AA"),
+          instability3     = color.rgb("instability3",    "#FFFF55"),
+          instability4     = color.rgb("instability4",    "#FFAA00"),
+          instability5     = color.rgb("instability5",    "#AA0000");
+        //researchName     = color.rgb("researchName",    "#000000"),
+        //loadingText      = color.rgb("loadingText",     "#00CC00");
+
+
+      // spotless:on
     }
 
     public static List<Aspect> getEssentiaFromItem(ItemStack input) {

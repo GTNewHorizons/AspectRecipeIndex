@@ -21,6 +21,7 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
+import com.gtnewhorizon.gtnhlib.color.ColorResource;
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
@@ -142,10 +143,13 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         if (ARIConfig.showInstabilityNumber) {
             text = StatCollector.translateToLocal("tc.inst") + recipe.getInstability();
             int colorIndex = Math.min(5, recipe.getInstability() / 2);
-            color = Util.getColor("aspectrecipeindex.gui.instabilityColor" + colorIndex);
+            ColorResource[] instabilityColors = { Util.ColorUtils.instability0, Util.ColorUtils.instability1,
+                    Util.ColorUtils.instability2, Util.ColorUtils.instability3, Util.ColorUtils.instability4,
+                    Util.ColorUtils.instability5 };
+            color = instabilityColors[colorIndex].getColor();
         } else {
             text = StatCollector.translateToLocal("tc.inst." + Math.min(5, recipe.getInstability() / 2));
-            color = Util.getColor("aspectrecipeindex.gui.instabilityColorOff");
+            color = Util.ColorUtils.instabilityOff.getColor();
         }
         GuiDraw.drawString(text, 83 - GuiDraw.fontRenderer.getStringWidth(text) / 2, 120, color, false);
     }

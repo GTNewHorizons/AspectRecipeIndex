@@ -82,14 +82,14 @@ public class AspectCombinationHandler extends TemplateThaumHandler {
                     StatCollector.translateToLocal("tc.aspect.primal"),
                     84,
                     25,
-                    Util.getColor("aspectrecipeindex.gui.textColor"),
+                    Util.ColorUtils.text.getColor(),
                     false);
         } else {
             GL11.glTranslatef(-33F, 8, 0F);
             super.drawBackground(recipe);
             GL11.glTranslatef(33F, -8F, 0F);
-            GuiDraw.drawStringC("=", 68, 17, Util.getColor("aspectrecipeindex.gui.textColor"), false);
-            GuiDraw.drawStringC("+", 100, 17, Util.getColor("aspectrecipeindex.gui.textColor"), false);
+            GuiDraw.drawStringC("=", 68, 17, Util.ColorUtils.text.getColor(), false);
+            GuiDraw.drawStringC("+", 100, 17, Util.ColorUtils.text.getColor(), false);
         }
     }
 
