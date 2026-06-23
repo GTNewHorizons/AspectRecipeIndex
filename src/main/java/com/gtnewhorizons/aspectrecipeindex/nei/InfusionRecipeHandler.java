@@ -108,9 +108,10 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             }
         }
         if (ingredient.getItem() instanceof IRunicArmor) {
-            new RunicShieldCachedRecipe(
-                    Collections.singletonList(ingredient),
-                    EventHandlerRunic.getFinalCharge(ingredient) + 1);
+            int charge = EventHandlerRunic.getFinalCharge(ingredient) + 1;
+            if (charge > 0 && charge <= Byte.MAX_VALUE) {
+                new RunicShieldCachedRecipe(Collections.singletonList(ingredient), charge);
+            }
         } else if (isRunicUpgradeIngredient(ingredient)) {
             loadAllRunicCraftingRecipes();
         }
@@ -399,7 +400,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             super(5 + charge / 2, Util.shouldShowRecipe(RESEARCH));
             setAspects(charge);
             setIngredients(items, charge);
-            setResult(items.get(0).copy()); // Output stacks don't show permutations so only use the first one
+            setResult(items.getFirst().copy()); // Output stacks don't show permutations so only use the first one
             addAspectsToIngredients();
             prereqs.add(
                     new ResearchInfo(
@@ -426,7 +427,12 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             this.result = new PositionedStack(item, OUTPUT_X, OUTPUT_Y, false);
         }
 
+        /**
+         * Essentia costs for runic recipes are 16 * 2^charge Potentia and 8 * 2^charge Tutamen and Praecantatio.
+         * Upgrading anything to 26 or higher costs no essentia.
+         */
         public void setAspects(int charge) {
+            if (charge >= 26) return;
             aspects = new AspectList();
             int cost = 8 << charge; // 8 * 2^charge
             aspects.add(Aspect.ENERGY, cost * 2);
