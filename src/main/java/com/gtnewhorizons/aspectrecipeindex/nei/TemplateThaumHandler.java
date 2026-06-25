@@ -68,7 +68,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
             String textToDraw = StatCollector.translateToLocal("aspectrecipeindex.research.missing");
             int y = 38;
             for (String text : Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(textToDraw, 162)) {
-                GuiDraw.drawStringC(text, 82, y, Util.getColor("aspectrecipeindex.gui.textColor"), false);
+                GuiDraw.drawStringC(text, 82, y, Util.ColorUtils.text.getColor(), false);
                 y += 11;
             }
         }
@@ -78,7 +78,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                     EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.research.researchName"),
                     0,
                     2,
-                    Util.getColor("aspectrecipeindex.gui.textColor"),
+                    Util.ColorUtils.text.getColor(),
                     false);
             if (cRecipe instanceof CachedThaumRecipe cachedRecipe) {
                 int recipeY = 12;
@@ -131,7 +131,7 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                 EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"),
                 162,
                 y,
-                Util.getColor("aspectrecipeindex.gui.textColor"),
+                Util.ColorUtils.text.getColor(),
                 false);
     }
 

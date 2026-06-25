@@ -139,7 +139,7 @@ public class ItemsContainingAspectHandler extends TemplateThaumHandler {
                             ThaumcraftHooks.getTotalToLoad()),
                     2,
                     32,
-                    Util.getColor("aspectrecipeindex.gui.loadingTextColor"),
+                    Util.ColorUtils.text.getColor(),
                     true);
         }
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
