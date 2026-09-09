@@ -432,8 +432,8 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
          * Upgrading anything to 26 or higher costs no essentia.
          */
         public void setAspects(int charge) {
-            if (charge >= 26) return;
             aspects = new AspectList();
+            if (charge >= 26) return;
             int cost = 8 << charge; // 8 * 2^charge
             aspects.add(Aspect.ENERGY, cost * 2);
             aspects.add(Aspect.ARMOR, cost);

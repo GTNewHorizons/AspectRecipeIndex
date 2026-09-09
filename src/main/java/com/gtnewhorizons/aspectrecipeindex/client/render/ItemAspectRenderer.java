@@ -45,10 +45,13 @@ public class ItemAspectRenderer implements IItemRenderer {
 
         Aspect aspect = ItemAspect.getAspect(stack);
 
-        if (aspect != null && player != null) {
+        int meta = stack.getItemDamage();
+        // Meta 2+ will always show the ? icon.
+        if (meta < 2 && aspect != null && player != null) {
             String name = player.getCommandSenderName();
 
-            if (ThaumcraftApiHelper.hasDiscoveredAspect(name, aspect)) {
+            // Meta 1 will always show the aspect icon. Meta 0 requires the player to discover it.
+            if (meta == 1 || ThaumcraftApiHelper.hasDiscoveredAspect(name, aspect)) {
                 UtilsFX.drawTag(0, 0, aspect, 0F, 0, 0F);
                 GL11.glEnable(GL11.GL_CULL_FACE);
                 GL11.glPopMatrix();
