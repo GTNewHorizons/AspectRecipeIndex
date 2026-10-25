@@ -261,7 +261,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
     }
 
     private static boolean isScrewOrConductor(ItemStack component, GTTier value) {
-        int screwID = OreDictionary.getOreID("screw" + value.getMaterial().mName);
+        int screwID = OreDictionary.getOreID(value.getScrew());
         for (int oreID : OreDictionary.getOreIDs(component)) {
             if (oreID == screwID) return true;
         }

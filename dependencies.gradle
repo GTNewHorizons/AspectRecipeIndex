@@ -8,7 +8,7 @@ dependencies {
 
     compileOnly("org.jetbrains:annotations:23.0.0")
     compileOnly("curse.maven:automagy-222153:2285272")
-    compileOnly("com.github.GTNewHorizons:GTNH-TC-Wands:1.4.14:dev")
+    compileOnly("com.github.GTNewHorizons:GTNH-TC-Wands:1.4.14-mu:dev")
 
     runtimeOnlyNonPublishable("com.github.GTNewHorizons:Baubles-Expanded:2.2.22-GTNH:dev")
 }
