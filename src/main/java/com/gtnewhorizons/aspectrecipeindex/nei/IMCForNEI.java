@@ -20,6 +20,7 @@ public class IMCForNEI {
         // Runic Matrix
         registerHandlerInfo(InfusionRecipeHandler.class.getName(), "Thaumcraft:blockStoneDevice:2", 152);
         registerHandlerInfo(ItemsContainingAspectHandler.class.getName(), "Thaumcraft:ItemResearchNotes", 147);
+        registerHandlerInfo(LootBagRecipeHandler.class.getName(), "Thaumcraft:ItemLootBag:0", 168);
         // Research Table
         registerHandlerInfo(AspectCombinationHandler.class.getName(), "Thaumcraft:blockTable:2", 43);
 

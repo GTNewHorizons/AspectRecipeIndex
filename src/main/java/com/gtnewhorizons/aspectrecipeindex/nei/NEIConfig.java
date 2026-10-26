@@ -23,6 +23,7 @@ public class NEIConfig implements IConfigureNEI {
         API.registerRecipeHandler(new ShapelessArcaneRecipeHandler());
         API.registerRecipeHandler(new AlchemyRecipeHandler());
         API.registerRecipeHandler(new InfusionRecipeHandler());
+        API.registerRecipeHandler(new LootBagRecipeHandler());
 
         API.registerUsageHandler(new ItemsContainingAspectHandler());
         API.registerUsageHandler(new AspectCombinationHandler());
@@ -31,6 +32,7 @@ public class NEIConfig implements IConfigureNEI {
         API.registerUsageHandler(new ShapelessArcaneRecipeHandler());
         API.registerUsageHandler(new AlchemyRecipeHandler());
         API.registerUsageHandler(new InfusionRecipeHandler());
+        API.registerUsageHandler(new LootBagRecipeHandler());
 
         ArcaneSlotPositioner positioner = new ArcaneSlotPositioner();
         API.registerGuiOverlay(GuiArcaneWorkbench.class, ShapedArcaneRecipeHandler.OVERLAY, positioner);
