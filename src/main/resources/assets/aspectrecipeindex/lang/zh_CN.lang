@@ -1,5 +1,8 @@
 aspectrecipeindex.items_containing_aspect.title=物品中的要素
 aspectrecipeindex.items_containing_aspect.still_load=正在加载... (%s/%s)
 aspectrecipeindex.aspect_combination.title=要素组合
+aspectrecipeindex.loot_bag.title=神秘时代战利品袋
+aspectrecipeindex.loot_bag.drops=可能掉落的物品（抽取 8～12 次）
+aspectrecipeindex.loot_bag.gear=装备属性随机
 
 aspectrecipeindex.research.missing=合成此物品所需的研究还未完成
