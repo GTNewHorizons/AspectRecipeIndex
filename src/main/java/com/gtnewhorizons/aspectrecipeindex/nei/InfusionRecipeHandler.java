@@ -24,6 +24,7 @@ import org.lwjgl.opengl.GL11;
 import com.gtnewhorizon.gtnhlib.color.ColorResource;
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.api.IAspectRangeList;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.Util;
@@ -31,6 +32,7 @@ import com.gtnewhorizons.aspectrecipeindex.util.Util;
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.GuiRecipe;
 import thaumcraft.api.IRunicArmor;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -123,6 +125,26 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     }
 
     @Override
+    public List<String> handleItemTooltip(GuiRecipe<?> gui, ItemStack stack, List<String> currenttip, int recipe) {
+        super.handleItemTooltip(gui, stack, currenttip, recipe);
+        if (stack != null && stack.getItem() instanceof ItemAspect && recipe < this.aspects.size()) {
+            final AspectList recipeAspects = this.aspects.get(recipe);
+            if (recipeAspects instanceof IAspectRangeList ranges) {
+                final int min = ranges.getMinAmount(ItemAspect.getAspect(stack));
+                final int max = ranges.getMaxAmount(ItemAspect.getAspect(stack));
+                if (min >= 0 && max >= 0) {
+                    currenttip.add(
+                            StatCollector.translateToLocalFormatted(
+                                    "aspectrecipeindex.infusion.aspect_cost_range",
+                                    min,
+                                    max));
+                }
+            }
+        }
+        return currenttip;
+    }
+
+    @Override
     protected void drawIngredientBackground() {
         GL11.glTranslatef(-0.5F, -1F, 0);
         GuiDraw.drawTexturedModalRect(27, 21, 207, 78, 42, 42); // Runic matrix drawing
@@ -131,8 +153,38 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
 
     @Override
     public void drawExtras(int recipeIndex) {
+        refreshRandomizedAspectStacks(recipeIndex);
         super.drawExtras(recipeIndex);
         drawInstability(recipeIndex);
+    }
+
+    /**
+     * Aspect lists implementing {@link IAspectRangeList} re-roll their contents on getter access, at most once every
+     * 500ms. Called every frame: keeps the displayed stack sizes ticking while the recipe is on screen instead of only
+     * being rolled when the view is opened. Plain {@code AspectList}s are unaffected.
+     */
+    private void refreshRandomizedAspectStacks(int recipeIndex) {
+        if (recipeIndex >= this.aspects.size()) {
+            return;
+        }
+        final AspectList recipeAspects = this.aspects.get(recipeIndex);
+        if (!(recipeAspects instanceof IAspectRangeList)) {
+            return;
+        }
+        recipeAspects.getAspectsSortedAmount(); // realize the current roll
+        for (PositionedStack stack : ((InfusionCachedRecipe) this.arecipes.get(recipeIndex)).getIngredients()) {
+            if (stack.item.getItem() instanceof ItemAspect) {
+                final int amount = recipeAspects.getAmount(ItemAspect.getAspect(stack.item));
+                stack.item.stackSize = amount;
+                // NEI's permutation cycling periodically replaces .item with a copy of items[]; keep every
+                // reference in sync or the stale cache-time amount flashes for a frame on cycle ticks
+                if (stack.items != null) {
+                    for (ItemStack is : stack.items) {
+                        is.stackSize = amount;
+                    }
+                }
+            }
+        }
     }
 
     public void drawInstability(int recipeIndex) {
@@ -367,17 +419,21 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         }
 
         protected void addAspectsToIngredients() {
-            int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
+            // Realize AspectLists that populate lazily before reading them: Gadomancy's
+            // RandomizedAspectList stays empty until a getter triggers a re-roll, so its recipes
+            // showed no aspects here. For plain AspectLists this call changes nothing.
+            final Aspect[] sortedAspects = aspects.getAspectsSortedAmount();
+            int rows = (int) Math.ceil((double) sortedAspects.length / aspectsPerRow);
             final int baseX = 35;
             final int baseY = 130 + itemOffset();
             int count = 0;
             for (int row = 0; row < rows; row++) {
                 int reversedRow = -row + rows - 1;
                 // distribute evenly
-                int columns = (aspects.size() + reversedRow) / rows;
+                int columns = (sortedAspects.length + reversedRow) / rows;
                 int xOffset = (100 - columns * 20) / 2;
                 for (int column = 0; column < columns; column++) {
-                    Aspect aspect = aspects.getAspectsSortedAmount()[count++];
+                    Aspect aspect = sortedAspects[count++];
                     int posX = baseX + column * 20 + xOffset;
                     int posY = baseY + row * 20;
                     ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
