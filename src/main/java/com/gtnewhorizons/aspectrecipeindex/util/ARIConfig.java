@@ -17,6 +17,11 @@ public class ARIConfig {
     @Config.DefaultBoolean(true)
     public static boolean showResearchKey;
 
+    @Config.Comment("Show research IDs and shortcut hints in NEI and the Thaumonomicon; copying works when disabled")
+    @Config.DefaultBoolean(false)
+    @Config.LangKey("aspectrecipeindex.config.showResearchId")
+    public static boolean showResearchId;
+
     @Config.Comment("Show names of undiscovered aspects when hovered in NEI")
     @Config.DefaultBoolean(false)
     public static boolean showUndiscoveredAspectNames;

@@ -15,6 +15,7 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
+import com.gtnewhorizons.aspectrecipeindex.client.research.ResearchIdDisplay;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.Util;
@@ -112,6 +113,28 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
     }
 
     @Override
+    public boolean keyTyped(GuiRecipe<?> gui, char character, int keyCode, int recipeIndex) {
+        String id = hoveredResearchId(gui, recipeIndex);
+        return ResearchIdDisplay.copyKey(id, keyCode) || super.keyTyped(gui, character, keyCode, recipeIndex);
+    }
+
+    @Override
+    public boolean mouseClicked(GuiRecipe<?> gui, int button, int recipeIndex) {
+        String id = hoveredResearchId(gui, recipeIndex);
+        return ResearchIdDisplay.copyMouse(id, button) || super.mouseClicked(gui, button, recipeIndex);
+    }
+
+    private String hoveredResearchId(GuiRecipe<?> gui, int recipeIndex) {
+        if (!ARIConfig.showResearchKey || !GuiContainerManager.shouldShowTooltip(gui)) return null;
+        if (recipeIndex < 0 || recipeIndex >= arecipes.size()) return null;
+        if (!(arecipes.get(recipeIndex) instanceof CachedThaumRecipe recipe)) return null;
+        Point mouse = GuiDraw.getMousePosition();
+        for (ResearchInfo info : recipe.prereqs)
+            if (info.getRect(gui, recipeIndex).contains(mouse)) return info.getResearchId();
+        return null;
+    }
+
+    @Override
     public void loadTransferRects() {
         int stringLength = GuiDraw.getStringWidth(
                 EnumChatFormatting.BOLD + StatCollector.translateToLocal("aspectrecipeindex.gui.nei.seeAll"));
@@ -135,16 +158,21 @@ public abstract class TemplateThaumHandler extends TemplateRecipeHandler {
                 false);
     }
 
-    protected abstract class CachedThaumRecipe extends CachedRecipe {
+    public abstract class CachedThaumRecipe extends CachedRecipe {
 
         protected final List<ResearchInfo> prereqs = new ArrayList<>();
+        private final List<ResearchInfo> researchInfo = Collections.unmodifiableList(prereqs);
         protected final boolean shouldShowRecipe;
         protected List<PositionedStack> ingredients = new ArrayList<>();
         protected PositionedStack result;
         protected AspectList aspects;
 
-        protected CachedThaumRecipe(boolean shouldShowRecipe) {
+        public CachedThaumRecipe(boolean shouldShowRecipe) {
             this.shouldShowRecipe = shouldShowRecipe;
+        }
+
+        public List<ResearchInfo> getResearchInfo() {
+            return researchInfo;
         }
 
         protected void tryAddResearch(ResearchItem researchItem) {

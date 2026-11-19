@@ -1,3 +1,5 @@
+aspectrecipeindex.config.showResearchId=Show Research IDs
+
 aspectrecipeindex.items_containing_aspect.title=Items Containing Aspect
 aspectrecipeindex.items_containing_aspect.still_load=Still loading... (%s/%s)
 aspectrecipeindex.items_containing_aspect.aspect_list=Aspects
@@ -8,6 +10,8 @@ aspectrecipeindex.shaped_arcane_crafting.title=Shaped Arcane Crafting
 aspectrecipeindex.wand_crafting.title=Wand Crafting
 aspectrecipeindex.shapeless_arcane_crafting.title=Shapeless Arcane Crafting
 
+aspectrecipeindex.research.id=Research ID: %s
+aspectrecipeindex.research.copy_id=Press %s to copy the research ID
 aspectrecipeindex.research.missing=You haven't completed the research required to craft this item
 aspectrecipeindex.research.researchName=Research
 aspectrecipeindex.research.researchName_rod=Rod Research
@@ -23,6 +27,10 @@ aspectrecipeindex.research.prerequisites.allresearched=You have done all the req
 aspectrecipeindex.gui.nei.seeAll=See All
 
 aspectrecipeindex.aspect.undiscovered=%s (Undiscovered)
+
+nei.options.tools.dump.thaumcraftresearch=Thaumcraft research IDs
+nei.options.tools.dump.thaumcraftresearch.mode.0=CSV
+nei.options.tools.dump.thaumcraftresearch.mode.1=JSON
 
 tc.research_name.CAP_iron=Basic Thaumaturgy
 tc.research_name.ROD_wood=Basic Thaumaturgy
