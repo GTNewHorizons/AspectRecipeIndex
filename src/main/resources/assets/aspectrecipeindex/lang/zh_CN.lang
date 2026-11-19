@@ -1,5 +1,13 @@
+aspectrecipeindex.config.showResearchId=显示研究 ID
+
 aspectrecipeindex.items_containing_aspect.title=物品中的要素
 aspectrecipeindex.items_containing_aspect.still_load=正在加载... (%s/%s)
 aspectrecipeindex.aspect_combination.title=要素组合
 
+aspectrecipeindex.research.id=研究 ID：%s
+aspectrecipeindex.research.copy_id=按 %s 复制研究 ID
 aspectrecipeindex.research.missing=合成此物品所需的研究还未完成
+
+nei.options.tools.dump.thaumcraftresearch=神秘研究 ID
+nei.options.tools.dump.thaumcraftresearch.mode.0=CSV
+nei.options.tools.dump.thaumcraftresearch.mode.1=JSON

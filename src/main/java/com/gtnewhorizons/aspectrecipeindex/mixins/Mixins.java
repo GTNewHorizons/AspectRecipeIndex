@@ -10,7 +10,7 @@ public enum Mixins implements IMixins {
     // spotless:off
     MAPPING_THREAD_HOOK(new MixinBuilder()
         .addClientMixins("thaumcraft.MappingThreadMixin")
-        .addClientMixins("thaumcraft.ClientTickEventsFMLMixin")
+        .addClientMixins("thaumcraft.ClientTickEventsFMLMixin", "thaumcraft.GuiResearchBrowserMixin", "thaumcraft.GuiResearchRecipeMixin")
         .addRequiredMod(TargetedMod.THAUMCRAFT)
         .setPhase(Phase.LATE));
     // spotless:on

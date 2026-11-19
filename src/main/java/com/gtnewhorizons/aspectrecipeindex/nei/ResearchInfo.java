@@ -12,6 +12,7 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
+import com.gtnewhorizons.aspectrecipeindex.client.research.ResearchIdDisplay;
 import com.gtnewhorizons.aspectrecipeindex.util.Util;
 
 import codechicken.lib.gui.GuiDraw;
@@ -61,12 +62,19 @@ public class ResearchInfo {
                         isResearched ? EnumChatFormatting.GREEN : EnumChatFormatting.RED,
                         category != null ? category : "N/A",
                         research));
-        try {
-            getResearchPrerequisites(list, researchItem);
-        } catch (Exception ignored) {} // modded thaum is weird sometimes
+        getResearchPrerequisites(list, researchItem);
+        list.addAll(ResearchIdDisplay.lines(getResearchId()));
         if (list.size() > 1) {
             list.add(1, "");
         }
+    }
+
+    public String getResearchId() {
+        return researchItem == null ? null : researchItem.key;
+    }
+
+    public ResearchItem getResearchItem() {
+        return researchItem;
     }
 
     public void onDraw(int x, int y) {
@@ -102,11 +110,8 @@ public class ResearchInfo {
 
     private static void getResearchPrerequisites(List<String> list, ResearchItem researchItem) {
         if (researchItem != null) {
-            // Parent research
             getResearchListByName(list, researchItem.parents, Util.getUsername(), "parents");
-            // Parent hidden research
             getResearchListByName(list, researchItem.parentsHidden, Util.getUsername(), "parentsHidden");
-            // Item scan
             if (researchItem.getItemTriggers() != null && researchItem.getItemTriggers().length != 0) {
                 list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites.item") + ":");
                 for (ItemStack itemStack : researchItem.getItemTriggers()) {
@@ -114,7 +119,6 @@ public class ResearchInfo {
                     list.add("    " + displayName);
                 }
             }
-            // Entity scan
             if (researchItem.getEntityTriggers() != null && researchItem.getEntityTriggers().length != 0) {
                 list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites.entity") + ":");
                 for (String entityKey : researchItem.getEntityTriggers()) {
@@ -122,7 +126,6 @@ public class ResearchInfo {
                     list.add("    " + entityName);
                 }
             }
-            // Aspect scan
             if (researchItem.getAspectTriggers() != null && researchItem.getAspectTriggers().length != 0) {
                 list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites.aspect") + ":");
                 for (Aspect aspect : researchItem.getAspectTriggers()) {
@@ -130,7 +133,6 @@ public class ResearchInfo {
                     list.add("    " + aspectName);
                 }
             }
-            // Kill scan
             if (Loader.isModLoaded("Automagy") && researchItem.category.equals("AUTOMAGY")) {
                 Set<String> killList = Util.getKeysByValue(ModResearchItems.cluesOnKill, researchItem.key);
                 if (!killList.isEmpty()) {
@@ -149,9 +151,9 @@ public class ResearchInfo {
             int needResearch = 0;
             list.add(StatCollector.translateToLocal("aspectrecipeindex.research.prerequisites." + keysName) + ":");
             for (String researchKey : researchKeys) {
-                String researchName = ResearchCategories
-                        .getCategoryName(ResearchCategories.getResearch(researchKey).category) + ": "
-                        + ResearchCategories.getResearch(researchKey).getName();
+                ResearchItem parent = ResearchCategories.getResearch(researchKey);
+                String researchName = parent == null ? researchKey
+                        : ResearchCategories.getCategoryName(parent.category) + ": " + parent.getName();
                 if (ResearchManager.isResearchComplete(playerName, researchKey)) {
                     if (researchKeys.length <= 10) {
                         researchName = EnumChatFormatting.GREEN + "" + EnumChatFormatting.STRIKETHROUGH + researchName;

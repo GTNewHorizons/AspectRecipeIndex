@@ -1,6 +1,7 @@
 package com.gtnewhorizons.aspectrecipeindex.nei;
 
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
+import com.gtnewhorizons.aspectrecipeindex.client.research.ResearchIdDumper;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneOverlayHandler;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ArcaneSlotPositioner;
 import com.gtnewhorizons.aspectrecipeindex.nei.arcaneworkbench.ShapedArcaneRecipeHandler;
@@ -15,6 +16,8 @@ public class NEIConfig implements IConfigureNEI {
 
     @Override
     public void loadConfig() {
+
+        API.addOption(new ResearchIdDumper());
 
         API.registerRecipeHandler(new ItemsContainingAspectHandler());
         API.registerRecipeHandler(new AspectCombinationHandler());

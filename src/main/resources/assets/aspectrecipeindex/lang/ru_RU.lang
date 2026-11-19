@@ -1,3 +1,11 @@
+aspectrecipeindex.config.showResearchId=Показывать ID исследований
+
 aspectrecipeindex.items_containing_aspect.title=Аспект из предметов
 aspectrecipeindex.items_containing_aspect.still_load=Ещё загружаем... (%s/%s)
 aspectrecipeindex.aspect_combination.title=Комбинация аспектов
+
+aspectrecipeindex.research.id=ID исследования: %s
+aspectrecipeindex.research.copy_id=Нажмите %s, чтобы скопировать ID исследования
+nei.options.tools.dump.thaumcraftresearch=ID исследований Thaumcraft
+nei.options.tools.dump.thaumcraftresearch.mode.0=CSV
+nei.options.tools.dump.thaumcraftresearch.mode.1=JSON
