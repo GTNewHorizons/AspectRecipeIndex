@@ -65,7 +65,7 @@ public class WandRecipeHandler extends ShapedArcaneRecipeHandler {
 
     @Override
     public void loadCraftingRecipes(ItemStack result) {
-        if (!(result.getItem() instanceof ItemWandCasting wand)) {
+        if (result.getItem() != ConfigItems.itemWandCasting || !(result.getItem() instanceof ItemWandCasting wand)) {
             return;
         }
         WandRod rod = wand.getRod(result);

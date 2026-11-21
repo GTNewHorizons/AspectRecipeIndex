@@ -23,9 +23,7 @@ A new and improved mod that adds NEI support for Thaumcraft, originally based on
 * Shaped and Shapeless Arcane Crafting handlers, as well as a new handler just for Wand Crafting.
   * All three support automatically moving stacks into the correct slots with NEI's overlay button.
   * Wands without enough vis to complete the craft will be swapped out if one with enough vis is found in your inventory.
-  * The Wand Recipe handler will also automatically find recipes for any item that extends ItemWandCasting, such as the bracelets from Thaumic Bases.
   * Recipes for wands will be shown when looking at uses for their components (e.g. searching for uses of Gold Caps will show you how to combine them with every type of rod).
-  * The Wand Recipe handler also supports custom wand recipes. If a mod adds custom recipes for wands and removes the original ArcaneWandRecipe and ArcaneSceptreRecipe, it will display the new recipes instead.
 * Aspect Combination handler, to see what an aspect's parents are (or show if it is primal) and what aspects it can be combined with to create new ones.
   * Combinations are hidden until learned by default.
     * Enable `showUndiscoveredAspectNames` to see names of undiscovered aspects when hovered anywhere in NEI.
