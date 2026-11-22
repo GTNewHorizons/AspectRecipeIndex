@@ -277,6 +277,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     protected class InfusionCachedRecipe extends CachedThaumRecipe {
 
         private final int instability;
+        private final List<PositionedStack> aspectIngredients = new ArrayList<>();
 
         public InfusionCachedRecipe(InfusionRecipe recipe, boolean shouldShowRecipe) {
             super(shouldShowRecipe);
@@ -309,7 +310,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected void setIngredients(InfusionRecipe recipe) {
             EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipe);
             this.ingredients.clear();
-            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 63));
+            this.ingredients.add(positionedIngredient(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 63));
             addSurroundingItems(r.getComponentsExt());
         }
 
@@ -338,9 +339,25 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             for (RecipeIngredient ingredient : r) {
                 int vx = sx + coords.get(total).x;
                 int vy = sy + coords.get(total).y;
-                this.ingredients.add(new PositionedStack(ingredient.getRepresentativeStacks(), vx, vy));
+                this.ingredients.add(positionedIngredient(ingredient.getRepresentativeStacks(), vx, vy));
                 ++total;
             }
+        }
+
+        /**
+         * PositionedStack expands a wildcard damage value into every subtype of the item, copying the stacks straight
+         * out of the item list and dropping the NBT tag the recipe asked for. An ingredient that carries both is
+         * therefore shown as a set of items that would not actually craft, so keep it as the single stack it is.
+         */
+        private PositionedStack positionedIngredient(List<ItemStack> stacks, int x, int y) {
+            boolean generatePermutations = true;
+            for (ItemStack stack : stacks) {
+                if (stack != null && stack.getItemDamage() == Short.MAX_VALUE && stack.hasTagCompound()) {
+                    generatePermutations = false;
+                    break;
+                }
+            }
+            return new PositionedStack(stacks, x, y, generatePermutations);
         }
 
         protected void setResult(InfusionRecipe recipe) {
@@ -367,24 +384,41 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         }
 
         protected void addAspectsToIngredients() {
-            int rows = (int) Math.ceil((double) aspects.size() / aspectsPerRow);
+            Aspect[] sortedAspects = aspects.getAspectsSortedAmount();
+            int aspectCount = aspects.size();
+            int rows = (int) Math.ceil((double) aspectCount / aspectsPerRow);
             final int baseX = 35;
             final int baseY = 130 + itemOffset();
             int count = 0;
             for (int row = 0; row < rows; row++) {
                 int reversedRow = -row + rows - 1;
                 // distribute evenly
-                int columns = (aspects.size() + reversedRow) / rows;
+                int columns = (aspectCount + reversedRow) / rows;
                 int xOffset = (100 - columns * 20) / 2;
                 for (int column = 0; column < columns; column++) {
-                    Aspect aspect = aspects.getAspectsSortedAmount()[count++];
+                    Aspect aspect = sortedAspects[count++];
                     int posX = baseX + column * 20 + xOffset;
                     int posY = baseY + row * 20;
                     ItemStack stack = new ItemStack(ModItems.itemAspect, aspects.getAmount(aspect), 1);
                     ItemAspect.setAspect(stack, aspect);
-                    this.ingredients.add(new PositionedStack(stack, posX, posY, false));
+                    PositionedStack positioned = new PositionedStack(stack, posX, posY, false);
+                    this.ingredients.add(positioned);
+                    this.aspectIngredients.add(positioned);
                 }
             }
+        }
+
+        @Override
+        public List<PositionedStack> getIngredients() {
+            if (shouldShowRecipe) {
+                for (PositionedStack ingredient : aspectIngredients) {
+                    ItemStack stack = ingredient.items[0];
+                    int amount = aspects.getAmount(ItemAspect.getAspect(stack));
+                    stack.stackSize = amount;
+                    ingredient.item.stackSize = amount;
+                }
+            }
+            return super.getIngredients();
         }
 
         protected int itemOffset() {
