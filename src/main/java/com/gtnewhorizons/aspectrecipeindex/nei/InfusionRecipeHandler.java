@@ -24,6 +24,7 @@ import org.lwjgl.opengl.GL11;
 import com.gtnewhorizon.gtnhlib.color.ColorResource;
 import com.gtnewhorizons.aspectrecipeindex.AspectRecipeIndex;
 import com.gtnewhorizons.aspectrecipeindex.ModItems;
+import com.gtnewhorizons.aspectrecipeindex.api.IAspectRangeList;
 import com.gtnewhorizons.aspectrecipeindex.common.items.ItemAspect;
 import com.gtnewhorizons.aspectrecipeindex.util.ARIConfig;
 import com.gtnewhorizons.aspectrecipeindex.util.Util;
@@ -31,6 +32,7 @@ import com.gtnewhorizons.aspectrecipeindex.util.Util;
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.NEIServerUtils;
 import codechicken.nei.PositionedStack;
+import codechicken.nei.recipe.GuiRecipe;
 import thaumcraft.api.IRunicArmor;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
@@ -120,6 +122,26 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
     @Override
     public String getGuiTexture() {
         return super.getGuiTexture();
+    }
+
+    @Override
+    public List<String> handleItemTooltip(GuiRecipe<?> gui, ItemStack stack, List<String> currenttip, int recipe) {
+        super.handleItemTooltip(gui, stack, currenttip, recipe);
+        if (stack != null && stack.getItem() instanceof ItemAspect && recipe < this.aspects.size()) {
+            final AspectList recipeAspects = this.aspects.get(recipe);
+            if (recipeAspects instanceof IAspectRangeList ranges) {
+                final int min = ranges.getMinAmount(ItemAspect.getAspect(stack));
+                final int max = ranges.getMaxAmount(ItemAspect.getAspect(stack));
+                if (min >= 0 && max >= 0) {
+                    currenttip.add(
+                            StatCollector.translateToLocalFormatted(
+                                    "aspectrecipeindex.infusion.aspect_cost_range",
+                                    min,
+                                    max));
+                }
+            }
+        }
+        return currenttip;
     }
 
     @Override
