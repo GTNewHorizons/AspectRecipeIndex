@@ -332,7 +332,7 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
         protected void setIngredients(InfusionRecipe recipe) {
             EnhancedInfusionRecipe r = InfusionRecipeExt.get().convert(recipe);
             this.ingredients.clear();
-            this.ingredients.add(positionedIngredient(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 63));
+            this.ingredients.add(new PositionedStack(r.getCentral().getRepresentativeStacks(), OUTPUT_X, 63));
             addSurroundingItems(r.getComponentsExt());
         }
 
@@ -361,25 +361,9 @@ public class InfusionRecipeHandler extends TemplateThaumHandler {
             for (RecipeIngredient ingredient : r) {
                 int vx = sx + coords.get(total).x;
                 int vy = sy + coords.get(total).y;
-                this.ingredients.add(positionedIngredient(ingredient.getRepresentativeStacks(), vx, vy));
+                this.ingredients.add(new PositionedStack(ingredient.getRepresentativeStacks(), vx, vy));
                 ++total;
             }
-        }
-
-        /**
-         * PositionedStack expands a wildcard damage value into every subtype of the item, copying the stacks straight
-         * out of the item list and dropping the NBT tag the recipe asked for. An ingredient that carries both is
-         * therefore shown as a set of items that would not actually craft, so keep it as the single stack it is.
-         */
-        private PositionedStack positionedIngredient(List<ItemStack> stacks, int x, int y) {
-            boolean generatePermutations = true;
-            for (ItemStack stack : stacks) {
-                if (stack != null && stack.getItemDamage() == Short.MAX_VALUE && stack.hasTagCompound()) {
-                    generatePermutations = false;
-                    break;
-                }
-            }
-            return new PositionedStack(stacks, x, y, generatePermutations);
         }
 
         protected void setResult(InfusionRecipe recipe) {
